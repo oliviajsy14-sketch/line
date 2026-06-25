@@ -74,6 +74,7 @@
 
 ## 카테고리 구분
 
+- AI Agent
 - AI/GPT
 - Global Big Tech
 - Asia Big Tech
@@ -81,6 +82,26 @@
 - Theme
 
 ## 카테고리별 기준
+
+### AI Agent
+
+- AI Agent는 Weekly AI Trend Report에서 별도 상단 구역으로 관리 가능
+- 리포트 카테고리 기준으로는 AI/GPT에 포함
+- Sheet에서는 AI Agent 관련 Query가 많기 때문에 `AI Agent`를 별도 대분류로 배치 가능
+- 포함 범위:
+  - OpenClaw
+  - AutoGPT
+  - AgentGPT
+  - CrewAI
+  - LangGraph
+  - Claude Code
+  - agentic workflow
+  - enterprise AI agent
+  - agentic commerce
+  - AI payment
+  - AI security
+- AI Agent 관련 기사는 원문 제목과 본문을 참고하되, Sheet에는 최종 리포트용 `Korean Title`만 입력
+- Check Box는 자동화 agent가 임의로 체크하지 않고 기본 미체크 상태로 생성
 
 ### AI/GPT
 
@@ -201,6 +222,14 @@
   - Gen Z/MZ 트렌드
 
 ## 카테고리별 우선 포함 기준
+
+### AI Agent
+
+- AI Agent, Agentic AI, agentic workflow, AI coding agent 관련 기사 우선
+- OpenClaw, AutoGPT, AgentGPT, CrewAI, LangGraph, Claude Code, Cursor, Codex 등 agentic workflow 변화 우선
+- AI Agent가 결제, 구매, 예약, 주문, 데이터 분석, 코드 작성, 고객 응대, 업무 자동화 등 실제 action을 수행하는 기사 우선
+- GitHub Release, Changelog, Release Notes라도 AI Agent 기능 변화가 있으면 누락하지 않고 리스트업
+- 리포트 카테고리 기준으로는 AI/GPT에 포함되지만 Sheet에서는 별도 대분류처럼 배치 가능
 
 ### AI/GPT
 

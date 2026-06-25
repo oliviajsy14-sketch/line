@@ -66,6 +66,7 @@
 
 ## 카테고리 구분
 
+- AI Agent
 - AI/GPT
 - Global Big Tech
 - Asia Big Tech
@@ -73,6 +74,26 @@
 - Theme
 
 ## 카테고리별 기준
+
+### AI Agent
+
+- AI Agent는 Weekly AI Trend Report에서 별도 상단 구역으로 관리 가능
+- 리포트 카테고리 기준으로는 AI/GPT에 포함
+- Sheet에서는 AI Agent 관련 Query가 많기 때문에 `AI Agent`를 별도 대분류로 배치 가능
+- 포함 범위:
+  - OpenClaw
+  - AutoGPT
+  - AgentGPT
+  - CrewAI
+  - LangGraph
+  - Claude Code
+  - agentic workflow
+  - enterprise AI agent
+  - agentic commerce
+  - AI payment
+  - AI security
+- AI Agent 관련 기사는 원문 제목과 본문을 참고하되, Sheet에는 최종 리포트용 `Korean Title`만 입력
+- Check Box는 자동화 agent가 임의로 체크하지 않고 기본 미체크 상태로 생성
 
 ### AI/GPT
 
