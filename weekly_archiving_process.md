@@ -2631,58 +2631,91 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
 
 - 주차별 새 탭 생성
 - 기존 템플릿 서식 유지
-- 카테고리별 기사 정리
-- 최종 Sheet는 포함 기사 중심으로 정리
-- Sheet 입력 컬럼은 `Sheet 입력 권장 컬럼` 기준 사용
+- 대분류 카테고리별 구역 생성
+- 각 대분류 아래 Query List 또는 세부 서비스명 배치
+- 각 Query List 항목 아래 해당 기간 내 확인된 기사 입력
+- 최종 Sheet는 Include 기사 중심으로 입력
+- 제외 기사나 중복 제외 기사는 별도 컬럼으로 관리하지 않음
 - 기사 원문 제목은 별도 컬럼으로 입력하지 않고, 최종 리포트용 `Korean Title` 중심으로 정리
-- 날짜는 기사 발행일 기준으로 입력
-- URL은 바로 접근 가능하고 본문 확인 가능한 원문 링크 입력
-- Source Type은 `Official`, `Tech Media`, `Local Media`, `General Media`, `Paywall Seed` 중 선택
-- 중복 제거, Cluster 처리, 제외 판단, AI 관련성 판단은 업무 프로세스 기준으로 수행하되 Sheet 필수 컬럼으로 추가하지 않음
-- Paywall 대체 기사는 최종 접근 가능한 URL만 `URL` 컬럼에 입력
+- URL은 실제 접속 가능하고 본문 확인 가능한 링크만 입력
+- 기사 없음 또는 해당 기간 업데이트 없음은 `n/a`로 입력
+- 기존 `O` 표시 방식은 사용하지 않고 `Check Box` 컬럼 사용
+- 중복 제거, Cluster 처리, 제외 판단, AI 관련성 판단은 업무 프로세스 기준으로 수행하되 Sheet 컬럼으로 입력하지 않음
 
 ## Sheet 입력 권장 컬럼
 
-기사 리스트업 Sheet에는 아래 컬럼을 기준으로 입력한다.
+### Sheet 입력 기본 원칙
 
-| 컬럼명 | 입력 내용 |
-| --- | --- |
-| Search Query | 기사를 발견한 검색어 또는 Query List 항목 |
-| Category | AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme 중 선택 |
-| Company / Service | 기업명 또는 서비스명 |
-| Korean Title | 최종 리포트용 국문 제목 |
-| Published Date | 기사 발행일 |
-| Source | 매체명 또는 공식 소스명 |
-| Source Type | Official / Tech Media / Local Media / General Media / Paywall Seed 중 선택 |
-| URL | 실제 접속 가능하고 본문 확인 가능한 링크 |
-| Country / Region | 관련 국가 또는 지역 |
+기사 리스트업 Sheet는 일반적인 데이터베이스형 테이블이 아니라, 카테고리와 Query List를 기준으로 기사 제목과 URL을 입력하는 구조로 관리한다.
 
-### Sheet 입력 예시
+- 대분류 카테고리별로 구역을 나눔
+- 대분류 카테고리 예시: `AI Agent`, `AI/GPT`, `Global Big Tech`, `Asia Big Tech`, `Social`, `Theme`
+- 각 대분류 아래에 Query List 또는 세부 서비스명을 배치
+- 각 Query List 항목 아래에 해당 기간 내 확인된 기사 입력
+- 기사 입력 시 원문 제목은 입력하지 않고, 최종 리포트용 국문 제목만 입력
+- 기사 제목은 반드시 기존 제목 작성 규칙에 맞춰 작성
+- URL은 실제 접속 가능하고 본문 확인 가능한 링크만 입력
+- 기사 없음 또는 해당 기간 업데이트 없음은 `n/a`로 입력
+- 기존 `O` 표시 방식은 사용하지 않고, 실제 Sheet에서 클릭 가능한 체크박스 컬럼 사용
+- 체크박스는 사람이 최종 선정 여부나 검토 완료 여부를 직접 체크할 수 있도록 구성
+- 체크박스 컬럼은 `Status`, `Note`, `AI Relevance`, `Report Relevance` 같은 판단용 컬럼으로 확장하지 않음
 
-아래는 실제 기사 리스트업 Sheet에 입력할 때 참고하는 예시 형식이다.
-예시는 컬럼 구조와 작성 톤을 보여주기 위한 것이며, 실제 입력 시에는 확인된 기사 원문 기준으로 작성한다.
+### Sheet 입력 시 사용하지 않는 컬럼
 
-| Search Query | Category | Company / Service | Korean Title | Published Date | Source | Source Type | URL | Country / Region |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Gemini | AI/GPT | Google / Gemini | [Google] Gemini, 개발자용 신규 업데이트 공개하며 AI 개발 워크플로우 지원 확대 (2026.6.12) | 2026.6.12 | Google Blog | Official | 실제 기사 URL 입력 | US |
-| Claude Code | AI/GPT | Anthropic / Claude Code | [Anthropic] Claude Code, 정식 제공 전환하며 개발자용 AI Agent 활용 확대 (2026.6.18) | 2026.6.18 | Anthropic News | Official | 실제 기사 URL 입력 | US |
-| Meta AI | Global Big Tech | Meta | [Meta] 광고주용 AI 도구 확대하며 생성형 광고 제작과 캠페인 운영 자동화 강화 (2026.6.17) | 2026.6.17 | Meta Newsroom | Official | 실제 기사 URL 입력 | US |
-| TikTok AI Advertising | Social | TikTok | [TikTok] AI 광고 솔루션 공개하며 크리에이티브 제작과 브랜드 캠페인 효율화 지원 (2026.6.19) | 2026.6.19 | TikTok Newsroom | Official | 실제 기사 URL 입력 | Global |
-| AI Agent startup funding | Theme | AI Agent Startup | [Market] AI Agent 스타트업, 기업 워크플로우 자동화 수요 기반 투자 유치 확대 (2026.6.20) | 2026.6.20 | TechCrunch | Tech Media | 실제 기사 URL 입력 | US |
+아래 컬럼들은 실제 기사 리스트업 Sheet에서 사용하지 않는다.
 
-### Sheet 입력 원칙
+- Original Title
+- Key Update
+- AI Relevance
+- Report Relevance
+- Cluster ID
+- Duplicate Check Keyword
+- Status
+- Note
 
-- 기사 원문 제목은 Sheet에 별도 컬럼으로 입력하지 않음
-- 최종 Sheet는 포함 기사 중심으로 정리
-- 중복 제거, Cluster 처리, 제외 판단, AI 관련성 판단은 업무 프로세스에서 수행하되 별도 Sheet 컬럼으로 요구하지 않음
-- `Korean Title`은 최종 리포트에서 바로 활용 가능한 제목으로 작성
-- `Korean Title` 작성 규칙은 [최종 Title 작성 방식](#최종-title-작성-방식)과 [Korean Title 품질 체크](#korean-title-품질-체크)를 따른다
-- Sheet 입력용 `Korean Title`에는 URL을 넣지 않고, URL은 `URL` 컬럼에만 입력
-- `Korean Title` 형식: `[회사명] 핵심 내용 (YYYY.M.DD)`
+### Sheet 입력 권장 구조
+
+Sheet 입력 구조는 아래 형태를 따른다.
+
+| 대분류 | Query / Service | Korean Title | Check Box | URL |
+| --- | --- | --- | --- | --- |
+| AI Agent | AI Agent | [Agentshub.AI] 완전한 노코드 기반 AI Agent Platform 공개하며 기업용 AI 워크포스 구축 지원 (2026.4.6) | ☐ | https://finance.yahoo.com/sectors/technology/articles/agentshub-ai-launches-complete-no-130800495.html |
+|  |  | [Razorpay] Codex 및 ChatGPT 연동 통해 자연어 명령만으로 결제 설정과 데이터 분석 수행하는 Agentic 결제 인프라 확장 (2026.4.7) | ☐ | https://razorpay.com/blog/ai-app-monetisation-razorpay-codex/ |
+|  |  | [Meta] 내부 데이터 파이프라인에 50+ AI Agent 투입해 4.1K+ 파일 분석 및 59개 컨텍스트 파일 기반 지식 구조화 사례 공개 (2026.4.6) | ☐ | https://engineering.fb.com/2026/04/06/developer-tools/how-meta-used-ai-to-map-tribal-knowledge-in-large-scale-data-pipelines/ |
+|  | OpenClaw (Moltbot, Clawdbot) | [OpenClaw] 38M 월간 방문자와 3.2M MAU 기록하며 글로벌 AI Agent 플랫폼 성장 가속 (2026.4.7) | ☐ | https://www.trendingtopics.eu/openclaw-numbers/ |
+|  | OpenClaw (Moltbot, Clawdbot) | [OpenClaw] 2026.4.7 버전 업데이트, Gemma 4 지원 추가와 memory-wiki 복원 적용 (2026.4.7) | ☐ | https://github.com/openclaw/openclaw/releases/tag/v2026.4.7 |
+|  | Paperclip | n/a |  |  |
+|  | BabyAGI | n/a |  |  |
+|  | Microsoft AutoGen | n/a |  |  |
+| AI/GPT | AI | [Zero Shot] Ex-OpenAI 창업자들, $100M 목표 AI 투자 펀드 조성하며 초기 투자 집행 (2026.4.6) | ☐ | https://techcrunch.com/2026/04/06/openai-alums-have-been-quietly-investing-from-a-new-potentially-100m-fund/ |
+|  | OpenAI | [OpenAI] "Safety Fellowship" 공개하며 AI 안전과 정렬 연구 인재 육성 프로그램 운영 (2026.4.6) | ☐ | https://openai.com/index/introducing-openai-safety-fellowship/ |
+|  | Google AI | [Google] 오프라인 Dictation 앱 "AI Edge Eloquent" 공개하며 음성 입력 생산성 기능 강화 (2026.4.6) | ☐ | https://techcrunch.com/2026/04/06/google-quietly-releases-an-offline-first-ai-dictation-app-on-ios/ |
+|  | Gemini | [Google] Gemini overlay와 Gemini Live UI 통합 재설계 통해 AOS 상호작용 방식과 Multi-modal 접근성 개선 (2026.4.7) | ☐ | https://9to5google.com/2026/04/07/gemini-live-redesign-android/ |
+|  | Nova AI | [Amazon] Nova 2 Sonic, 실시간 대화형 Podcast 생성 가능한 음성 기반 AI 모델 활용 아키텍처 공개 (2026.4.7) | ☐ | https://aws.amazon.com/ko/blogs/machine-learning/building-real-time-conversational-podcasts-with-amazon-nova-2-sonic/ |
+
+### 체크박스 컬럼 적용 기준
+
+md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Google Sheet 또는 Excel 템플릿을 생성할 때는 해당 열을 반드시 클릭 가능한 체크박스 형식으로 설정한다.
+
+- Google Sheets 기준: `Insert > Checkbox` 기능이 적용된 열로 구성
+- Excel 기준: 실제 체크박스 삽입이 어렵다면 `TRUE/FALSE` 또는 빈 체크박스 기호 `☐` 사용 가능
+- 단순히 `O` 문자로 표시하지 않음
+- 사람이 직접 클릭하거나 선택할 수 있는 체크용 컬럼으로 구성
+- 체크박스는 최종 포함 여부 또는 검토 완료 여부를 사람이 확인하기 위한 용도
+- 자동화 agent가 임의로 체크하지 않도록 관리
+
+### Sheet 입력 예시 작성 방식
+
+- 원문 제목 컬럼은 만들지 않음
+- 핵심 요약 컬럼은 만들지 않음
+- AI Relevance, Report Relevance, Status, Note 등 판단용 컬럼은 만들지 않음
+- 기존 `O` 표시 컬럼은 사용하지 않고 `Check Box` 컬럼 사용
+- 국문 제목은 `[회사명] 핵심 내용 (YYYY.M.DD)` 형식 적용
 - 산업 전반 또는 특정 기업 중심이 아닌 경우 `[Market]` 사용
-- 날짜는 0 padding 없이 작성
-- 쉼표는 최대 1개만 사용
+- 날짜는 `2026.4.7`처럼 0 padding 없이 작성
 - 신규 공개 서비스나 기능명에만 큰따옴표 사용
+- URL이 여러 개인 경우 한 셀에 줄바꿈으로 입력 가능
+- 해당 Query 항목에서 기사 없음 또는 업데이트 없음은 `n/a`로 입력
 
 ## 중복 기사 처리 방식
 
@@ -3143,6 +3176,8 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
 - [ ] 기사 날짜와 출처 정확성 확인
 - [ ] 최종 Korean Title 작성
 - [ ] Sheet 입력용 Korean Title이 `[회사명] 핵심 내용 (YYYY.M.DD)` 형식에 부합
+- [ ] 기존 `O` 표시 방식 대신 클릭 가능한 `Check Box` 컬럼을 사용했는지 확인
+- [ ] 기사 없음 또는 해당 기간 업데이트 없음이 `n/a`로 입력되었는지 확인
 - [ ] Title이 명사형 종결
 - [ ] `[Market]` 사용 기준 정확히 적용
 - [ ] Weekly AI Trend Report와 Global IT Trend Report에 활용 가능한 기사만 유지
