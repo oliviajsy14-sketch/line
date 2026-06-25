@@ -1,5 +1,40 @@
 # Weekly Archiving Process
 
+
+## 자동화 실행 개요
+
+이 문서는 Weekly IT Trend Sheet와 Global IT Trend Sheet 기사 아카이빙 자동화를 위한 실행 기준이다.
+
+자동화 agent는 아래 흐름으로 작업한다.
+
+1. 작업자가 입력한 날짜 범위와 실행 모드 확인
+2. 실행 모드에 맞는 Query List 선택
+3. Query별 Official Source, Blog, Newsroom, GitHub, Release Notes, Changelog 우선 확인
+4. Google Query 또는 Google News/Search로 누락 기사 보완
+5. 기사 날짜, 중복 여부, Paywall 여부, 제외 대상 여부 검수
+6. Query별로 관련 기사를 중요도 순으로 정렬
+7. Sheet 출력 Schema에 맞춰 Korean Title, Check Box, URL 입력
+8. Check Box는 기본 미체크 상태로 생성
+9. 작업자가 최종 검토 후 직접 Check Box 선택
+10. 검색 실패, 제외 기사, Paywall, 중복 등은 Sheet 본문이 아니라 실행 로그에 기록
+
+## 자동화 실행 모드
+
+자동화 agent는 실행 전 반드시 아래 모드 중 하나를 선택한다.
+
+| run_mode | 작업 대상 | 사용 Query List | 출력 대상 |
+|---|---|---|---|
+| weekly | Weekly IT Trend Sheet | Weekly Sheet Query | Weekly IT Trend Sheet |
+| global | Global IT Trend Sheet | Global IT Trend Sheet Query | Global IT Trend Sheet |
+
+운영 기준:
+
+- `run_mode=weekly`인 경우 Weekly Sheet Query만 사용한다.
+- `run_mode=global`인 경우 Global IT Trend Sheet Query만 사용한다.
+- 두 Query List를 임의로 병합하지 않는다.
+- 선택된 run_mode와 다른 Query List는 사용하지 않는다.
+- 작업자가 run_mode를 명시하지 않은 경우 자동화 agent는 작업을 시작하지 않고 run_mode 확인이 필요하다고 표시한다.
+
 ## 목차
 
 - [업무 목적](#업무-목적)
@@ -55,6 +90,88 @@
 - Weekly AI Trend Report 및 Global IT Trend Report 작성에 활용
 - 중복 기사, 비대상 기사, 단순 PR성 기사 제외
 - Query별 관련 기사를 넓게 수집하고 최종 리포트 반영 여부는 작업자가 Check Box로 선택
+
+## 자동화 입력값
+
+자동화 agent가 작업을 수행할 때 필요한 입력값은 아래와 같다.
+
+| 입력값 | 필수 여부 | 설명 | 예시 |
+|---|---|---|---|
+| run_mode | 필수 | 작업 대상 시트 구분 | `weekly` 또는 `global` |
+| date_range | 필수 | 검색 기간 | `2026.6.18~2026.6.24` |
+| sheet_name | 필수 | 작업할 Sheet 이름 또는 탭명 | `6월 4주` |
+| source_sheet_template | 권장 | 기존 Sheet 템플릿 | 이전 주차 Sheet |
+| query_list | 자동 선택 | run_mode에 따라 자동 선택 | Weekly Sheet Query / Global IT Trend Sheet Query |
+| official_source_links | 필수 | Google Query 전 우선 확인 링크 | Appendix A |
+| previous_archive | 권장 | 과거 중복 확인용 기존 아카이브 | 이전 주차 Sheet |
+| exclude_companies | 필수 | 제외 대상 기업 | Naver / LINE / LY Corporation 단독 기사 |
+
+입력 기준:
+
+- 검색 기간은 `yyyy.m.d~yyyy.m.d` 형식으로 입력한다.
+- 날짜에는 `/`를 사용하지 않는다.
+- 월/일에는 0 padding을 사용하지 않는다.
+- 예: `2026.06.08~2026.06.14`가 아니라 `2026.6.8~2026.6.14`
+
+## 자동화 출력값
+
+자동화 agent는 아래 구조로 결과를 생성한다.
+
+- 대분류
+- Query / Service
+- Korean Title
+- Check Box
+- URL
+
+자동화 agent는 아래 컬럼 외의 컬럼을 임의로 추가하지 않는다.
+
+## Output Schema
+
+| Field | Required | 입력 규칙 |
+|---|---|---|
+| 대분류 | 필수 | Query List의 Category와 동일하게 입력 |
+| Query / Service | 필수 | Query List 표기 그대로 입력 |
+| Korean Title | 필수 | 기사 제목 입력, 기사 없음 확인 시 `n/a` 입력 |
+| Check Box | 필수 | 신규 기사는 기본 미체크 상태 |
+| URL | 조건부 필수 | Korean Title이 `n/a`이면 빈칸, 기사 있으면 필수 |
+
+출력 금지 컬럼:
+
+- Original Title
+- Key Update
+- AI Relevance
+- Report Relevance
+- Cluster ID
+- Duplicate Check Keyword
+- Status
+- Note
+- Source Type
+- Published Date
+- Country / Region
+
+주의:
+
+- 원문 제목은 참고용으로만 사용하고 Sheet에는 출력하지 않는다.
+- 기사 발행일은 Korean Title 끝의 `(yyyy.m.d)` 안에 포함한다.
+- URL은 Korean Title 안에 넣지 않고 URL 칸에만 입력한다.
+- Check Box는 자동화 agent가 임의로 체크하지 않는다.
+
+## Sheet 입력 방식
+
+Sheet 입력 구조는 아래 형식을 따른다.
+
+| 대분류 | Query / Service | Korean Title | Check Box | URL |
+|---|---|---|---|---|
+
+입력 기준:
+
+- 대분류와 Query / Service 순서는 해당 run_mode의 Query List 순서를 strict하게 따른다.
+- Query 이름은 임의로 수정하지 않는다.
+- 특정 Query에서 기사가 여러 개 발견되면 같은 Query 아래 여러 행으로 입력한다.
+- 특정 Query를 확인했지만 입력할 기사가 없으면 Korean Title 칸에 `n/a`를 입력한다.
+- 검색 실패 또는 접속 실패는 `n/a`로 처리하지 않고 실행 로그에 기록한다.
+- Check Box는 기본 미체크 상태로 생성한다.
+- URL이 여러 개인 경우 같은 URL 셀 안에서 줄바꿈으로 입력한다.
 
 ## 기본 작업 단위
 
@@ -303,7 +420,7 @@
 1. 작업자가 입력한 날짜 범위 확인
 2. 기존 Sheet 템플릿 복사 후 새 주차 탭 생성
 3. 카테고리별 Query List 확인
-4. Google Query 전 우선 확인 링크에서 Official Source, Blog, Newsroom, GitHub, Release Notes, Changelog 먼저 확인
+4. Appendix A. Google Query 전 우선 확인 링크에서 Official Source, Blog, Newsroom, GitHub, Release Notes, Changelog 먼저 확인
 5. `(Google Query)` 표시 항목은 Google Search 또는 Google News에서 검색
 6. 공식 링크에서 누락 가능성이 있는 항목은 Google News / Google Search로 보완 검색
 7. 공통 Tech / AI / Social Source에서 주요 기사 추가 확인
@@ -387,7 +504,1402 @@
 - Integration Guide
 - Migration Guide
 
-## Google Query 전 우선 확인 링크
+## Query List 적용 방식
+
+- 자동화 agent는 작업 대상 시트에 맞는 Query List만 사용한다.
+- Weekly IT Trend Sheet 작업 시 `Weekly Sheet Query`만 사용한다.
+- Global IT Trend Sheet 작업 시 `Global IT Trend Sheet Query`만 사용한다.
+- 두 Query List를 임의로 병합하지 않는다.
+- Query 순서는 아래에 정의된 순서를 strict하게 따른다.
+- Query 이름은 임의로 수정하지 않는다.
+- Query별 공식 링크가 있으면 Google Query 전 우선 확인 링크를 먼저 확인한다.
+- Query에 `Google Query`가 표시되어 있으면 Google Search 또는 Google News 중심으로 검색한다.
+- Query별 기사 입력 시 Sheet에는 `Korean Title`, `Check Box`, `URL` 중심으로 입력한다.
+
+## Official Source 확인 방식
+
+- 기업별 공식 채널 먼저 확인:
+  - Blog
+  - Newsroom
+  - Developer Blog
+  - Product Update Page
+- Official Source 정보는 신뢰도 높게 우선순위 부여
+- Official Source와 외부 기사 내용이 겹치면 Official Source 기준으로 내용 확인
+- 외부 기사는 아래 용도로 활용:
+  - 보완 설명
+  - 시장 반응
+  - 투자 규모
+  - 파트너십 맥락
+- 영어 Official Source가 있으면 영어 페이지 우선 사용
+- 영어 페이지가 없고 한국어/일본어 공식 링크만 있으면 현지어 공식 링크 사용 가능
+- `(Google Query)` 표시 항목은 Official Source 확인 없이 Google Query만 진행
+
+## Google Query 및 외부 기사 검색 방식
+
+- Official Source 및 우선 확인 소스 확인 후 Google News 또는 Google Search 활용
+- `(Google Query)` 표시 항목은 Google News 또는 Google Search만 활용
+- 검색어 조합 예시:
+  - 기업명
+  - 서비스명
+  - AI
+  - update
+  - launch
+  - partnership
+  - funding
+  - regulation
+- 검색 기간은 작업자 입력 `yyyy.mm.dd~yyyy.mm.dd` 범위 적용
+- 검색 결과는 최신순과 관련도 기준으로 확인
+- 동일 내용이 여러 매체에 반복되면 아래 우선순위 적용:
+  1. 원출처에 가까운 기사
+  2. Official Source
+  3. 신뢰도 높은 Tech Media
+  4. 본문 접근 가능한 영어 기사
+- Google Query 신규 발견 기사는 과거 중복 여부 확인 후 Sheet 입력
+
+## Google Query 기사 중복 확인 방식
+
+- Sheet 입력 전 반드시 과거 중복 여부 확인
+- 확인 방식:
+  1. 기존 검색 날짜 필터 해제
+  2. 기사 타이틀로 재검색
+  3. 핵심 키워드로 재검색
+  4. 동일 기사 또는 동일 이슈의 과거 주차 사용 여부 확인
+- 최신 발행 기사라도 아래 경우 제외:
+  - 과거 기사 재사용
+  - 재배포
+  - 업데이트 없는 반복 보도
+- 과거 동일 기사 또는 동일 이슈가 있으면 `실행 로그 또는 URL 셀 줄바꿈으로 처리하고 대표 기사 아래 기록
+- 신규 기사로 유지 가능한 경우:
+  - 후속 발표
+  - 신규 기능 추가
+  - 새로운 수치
+  - 새로운 지역 출시
+  - 새로운 파트너십
+- 애매한 경우 내부 판단 기준으로만 활용:
+  - `중복 가능성`
+  - `후속 기사`
+  - `기존 이슈 업데이트`
+
+## 기사 선별 기준
+
+- 아래 기준에 해당하면 선별 가능:
+  - AI 기능 출시
+  - AI Agent
+  - 생성형 AI
+  - LLM
+  - 모델 업데이트
+  - AI 인프라
+  - Big Tech 주요 제품 업데이트
+  - 플랫폼 전략
+  - 광고
+  - 커머스
+  - 검색
+  - OS
+  - Social 서비스 신규 기능
+  - 유저 성장
+  - 커뮤니티 기능
+  - 크리에이터 기능
+  - Asia Big Tech의 AI, 플랫폼, 콘텐츠, 커머스, 메신저, 앱 서비스
+  - 시장 구조 변화
+  - 유저 행동 변화
+  - 규제
+  - 투자
+  - 파트너십
+  - 플랫폼 수익화
+  - 광고 상품
+  - 구독 모델
+  - 크리에이터 생태계 변화
+  - 국가별 정책, 법안, 보안, 개인정보 이슈
+  - 시장 전반에 영향을 줄 수 있는 기사
+
+## Global IT Trend Report 기사 중요도 및 정렬 기준
+
+Global IT Trend Report의 기사 리스트업 목적은 중요한 기사만 선별하는 것이 아니라, Global IT / AI / Big Tech / Social / Asia Tech / Market Trend와 관련된 기사를 빠짐없이 수집한 뒤, 검토자가 보기 쉽도록 중요도에 따라 시트 내 배치 순서를 정리하는 것이다.
+
+- 중요도는 기사 포함/제외 기준이 아님
+- 중요도는 해당 Query 섹션 안에서 어떤 기사를 위에 배치할지 판단하기 위한 정렬 기준으로만 사용
+- 중요도가 낮아 보이는 기사라도 Global IT Trend Report의 카테고리와 관련성이 있으면 절대 누락하지 않고 반드시 리스트업
+
+### 기본 원칙
+
+- Global IT / AI / Big Tech / Asia Tech / Social / Market Trend 관련 기사는 중요도와 관계없이 모두 리스트업
+- 중요한 기사는 해당 Query 섹션의 위쪽에 배치
+- 중요도가 낮거나 단순 PR성 기사라도 관련성이 있으면 아래쪽에 배치
+- 자동으로 중요하지 않다고 판단해 기사 제외 금지
+- 최종적으로 각 Query 안에서는 `시장 영향이 큰 기사 → 기업/서비스 변화 기사 → 일반 관련 기사 → 중복/보조 출처` 순서로 정렬
+- 같은 내용의 중복 기사도 완전히 삭제하지 않고 대표 기사와 함께 보조 출처 또는 중복으로 기록
+- 공식 Newsroom, Blog, Release Notes, Changelog, GitHub Release도 제품·서비스·기능·시장 변화가 있으면 일반 기사처럼 리스트업
+- Weekly AI Trend Report보다 더 넓게 보되, Global IT Trend Report에서는 기술 자체보다 서비스화, 사업화, 시장 변화, 유저 접점 변화, 글로벌 경쟁 구도를 우선적으로 상단 배치
+
+### 상단 배치해야 하는 중요 기사 기준
+
+아래 내용에 해당하는 기사는 해당 Query 섹션의 위쪽에 배치한다.
+
+#### 1. 글로벌 Big Tech의 주요 제품·서비스 변화
+
+아래 기업의 주요 제품 출시, 기능 확장, 정책 변화, 수익화, 글로벌 확장, 파트너십, 규제 이슈는 상단에 배치한다.
+
+- Google
+- Apple
+- Meta
+- Amazon
+- Microsoft
+- Netflix
+- YouTube
+- Instagram
+- Facebook
+- WhatsApp
+- Android
+- iOS
+- Gmail
+- Chrome
+- AWS
+- OpenAI
+- Anthropic
+- NVIDIA
+- Salesforce
+- Adobe
+- Databricks
+- Cloudflare
+
+특히 기존 대규모 유저 기반 서비스에 AI, Agent, Search, Ads, Commerce, Creator, Payment, Productivity 기능이 들어가는 기사는 상단에 배치한다.
+
+#### 2. AI가 실제 서비스와 유저 접점으로 확장되는 기사
+
+AI 기술 자체보다 실제 앱, 서비스, 플랫폼, 업무 흐름에 적용되는 기사를 중요하게 본다.
+
+아래 내용은 상단에 배치한다.
+
+- ChatGPT, Gemini, Claude, Meta AI, Copilot, Grok 등 AI 서비스가 기존 앱이나 업무 도구에 통합되는 기사
+- Google Search, Chrome, Android, Gmail, Workspace, YouTube에 AI 기능이 들어가는 기사
+- Meta AI가 WhatsApp, Instagram, Facebook, Ads, Business tools, smart glasses에 적용되는 기사
+- Amazon Alexa, Rufus, Bedrock, AWS 기반 AI 서비스 확장 기사
+- Microsoft Copilot, Agent 365, Windows, Microsoft 365, Power Platform에 AI 기능이 들어가는 기사
+- Apple Intelligence, Siri, iOS, App Store, Safari, Messages 등 Apple 생태계 내 AI 변화 기사
+- Adobe, Canva, Figma, Notion, Roblox, Atlassian, Zoom 등 기존 대형 앱의 AI workflow 변화 기사
+- Kakao, SK Telecom, Samsung, Alibaba, Tencent, ByteDance, Huawei 등 Asia Big Tech의 AI 서비스 적용 기사
+
+#### 3. AI Agent / Agentic AI의 산업 적용 기사
+
+AI Agent 관련 기사는 Global IT Trend Report에서도 매우 중요하게 다룬다.
+다만 기술 자체보다 실제 산업과 기업 업무에 적용되는 의미가 큰 기사를 위에 배치한다.
+
+아래 내용은 상단에 배치한다.
+
+- AI Agent가 기업 업무, 고객 응대, 마케팅, 금융, 제조, 통신, 의료, 교육, 커머스, 리테일, 보안에 적용되는 기사
+- AI Agent가 결제, 거래, 구매, 예약, 주문, 데이터 분석, 코드 작성, 고객 상담, workflow 자동화를 수행하는 기사
+- AI Agent 플랫폼, agentic commerce, AI payment, AI shopping, AI trading 관련 기사
+- 기업이 AI Agent를 도입해 비용 절감, 매출 증가, 업무 시간 단축, 자동화 확대 효과를 공개한 기사
+- 대기업이 AI Agent를 전사 도입하거나 주요 산업 파트너십으로 확장하는 기사
+- AI Agent가 assistant에서 coworker, autonomous worker, digital employee, operating platform으로 진화하는 기사
+
+중소 기업 기사라도 AI Agent가 실제 산업 use case를 명확히 보여주면 반드시 리스트업하고, 산업 변화 의미가 크면 상단에 배치한다.
+
+#### 4. 시장 구조와 경쟁 구도를 보여주는 기사
+
+단순 제품 소식보다 시장 방향성을 설명할 수 있는 기사는 상단에 배치한다.
+
+아래 내용은 중요하게 본다.
+
+- AI Agent Loop, Agentic Web, AI Agent Identity, Agentic Commerce처럼 새로운 시장 개념이 등장하는 기사
+- OpenClaw, Codex, Claude Code, Cursor, Gemini, Grok 등 agentic coding 경쟁 구도 기사
+- Google, Apple, Meta, Microsoft, Amazon, OpenAI, Anthropic, xAI 간 AI 플랫폼 경쟁 기사
+- Big Tech의 AI 인프라 투자, 데이터센터, 반도체, GPU, AI PC, on-device AI 경쟁 기사
+- AI search, AI browser, AI shopping, AI ads, AI content creation처럼 기존 인터넷 사용 방식이 바뀌는 기사
+- AI 규제, 데이터 보호, 저작권, 청소년 안전, privacy, security 이슈가 시장 구조에 영향을 주는 기사
+- AI adoption, enterprise adoption, user growth, revenue, ARR, valuation 등 정량 지표가 포함된 기사
+
+#### 5. Asia Big Tech / 지역별 AI 확산 기사
+
+Global IT Trend Report에서는 Asia Big Tech와 지역별 서비스 확산도 중요하다.
+
+아래 내용은 상단에 배치한다.
+
+- Alibaba, Qwen, Alibaba Cloud, Tencent, ByteDance, Huawei, Baidu, Samsung, Kakao, SK Telecom, Rakuten, Mercari 등 주요 Asia Tech 기업의 AI·서비스 변화
+- China, Japan, Korea, India, Southeast Asia 지역에서 AI 서비스가 출시되거나 확장되는 기사
+- AI 모델, AI assistant, AI Agent, AI cloud, AI commerce, AI payment, AI device 관련 지역별 경쟁 기사
+- India, Japan, Korea, China, Southeast Asia 등 특정 시장 현지화 전략
+- Alexa+ Hindi 지원, Kakao AI 서비스, Alibaba Qwen, Tencent AI Agent, Huawei Cloud, SK Telecom AI Agent 등 지역 기반 서비스 변화
+- Asia 기업이 글로벌 AI 생태계나 Big Tech 경쟁에 영향을 주는 기사
+
+단순 로컬 PR이라도 AI, Big Tech, platform, commerce, social, cloud, device, regulation과 연결되면 리스트업한다.
+
+#### 6. Social / Creator / Ads / Commerce 변화 기사
+
+Social 및 creator platform 관련 기사는 유저 행동, 광고, 커머스, 콘텐츠 제작 방식 변화가 있으면 상단에 배치한다.
+
+아래 내용은 중요하게 본다.
+
+- Instagram, Facebook, WhatsApp, TikTok, Snapchat, Pinterest, Reddit, LinkedIn, X, Discord, Twitch 등의 AI 기능 추가
+- Creator tool, AI video editing, AI ad tool, AI sponsored content, AI recommendation, AI search, AI shopping 관련 기사
+- social media 내 광고 상품, measurement, creator monetization, shopping, brand safety 변화
+- AI가 콘텐츠 제작, 유통, 추천, 광고 집행, 쇼핑 전환에 적용되는 기사
+- 플랫폼 정책 변화, teen safety, privacy, moderation, misinformation, bot, synthetic content 관련 기사
+- user engagement, MAU, creator economy, Gen Z/MZ trend와 연결되는 기사
+
+단순 캠페인이나 이벤트성 기사라도 social platform의 광고, creator, commerce, AI 기능 변화와 연결되면 리스트업한다.
+
+#### 7. AI 인프라, 반도체, 클라우드, 디바이스 기사
+
+AI 서비스 변화와 연결되는 인프라 기사는 상단에 배치한다.
+
+아래 내용은 중요하게 본다.
+
+- NVIDIA, AMD, Intel, Qualcomm, Apple Silicon, Google TPU, AWS Trainium 등 AI chip 관련 기사
+- AI PC, AI smartphone, smart glasses, wearable AI, edge AI, on-device AI 관련 기사
+- AWS, Google Cloud, Microsoft Azure, Alibaba Cloud, Oracle Cloud, Cloudflare 등 AI cloud infrastructure 기사
+- 데이터센터, GPU cluster, AI factory, sovereign AI, energy, water, cooling, compute shortage 관련 기사
+- AI Agent 실행을 위한 local runtime, edge deployment, secure runtime, sandbox, memory, gateway 관련 기사
+- AI infrastructure가 비용, 성능, 기업 도입, 생태계 경쟁에 영향을 주는 기사
+
+단순 하드웨어 기사라도 AI 서비스 확장, AI Agent, on-device AI, cloud AI, model deployment와 연결되면 리스트업한다.
+
+#### 8. 보안, 개인정보, 규제, 저작권 기사
+
+Global IT Trend Report에서는 AI와 플랫폼 확산에 따른 리스크 기사도 중요하게 다룬다.
+
+아래 내용은 상단에 배치한다.
+
+- AI Agent 보안, agent identity, access control, governance, compliance
+- prompt injection, RCE, MCP vulnerability, browser agent takeover, extension takeover
+- AI 모델의 개인정보, 학습 데이터, 저작권, content provenance, synthetic media 이슈
+- App Store, Android, social platform, browser, cloud, AI service 관련 규제
+- EU, US, China, Korea, Japan 등 주요 지역의 AI regulation 또는 platform regulation
+- 청소년 보호, AI companion safety, chatbot lawsuit, moderation, privacy 관련 기사
+- 데이터 유출, 보안 사고, 취약점, 계정 탈취, 인증, payment fraud 관련 기사
+
+보안·규제 기사는 제품 출시가 아니더라도 시장 영향이나 플랫폼 운영 방식 변화와 연결되면 상단에 배치한다.
+
+#### 9. 수치가 있는 기사
+
+정량 지표가 포함된 기사는 중요하게 배치한다.
+
+아래 지표가 있으면 상단 배치 우선순위를 높인다.
+
+- 사용자 수
+- MAU / WAU
+- paid users
+- revenue
+- ARR
+- enterprise revenue
+- adoption rate
+- valuation
+- funding 규모
+- usage growth
+- market share
+- 비용 절감 수치
+- 생산성 향상 수치
+- 업무 시간 단축 수치
+- 성능 개선 수치
+- 처리량, 속도, latency, throughput
+- 파트너 수, 고객사 수, 국가 수, rollout 범위
+
+단순 funding 기사라도 기업이 AI 시장 구조에 영향을 줄 가능성이 있거나, Big Tech/AI platform/Agentic AI와 연결되면 리스트업한다.
+
+#### 10. Release Notes / Changelog / GitHub Release
+
+Global IT Trend Report에서도 Release Notes, Changelog, GitHub Release는 누락하면 안 된다.
+
+아래 내용이 있으면 리스트업한다.
+
+- AI 기능 추가
+- AI Agent 기능 추가
+- 모델 업데이트
+- 검색, 브라우저, 광고, 커머스, 크리에이터 도구 기능 변화
+- developer workflow 변화
+- API, SDK, MCP, plugin, connector, integration 변화
+- security, identity, permission, compliance 관련 변화
+- 성능 개선, 비용 절감, 배포 안정성 개선
+- provider integration, channel integration, memory, runtime, gateway 개선
+
+작은 업데이트라도 Global IT Trend Report 카테고리와 관련성이 있으면 하단에 배치하되 누락하지 않는다.
+시장 영향이 크거나 핵심 기업/서비스와 연결되면 상단에 배치한다.
+
+### 하단 배치하되 누락하면 안 되는 기사
+
+아래 유형은 상대적으로 중요도가 낮을 수 있지만, 관련성이 있으면 반드시 리스트업하고 해당 Query 섹션의 아래쪽에 배치한다.
+
+- 중소 SaaS 기업의 AI 기능 출시
+- 특정 산업용 AI Agent 또는 AI workflow 발표
+- PRNewswire, BusinessWire, GlobeNewswire 기반 제품 출시 기사
+- 단순 funding 기사
+- 기업 내부 AI 도입 사례
+- survey / report / thought leadership 기사
+- 특정 vertical use case 기사
+- AI Healthcare, AI Education, AI Advertising, AI Shopping, AI Browser, AI Security 관련 기사
+- Asia 지역 로컬 기업의 AI 서비스 출시
+- social platform의 작은 기능 변화
+- 공식 블로그의 작은 product update
+- release note / changelog의 작은 기능 변화
+
+주의:
+
+- 하단 배치 대상이라는 이유로 기사를 제외하지 않음
+- 중요도가 낮아 보여도 Global IT Trend Report 카테고리와 관련성이 있으면 반드시 기사 리스트에 포함
+
+### 중복 기사 처리 기준
+
+같은 내용을 여러 출처가 보도한 경우에도 완전히 삭제하지 않는다.
+
+- 공식 발표가 있으면 공식 출처를 대표 URL로 둠
+- TechCrunch, Reuters, CNBC, Bloomberg, 9to5Google, 9to5Mac, Social Media Today 등 해설 가치가 있는 기사는 보조 URL로 함께 둠
+- 같은 내용을 반복한 기사라면 `실행 로그 또는 URL 셀 줄바꿈으로 처리
+- 중복 기사라도 나중에 검토자가 판단할 수 있도록 기록은 남김
+- 완전히 동일하고 정보 가치가 없는 경우에만 대표 URL 아래에 묶음
+
+### 절대 누락하면 안 되는 주제
+
+아래 주제와 직접 관련된 기사는 중요도와 관계없이 반드시 확인하고, 관련성이 있으면 리스트업한다.
+
+- AI
+- Generative AI
+- AI Agent
+- Agentic AI
+- ChatGPT
+- OpenAI
+- Codex
+- Claude
+- Claude Code
+- Gemini
+- Google AI Mode
+- DeepMind
+- Meta AI
+- Copilot
+- Grok
+- OpenClaw
+- MCP
+- AI coding
+- AI browser
+- AI search
+- AI commerce
+- AI payment
+- AI shopping
+- AI advertising
+- AI security
+- AI governance
+- AI model release
+- AI assistant
+- AI companion
+- AI character
+- AI healthcare
+- AI education
+- enterprise AI adoption
+- Big Tech AI partnership
+- AI cloud
+- AI chip
+- AI PC
+- on-device AI
+- social platform AI
+- creator AI tools
+- AI regulation
+- AI privacy
+- AI copyright
+- platform policy change
+- app ecosystem change
+- release notes
+- changelog
+- GitHub release
+
+### 제외 기준
+
+아래에 해당하는 경우에만 제외한다.
+
+- IT/AI/Big Tech/Social/Market Trend와 직접 관련이 없는 기사
+- AI 관련성이 전혀 없는 일반 기업 홍보 기사
+- 단순 인사, 채용, 행사, 프로모션 기사
+- 제품·시장·기술 변화가 없는 단순 이벤트 안내
+- Naver/LINE 단독 기사
+- 동일 내용이 이미 대표 기사로 정리되어 있고, 보조 출처로도 가치가 없는 완전 중복 기사
+
+주의:
+
+- `중요도가 낮아 보인다`는 제외 사유가 아님
+- 관련성이 있으면 반드시 리스트업하고, 중요도에 따라 아래쪽에 배치
+
+### 한 줄 원칙
+
+Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하지 않는다.
+중요도는 제외 기준이 아니라, 해당 Query 섹션 안에서 어떤 기사를 위에 배치할지 판단하는 정렬 기준이다.
+
+## 기사 제외 기준
+
+- 아래 기준에 해당하면 제외:
+  - AI/GPT 카테고리에서 AI 또는 AI Agent 관련성이 약한 기사
+  - Global IT Trend Report 관점에서 IT, 플랫폼, social media, 커머스, 광고, 콘텐츠, 규제, 유저 행동 변화와 연결성이 낮은 기사
+  - Naver 단독 기사
+  - LINE 단독 기사
+  - LY Corporation 단독 기사
+  - 단순 이벤트 안내
+  - 단순 할인
+  - 단순 인사 이동 기사
+  - 의미 있는 기능 변화 없는 홍보성 기사
+  - 동일 내용 반복 보도
+  - 과거 주차 사용 기사
+  - 동일 이슈 단순 재사용 기사
+  - 출처 신뢰도가 낮은 기사
+  - 원문 확인이 어려운 기사
+  - Weekly AI Trend Report 또는 Global IT Trend Report 활용이 어려운 기사
+  - 본문 접근 불가능한 Paywall 기사
+  - 제목만 확인 가능한 기사
+
+## 국가 중요도 우선순위
+
+- 국가 우선순위는 절대 제외 기준이 아님
+- 기사 중요도와 리포트 반영 우선순위 판단 기준으로 사용
+
+### 1순위
+
+- US
+- Global
+
+### 2순위
+
+- China
+- Japan
+- Korea
+
+### 3순위
+
+- Taiwan
+- Thailand
+- Singapore
+- India
+
+### 4순위
+
+- UK
+- EU
+- Canada
+- Australia
+
+### 5순위
+
+- Indonesia
+- Vietnam
+- Malaysia
+- Philippines
+
+### 6순위
+
+- Middle East
+- LATAM
+- Africa
+- 기타 지역
+
+## 국가 우선순위 적용 방식
+
+- US, Global:
+  - Big Tech, AI, 플랫폼 전략, 광고, 커머스, social media 변화와 연결 시 우선 검토
+- China, Japan, Korea:
+  - Asia Big Tech 및 주요 플랫폼 변화와 연결 시 우선 검토
+- Taiwan, Thailand, Singapore, India:
+  - AI, social media, 커머스, 메신저, 슈퍼앱, 플랫폼 성장 관련 시 적극 검토
+- UK, EU:
+  - 규제, AI 법안, 플랫폼 정책, 개인정보, 광고 정책 변화 관련 시 우선 검토
+- Southeast Asia:
+  - Grab, TikTok, LINE, Shopee, Lazada, social commerce, creator economy 관련 시 검토
+- 낮은 우선순위 국가라도 포함 가능한 경우:
+  - 글로벌 확산 가능성
+  - 신규 시장 진입
+  - Big Tech 전략 변화
+  - 대규모 투자
+  - 규제 영향
+- 높은 우선순위 국가라도 제외 가능한 경우:
+  - 단순 이벤트
+  - 단순 PR
+  - 영향도 낮은 기사
+
+## Cluster 처리 방식
+
+- 동일 이벤트 기사는 하나의 Cluster로 묶어 관리
+- Cluster 판단 기준:
+  - 같은 기업
+  - 같은 기능
+  - 같은 발표
+  - 같은 파트너십
+  - 같은 투자
+  - 같은 규제 이슈
+- Cluster 내 최종 유지 원칙:
+  1. Official Source 우선
+  2. 접근 가능한 영어 원문 기사
+  3. 신뢰도 높은 Tech Media
+- 제외:
+  - 단순 재보도
+  - 내용 반복
+  - 출처 불명확 기사
+- 보완 기사 유지 가능 조건:
+  - 새로운 수치
+  - 신규 지역 출시
+  - 후속 발표
+  - 추가 기능
+  - 시장 반응
+- 내부 판단 기준으로만 활용 예시:
+  - `대표 기사 유지`
+  - `중복 제외`
+  - `보완 기사 유지`
+
+## 중복 기사 처리 방식
+
+중복 판단은 자동화 내부 로직으로만 사용한다.  
+Sheet에는 `Cluster ID`, `Status`, `Note` 컬럼을 만들지 않는다.
+
+처리 기준:
+
+- 동일 이슈에서 대표 기사 1개만 입력한다.
+- 공식 발표가 있으면 공식 발표를 대표 URL로 우선 사용한다.
+- Tech Media 기사에 시장 반응, 수치, 경쟁사 맥락 등 추가 정보가 있으면 같은 URL 셀에 줄바꿈으로 함께 입력한다.
+- 정보 가치가 낮은 단순 재보도는 입력하지 않는다.
+- 완전히 동일한 내용의 반복 보도는 대표 기사 1개만 유지한다.
+- 후속 기사로 볼 수 있는 경우에는 별도 기사로 입력할 수 있다.
+- 후속 기사 판단 기준은 신규 수치, 신규 지역 출시, 신규 기능 추가, 신규 파트너십, 신규 규제 변화가 있는지 여부다.
+- 중복으로 제외한 기사 URL은 Sheet 본문이 아니라 실행 로그에 기록할 수 있다.
+
+Sheet 입력 방식:
+
+| 상황 | Sheet 처리 | 로그 처리 |
+|---|---|---|
+| 공식 발표 + 보완 기사 | 대표 Korean Title 1개, URL 셀에 2개 링크 줄바꿈 | 선택 |
+| 단순 재보도 | 입력하지 않음 | 선택 |
+| 완전 동일 기사 | 대표 기사만 입력 | 선택 |
+| 후속 업데이트 | 별도 기사로 입력 가능 | 선택 |
+| 중복 여부 불확실 | 입력하되 대표 URL 중심으로 정리 | 실행 로그에 기록 |
+
+## Paywall 기사 처리 방식
+
+- Bloomberg, Reuters, NYTimes 등은 본문 접근 가능 여부 확인
+- 본문 확인이 어려운 Paywall 기사는 최종 URL로 사용 금지
+- Paywall 기사는 이슈 파악용 Seed로만 활용
+- 접근 불가 시 처리 순서:
+  1. 동일 타이틀로 Google Query 재검색
+  2. 핵심 키워드로 Google Query 재검색
+  3. 동일 이슈의 접근 가능한 기사 확인
+  4. 원문성과 신뢰도 확인
+  5. 최종 URL 교체
+- 대체 기사도 단순 인용이면 원출처 또는 공식 발표 재확인
+- 최종 URL은 작업자가 실제 열람 가능한 링크만 입력
+
+## URL 입력 및 검증 기준
+
+URL은 실제 접속 가능하고 본문 확인 가능한 링크만 입력한다.
+
+자동화 agent는 URL 입력 전 아래 조건을 확인한다.
+
+- URL이 빈 값이 아닌지 확인
+- URL이 `http://` 또는 `https://`로 시작하는지 확인
+- 접속 가능한지 확인
+- 본문 확인이 가능한지 확인
+- 로그인 필요, Paywall, 본문 미확인 링크는 최종 URL로 사용하지 않음
+- 동일 URL이 같은 Sheet 내에 이미 있는 경우 중복 입력하지 않음
+- URL이 여러 개인 경우 공식 링크를 첫 줄에 입력하고, 보완 링크를 두 번째 줄부터 입력
+- 단순 재보도 링크는 여러 개 넣지 않음
+- 공식 발표와 외부 보완 기사가 같은 이슈를 다루지만 각각 정보 가치가 있으면 함께 입력 가능
+
+URL 우선순위:
+
+1. Official Source
+2. GitHub Release / Changelog / Release Notes
+3. 신뢰도 높은 Tech Media
+4. 현지 전문 매체
+5. 일반 매체
+6. 단순 재보도 매체는 후순위 또는 제외
+
+## Korean Title 자동 검증 기준
+
+Korean Title은 아래 조건을 모두 만족해야 한다.
+
+- `[회사명]` 또는 `[Market]`으로 시작
+- 제목 끝에 `(yyyy.m.d)` 포함
+- 날짜에 `/` 사용 금지
+- 월/일 0 padding 금지
+- URL을 제목 안에 포함하지 않음
+- 원문 제목을 그대로 번역하지 않음
+- 쉼표는 최대 1개만 사용
+- 신규 공개 서비스나 기능명에만 큰따옴표 사용
+- 기존 서비스명이나 기존 기능명에는 불필요한 큰따옴표를 사용하지 않음
+- 기업명은 기사 주체 기준으로 작성
+- 산업 전반 또는 특정 기업 중심이 아닌 경우 `[Market]` 사용
+- 문장 끝은 명사형 중심으로 정리
+
+### 올바른 예시
+
+- [OpenAI] "Safety Fellowship" 공개하며 AI 안전과 정렬 연구 인재 육성 프로그램 운영 (2026.4.6)
+- [Google] Gemini overlay와 Gemini Live UI 통합 재설계 통해 AOS 상호작용 방식과 Multi-modal 접근성 개선 (2026.4.7)
+- [Market] AI data center, 투자자 요구로 Big Tech 대상 전력과 수자원 사용량 공개 압박 확대 (2026.4.8)
+
+### 잘못된 예시
+
+- [Google] Gemini 업데이트 (2026/04/07)
+- Google announces Gemini updates
+- [OpenAI] Safety Fellowship 공개 (2026.04.06) - https://example.com
+
+## Query Source Mapping 예시
+
+| Query | Primary Source | Secondary Source | Fallback |
+|---|---|---|---|
+| OpenAI | OpenAI News | OpenAI Docs / Changelog | Google Query |
+| ChatGPT | ChatGPT Release Notes | OpenAI News | Google Query |
+| Codex | Codex Changelog | OpenAI News | Google Query |
+| Gemini | Gemini Release Notes | Google Blog / DeepMind Blog | Google Query |
+| Google AI | Google AI Blog | DeepMind Blog / Google Research Blog | Google Query |
+| OpenClaw (Moltbot, Clawdbot) | OpenClaw Blog | GitHub Releases | Google Query |
+| Claude Code | Claude Docs | Anthropic Engineering / Claude Blog | Google Query |
+| Meta AI | Meta AI Blog | Meta Newsroom / Engineering Blog | Google Query |
+| Microsoft Edge | Microsoft Edge Blog | Bing Blog | Google Query |
+| Arc Browser | Browser Company Blog |  | Google Query |
+| Douyin | Google Query |  | Google News |
+| Kakao AI | Kakao Newsroom | Kakao Press | Google Query |
+| LINE / LY Corporation | 아카이빙 제외 |  | 단독 기사 제외 |
+
+운영 기준:
+
+- 위 표는 예시이며, 전체 Query List 표기는 변경하지 않는다.
+- Query 이름과 Source 이름이 다르더라도 동일 서비스로 판단 가능한 경우 연결한다.
+- 단, Sheet Query 표기는 절대 변경하지 않는다.
+
+## Machine-readable Query Table
+
+| Sheet | Category | Query | Search Type |
+|---|---|---|---|
+| weekly | AI Agent | AI Agent | Google Query |
+| weekly | AI Agent | OpenClaw (Moltbot, Clawdbot) | Official First |
+| weekly | AI Agent | Paperclip | Official First |
+| weekly | AI | OpenAI | Official First |
+| weekly | AI | Gemini | Official First |
+| weekly | Browser | Arc Browser | Official First |
+| weekly | Browser | Voice Synthesis | Google Query |
+| global | AI Agent | AI Agent - Google Query | Google Query |
+| global | AI/GPT | AI - Google Query | Google Query |
+| global | AI/GPT | OpenAI | Official First |
+| global | Global Big Tech | Meta | Official First |
+| global | Social | TikTok | Official First |
+| global | Theme | Gen Z - Google Query | Google Query |
+
+기준:
+
+- 기존 Query List 전체를 이 표로 모두 재작성하지 않고, 자동화 예시로만 사용한다.
+- `Search Type`은 `Official First` 또는 `Google Query` 중 하나를 사용한다.
+- `Google Query`가 이름에 포함된 항목은 `Search Type=Google Query`로 처리한다.
+- 공식 링크가 있는 항목은 `Search Type=Official First`로 처리한다.
+- 공식 링크가 없거나 불명확한 항목은 `Search Type=Google Query`로 처리한다.
+
+## URL 언어 기준
+
+- 기본 원칙:
+  - 영어 원문 기사 우선
+  - 영어 공식 링크 우선
+- 동일 이슈에 영어 기사와 비영어 기사가 모두 있으면 영어 기사 우선
+- 기업 공식 Blog, Newsroom, Docs에 영어 페이지가 있으면 영어 페이지 사용
+- 한국/일본 기업 관련 기사는 한국어/일본어 링크 사용 가능
+- 예외 기업 예시:
+  - Coupang
+  - Kakao
+  - Toss
+  - DeNA
+  - Mercari
+  - Rakuten
+  - Note
+  - Gree
+  - Gunosy
+- 영어 링크가 없고 현지어 공식 링크만 있으면 현지어 공식 링크 사용 가능
+- 단순 번역 기사보다 기업 공식 발표 또는 원출처에 가까운 링크 우선
+- 최종 URL은 실제 접속 가능하고 본문 확인 가능한 링크 사용
+
+## Sheet 정리 방식
+
+- 주차별 새 탭 생성
+- 기존 템플릿 서식 유지
+- 대분류 카테고리별 구역 생성
+- 각 대분류 아래 Query List 또는 세부 서비스명 배치
+- 각 Query List 항목 아래 해당 기간 내 확인된 기사 입력
+- 최종 Sheet는 Include 기사 중심으로 입력
+- 제외 기사나 중복 제외 기사는 별도 컬럼으로 관리하지 않음
+- 기사 원문 제목은 별도 컬럼으로 입력하지 않고, 최종 리포트용 `Korean Title` 중심으로 정리
+- URL은 실제 접속 가능하고 본문 확인 가능한 링크만 입력
+- 기사 없음 또는 해당 기간 업데이트 없음은 `n/a`로 입력
+- 기존 `O` 표시 방식은 사용하지 않고 `Check Box` 컬럼 사용
+- 중복 제거, Cluster 처리, 제외 판단, AI 관련성 판단은 업무 프로세스 기준으로 수행하되 Sheet 컬럼으로 입력하지 않음
+
+## Sheet 입력 권장 컬럼
+
+### Sheet 입력 기본 원칙
+
+기사 리스트업 Sheet는 일반적인 데이터베이스형 테이블이 아니라, 카테고리와 Query List를 기준으로 기사 제목과 URL을 입력하는 구조로 관리한다.
+
+- 대분류 카테고리별로 구역을 나눔
+- 대분류 카테고리 예시: `AI Agent`, `AI/GPT`, `Global Big Tech`, `Asia Big Tech`, `Social`, `Theme`
+- 각 대분류 아래에 Query List 또는 세부 서비스명을 배치
+- 각 Query List 항목 아래에 해당 기간 내 확인된 기사 입력
+- 기사 입력 시 원문 제목은 입력하지 않고, 최종 리포트용 국문 제목만 입력
+- 기사 제목은 반드시 기존 제목 작성 규칙에 맞춰 작성
+- URL은 실제 접속 가능하고 본문 확인 가능한 링크만 입력
+- 기사 없음 또는 해당 기간 업데이트 없음은 `n/a`로 입력
+- 기존 `O` 표시 방식은 사용하지 않고, 실제 Sheet에서 클릭 가능한 체크박스 컬럼 사용
+- 체크박스는 사람이 최종 선정 여부나 검토 완료 여부를 직접 체크할 수 있도록 구성
+- 체크박스 컬럼은 `Status`, `Note`, `AI Relevance`, `Report Relevance` 같은 판단용 컬럼으로 확장하지 않음
+
+### Sheet 입력 시 사용하지 않는 컬럼
+
+아래 컬럼들은 실제 기사 리스트업 Sheet에서 사용하지 않는다.
+
+- Original Title
+- Key Update
+- AI Relevance
+- Report Relevance
+- Cluster ID
+- Duplicate Check Keyword
+- Status
+- Note
+
+### Sheet 입력 권장 구조
+
+Sheet 입력 구조는 아래 형태를 따른다.
+
+| 대분류 | Query / Service | Korean Title | Check Box | URL |
+| --- | --- | --- | --- | --- |
+| AI Agent | AI Agent | [Agentshub.AI] 완전한 노코드 기반 AI Agent Platform 공개하며 기업용 AI 워크포스 구축 지원 (2026.4.6) | ☐ | https://finance.yahoo.com/sectors/technology/articles/agentshub-ai-launches-complete-no-130800495.html |
+|  |  | [Razorpay] Codex 및 ChatGPT 연동 통해 자연어 명령만으로 결제 설정과 데이터 분석 수행하는 Agentic 결제 인프라 확장 (2026.4.7) | ☐ | https://razorpay.com/blog/ai-app-monetisation-razorpay-codex/ |
+|  |  | [Meta] 내부 데이터 파이프라인에 50+ AI Agent 투입해 4.1K+ 파일 분석 및 59개 컨텍스트 파일 기반 지식 구조화 사례 공개 (2026.4.6) | ☐ | https://engineering.fb.com/2026/04/06/developer-tools/how-meta-used-ai-to-map-tribal-knowledge-in-large-scale-data-pipelines/ |
+|  | OpenClaw (Moltbot, Clawdbot) | [OpenClaw] 38M 월간 방문자와 3.2M MAU 기록하며 글로벌 AI Agent 플랫폼 성장 가속 (2026.4.7) | ☐ | https://www.trendingtopics.eu/openclaw-numbers/ |
+|  | OpenClaw (Moltbot, Clawdbot) | [OpenClaw] 2026.4.7 버전 업데이트, Gemma 4 지원 추가와 memory-wiki 복원 적용 (2026.4.7) | ☐ | https://github.com/openclaw/openclaw/releases/tag/v2026.4.7 |
+|  | Paperclip | n/a |  |  |
+|  | BabyAGI | n/a |  |  |
+|  | Microsoft AutoGen | n/a |  |  |
+| AI/GPT | AI | [Zero Shot] Ex-OpenAI 창업자들, $100M 목표 AI 투자 펀드 조성하며 초기 투자 집행 (2026.4.6) | ☐ | https://techcrunch.com/2026/04/06/openai-alums-have-been-quietly-investing-from-a-new-potentially-100m-fund/ |
+|  | OpenAI | [OpenAI] "Safety Fellowship" 공개하며 AI 안전과 정렬 연구 인재 육성 프로그램 운영 (2026.4.6) | ☐ | https://openai.com/index/introducing-openai-safety-fellowship/ |
+|  | Google AI | [Google] 오프라인 Dictation 앱 "AI Edge Eloquent" 공개하며 음성 입력 생산성 기능 강화 (2026.4.6) | ☐ | https://techcrunch.com/2026/04/06/google-quietly-releases-an-offline-first-ai-dictation-app-on-ios/ |
+|  | Gemini | [Google] Gemini overlay와 Gemini Live UI 통합 재설계 통해 AOS 상호작용 방식과 Multi-modal 접근성 개선 (2026.4.7) | ☐ | https://9to5google.com/2026/04/07/gemini-live-redesign-android/ |
+|  | Nova AI | [Amazon] Nova 2 Sonic, 실시간 대화형 Podcast 생성 가능한 음성 기반 AI 모델 활용 아키텍처 공개 (2026.4.7) | ☐ | https://aws.amazon.com/ko/blogs/machine-learning/building-real-time-conversational-podcasts-with-amazon-nova-2-sonic/ |
+
+### 체크박스 컬럼 적용 기준
+
+md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Google Sheet 또는 Excel 템플릿을 생성할 때는 해당 열을 반드시 클릭 가능한 체크박스 형식으로 설정한다.
+
+- Google Sheets 기준: `Insert > Checkbox` 기능이 적용된 열로 구성
+- Excel 기준: 실제 체크박스 삽입이 어렵다면 `TRUE/FALSE` 또는 빈 체크박스 기호 `☐` 사용 가능
+- 단순히 `O` 문자로 표시하지 않음
+- 사람이 직접 클릭하거나 선택할 수 있는 체크용 컬럼으로 구성
+- 체크박스는 최종 포함 여부 또는 검토 완료 여부를 사람이 확인하기 위한 용도
+- 자동화 agent가 임의로 체크하지 않도록 관리
+
+### Sheet 입력 예시 작성 방식
+
+- 원문 제목 컬럼은 만들지 않음
+- 핵심 요약 컬럼은 만들지 않음
+- AI Relevance, Report Relevance, Status, Note 등 판단용 컬럼은 만들지 않음
+- 기존 `O` 표시 컬럼은 사용하지 않고 `Check Box` 컬럼 사용
+- 국문 제목은 `[회사명] 핵심 내용 (yyyy.m.d)` 형식 적용
+- 산업 전반 또는 특정 기업 중심이 아닌 경우 `[Market]` 사용
+- 날짜는 `2026.4.7`처럼 0 padding 없이 작성
+- 신규 공개 서비스나 기능명에만 큰따옴표 사용
+- URL이 여러 개인 경우 한 셀에 줄바꿈으로 입력 가능
+- 해당 Query 항목에서 기사 없음 또는 업데이트 없음은 `n/a`로 입력
+
+## Check Box 운영 기준
+
+- Check Box는 사람이 최종 리포트 반영 후보를 선택하기 위한 용도다.
+- 자동화 agent는 신규 입력 기사의 Check Box를 기본 미체크 상태로 생성한다.
+- 자동화 agent가 기사 중요도를 판단해 임의로 체크하지 않는다.
+- 작업자는 기사 중요도, 중복 여부, 리포트 활용 가능성을 검토한 뒤 직접 체크한다.
+- Google Sheets에서는 실제 클릭 가능한 체크박스 형식으로 설정한다.
+- Google Sheets 기준으로는 `Insert > Checkbox` 또는 데이터 유효성 체크박스를 사용한다.
+- Excel에서 실제 체크박스 구현이 어려운 경우 `TRUE/FALSE` 또는 빈 체크박스 기호 `☐`를 임시로 사용할 수 있다.
+- 기존 `O` 표시는 사용하지 않는다.
+
+## n/a 입력 기준
+
+- `n/a`는 해당 Query를 검색했고, 날짜 범위 내 입력할 기사가 없음을 의미한다.
+- Query / Service 항목을 확인했지만 해당 기간 내 입력할 기사가 없으면 Korean Title 칸에 `n/a`를 입력한다.
+- `n/a`가 입력된 행은 Check Box와 URL을 비워둔다.
+- 검색 자체를 수행하지 않은 항목에는 `n/a`를 입력하지 않는다.
+- 검색 실패, 접속 오류, 차단, 네트워크 오류는 `n/a`로 처리하지 않는다.
+- 검색 실패 상태는 Sheet 본문이 아니라 실행 로그에 기록한다.
+
+## n/a와 미검색 상태 구분
+
+| 상태 | Sheet 입력 | 실행 로그 |
+|---|---|---|
+| 검색 완료, 기사 없음 | Korean Title에 `n/a` | 선택 |
+| 검색 실패 | Sheet 입력하지 않음 | 필수 |
+| 접속 실패 | Sheet 입력하지 않음 | 필수 |
+| Paywall만 존재 | 대체 링크 없으면 입력하지 않음 | 필수 |
+| 날짜 범위 밖 기사만 존재 | Korean Title에 `n/a` | 선택 |
+
+## 검색 실패 및 예외 처리
+
+자동화 agent는 검색 과정에서 아래 예외 상황을 구분한다.
+
+| 상황 | 처리 방식 |
+|---|---|
+| 검색 결과 없음 | 해당 Query를 `n/a`로 입력 |
+| 검색 실패 | Sheet에 `n/a` 입력 금지, 실행 로그에 기록 |
+| URL 접속 실패 | 대체 링크 검색, 실패 시 실행 로그에 기록 |
+| Paywall 기사만 발견 | 접근 가능한 대체 링크 추가 검색 |
+| 날짜 범위 밖 기사만 발견 | `n/a` 입력 가능 |
+| 공식 링크 업데이트 없음 | 필요 시 `n/a` 입력 |
+| Query와 무관한 기사만 발견 | `n/a` 입력 가능 |
+| Naver / LINE / LY Corporation 단독 기사 | Sheet 입력 금지, 실행 로그 기록 |
+| 중복 기사만 발견 | 대표 기사 이미 있으면 추가 입력하지 않음 |
+
+주의:
+
+- 검색 실패와 기사 없음은 다르게 처리한다.
+- 자동화 agent는 실패 상황을 임의로 `n/a` 처리하지 않는다.
+- 본문 확인이 안 되는 기사는 최종 URL로 사용하지 않는다.
+
+## 자동화 실행 로그
+
+자동화 agent는 Sheet 본문에는 Status/Note를 만들지 않지만, 실행 과정에서 아래 항목을 별도 로그로 남길 수 있다.
+
+로그에 남길 항목:
+
+- 검색 실패 Query
+- 접속 실패 URL
+- Paywall로 제외한 URL
+- 날짜 범위 밖 기사
+- 중복으로 제외한 기사
+- Query List에 없는 기사
+- Naver / LINE / LY Corporation 단독 기사로 제외한 기사
+- 공식 링크는 있으나 업데이트가 없는 Query
+- Google Query 결과가 없었던 Query
+- 제목 생성 실패 기사
+- 날짜 확인이 어려운 기사
+
+로그 형식 예시:
+
+| Type | Query | URL | Reason | Action |
+|---|---|---|---|---|
+| search_failed | Gemini |  | Google Search 결과 확인 실패 | 재검색 필요 |
+| paywall | OpenAI | https://example.com | 본문 확인 불가 | 대체 링크 검색 |
+| duplicate | Claude Code | https://example.com | 이전 주차 동일 이슈 | Sheet 입력 제외 |
+| excluded_company | LINE | https://example.com | LINE 단독 기사 | 제외 |
+| out_of_range | Meta AI | https://example.com | 날짜 범위 밖 기사 | 제외 |
+
+운영 기준:
+
+- 실행 로그는 Sheet 본문에 입력하지 않는다.
+- 실행 로그는 별도 `run_log`, 작업 요약, 또는 자동화 결과 보고에만 남긴다.
+- 실행 로그는 작업자가 자동화 결과를 검수하기 위한 참고 자료다.
+
+## 수집과 최종 선택의 구분
+
+- 기사 리스트업 Sheet의 목적은 처음부터 최종 리포트 기사만 남기는 것이 아니라, Query별 관련 기사를 수집한 뒤 검토자가 빠르게 판단할 수 있도록 정리하는 것이다.
+- 1차 수집 단계에서는 Global IT / AI / Big Tech / Asia Tech / Social / Market Trend와 관련된 기사를 넓게 리스트업한다.
+- 관련성이 있는 기사는 중요도가 낮아 보여도 누락하지 않고 Query 섹션 안에 입력한다.
+- 중요한 기사는 해당 Query 섹션의 위쪽에 배치한다.
+- 중요도가 낮거나 단순 PR성에 가까운 기사는 아래쪽에 배치한다.
+- 최종 리포트 반영 여부는 사람이 Check Box로 선택한다.
+- 단, 명백한 비대상 기사, Naver/LINE/LY Corporation 단독 기사, 완전 중복 기사, 본문 확인 불가 기사, AI/IT/플랫폼 관련성이 거의 없는 기사는 입력하지 않는다.
+
+## AI Agent 구역 처리 방식
+
+- `AI Agent`는 Weekly AI Trend Report에서 별도 상단 구역으로 관리할 수 있다.
+- 리포트 카테고리 기준으로는 `AI/GPT`에 포함된다.
+- Sheet에서는 AI Agent 관련 Query가 많기 때문에 `AI Agent`를 별도 대분류처럼 배치할 수 있다.
+- AI Agent 구역에는 OpenClaw, AutoGPT, AgentGPT, CrewAI, LangGraph, Claude Code, agentic workflow, enterprise AI agent, agentic commerce, AI payment, AI security 등 관련 기사를 입력한다.
+
+## 대분류별 기사 수 표기 방식
+
+대분류 행에는 필요 시 선정 기사 수와 전체 후보 기사 수를 표시한다.
+
+예시:
+
+- `AI Agent 5 14`
+- `AI/GPT 12 37`
+
+의미:
+
+- 앞 숫자: 사람이 Check Box로 선택한 주요 후보 기사 수
+- 뒤 숫자: 해당 대분류에서 수집된 전체 기사 수
+- 자동화 agent가 숫자를 정확히 계산할 수 있는 경우 자동 입력한다.
+- 자동 계산이 어렵다면 숫자 칸은 비워두고 작업자가 최종 검토 후 수동 업데이트한다.
+
+## 최종 Title 작성 방식
+
+최종 선별된 기사에는 `Korean Title`을 반드시 작성한다.
+
+### Title 기본 형식
+
+- `[회사명] 핵심 내용 (yyyy.m.d)`
+
+### Title 작성 규칙
+
+- 회사명은 English로 작성
+- Title 본문은 Korean으로 작성
+- 날짜는 기사 발행일 기준으로 작성
+- 날짜는 0 padding 없이 작성
+  - 예시: `2026.4.7`
+- 제목 안 날짜에는 `/`를 사용하지 않음
+- URL은 제목 뒤에 붙이지 않고 별도 URL 칸에 입력
+- Title은 항상 명사형 종결
+- 문장 끝 금지 표현:
+  - `함`
+  - `있음`
+  - `없음`
+  - `됨`
+- 기업명, 서비스명, 기능명은 English로 작성
+- 신규 공개 서비스나 기능명에만 필요한 경우 큰따옴표 사용
+- 기존 서비스명, 기존 기능명에는 불필요한 큰따옴표 사용 금지
+- 제목은 핵심 변화 중심으로 간결하게 작성
+- 쉼표는 최대 1개만 사용
+
+### `[Market]` 사용 기준
+
+- 여러 기업을 함께 다루는 기사
+- market-wide trends 기사
+- country-level trends 기사
+- industry changes 기사
+- company strategy comparisons 기사
+- 특정 기업보다 시장 구조 변화가 더 중요한 기사
+- 특정 국가의 유저 행동, 규제, 산업 변화, 소비 트렌드 기사
+
+### Title 예시
+
+- `[OpenAI] "Safety Fellowship" 공개하며 AI 안전과 정렬 연구 인재 육성 프로그램 운영 (2026.4.6)`
+- `[Google] Gemini overlay와 Gemini Live UI 통합 재설계 통해 AOS 상호작용 방식과 Multi-modal 접근성 개선 (2026.4.7)`
+- `[Market] AI data center, 투자자 요구로 Big Tech 대상 전력과 수자원 사용량 공개 압박 확대 (2026.4.8)`
+
+## Weekly IT Trend Sheet와 Global IT Trend Sheet 구분
+
+Weekly IT Trend Sheet와 Global IT Trend Sheet는 서로 다른 시트이며, 사용하는 Query List도 다르다.
+
+- Weekly IT Trend Sheet:
+  - AI Agent, AI, Browser 중심 Query를 사용한다.
+  - Weekly AI Trend Report 및 AI 중심 아카이빙에 활용한다.
+  - AI Agent / AI / Browser 관련 항목을 넓게 확인한다.
+
+- Global IT Trend Sheet:
+  - AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme Query를 사용한다.
+  - Global IT Trend Report 작성에 활용한다.
+  - AI뿐 아니라 Big Tech, Asia Big Tech, Social, Theme 관련 IT/플랫폼/시장 트렌드까지 포함한다.
+
+두 시트의 Query List는 서로 섞지 않는다.
+자동화 agent는 작업 대상 시트가 Weekly IT Trend Sheet인지 Global IT Trend Sheet인지 먼저 확인한 뒤, 해당 시트의 Query List만 사용한다.
+
+## Query 전체 리스트
+
+Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`로 분리한다.
+자동화 agent는 작업 대상 시트에 해당하는 Query List만 사용하고, 두 Query List를 임의로 병합하지 않는다.
+
+### Weekly Sheet Query
+
+아래 Query List는 `Weekly IT Trend Sheet`에 사용하는 Query이다.
+아래 순서와 표기를 strict하게 유지한다.
+
+#### AI Agent
+
+[AI Agent]
+- AI Agent
+- OpenClaw (Moltbot, Clawdbot)
+- Paperclip
+- BabyAGI
+- Microsoft AutoGen
+- AutoGPT
+- AgentGPT
+- Claude Cowork
+- A.(에이닷)
+- KIRA
+- Wrtn Crack
+- Rinna
+- Cotomo
+- CrewAI
+- AutoGen
+- LangGraph
+- Chai
+- Nomi
+- Kindroid
+- Paradot
+- Replika
+- Poketomo
+- Hume AI
+- Mersoom
+- Bot Madang
+
+#### AI
+
+[AI]
+- Lovable
+- Generative AI
+- OpenAI
+- ChatGPT
+- Codex
+- Sora
+- Meta AI
+- Scale AI
+- Google AI
+- Gemini
+- Veo
+- NotebookLM
+- Google Chrome
+- Amazon AI
+- Nova AI
+- Trainium
+- Anthropic
+- Claude
+- Claude Code
+- Microsoft
+- Microsoft Edge
+- Bing
+- Copilot
+- Apple AI
+- Safari
+- Databricks
+- Thinking Machines Lab
+- Perplexity AI
+- Comet
+- Stability.ai
+- Anysphere (Cursor)
+- ElevenLabs
+- Speak AI
+- Writer AI
+- Ayar Labs
+- Physical Intelligence
+- Inflection AI
+- Moonshot AI
+- Canva AI
+- Le Chat
+- Leonardo AI
+- Cohere
+- Skywalker.ai
+- Kling AI
+- Seedance
+
+#### Browser
+
+[Browser]
+- Arc Browser
+- Dia Browser
+- Brave Browser
+- Opera One
+- Sigma Browser (SigmaOS)
+- Zen Browser
+- Wavebox
+- Vivaldi Browser
+- Sidekick Browser
+- Shift Browser
+- Orion Browser
+- Maxthon Browser
+- Firefox
+- Samsung Internet
+- UC Browser
+- CryptoTab Browser
+- AI Startup
+- Stable Diffusion
+- DALL-E
+- Content Generator
+- Craiyon
+- Midjourney
+- MyHeritage
+- Voice Synthesis
+- Dream Fusion
+- AI Bot
+- AI Healthcare
+- Image AI
+- AI Assistant
+- AI Plugin
+- Sam Altman
+- LLM
+- Inflection AI (Pi)
+- Chatbot
+- Adobe AI
+- Adobe Firefly
+- character.ai
+- MDM
+- yandex
+- Kakao Brain
+- Kakao AI
+- Japan AI
+- Korea AI
+- China AI
+- US AI
+- AI Character
+- Copyright Shield
+- Microsoft Industry Blogs
+- blog.google
+
+### Global IT Trend Sheet Query
+
+아래 Query List는 `Global IT Trend Sheet`에 사용하는 Query이다.
+아래 순서와 표기를 strict하게 유지한다.
+
+#### AI Agent
+
+[AI Agent]
+- AI Agent - Google Query
+- OpenClaw (Moltbot, Clawdbot)
+- Paperclip
+- BabyAGI
+- Microsoft AutoGen
+- AutoGPT
+- AgentGPT
+- Claude Cowork
+- A.(에이닷)
+- KIRA
+- Crack (크랙)
+- Rinna
+- Cotomo
+- CrewAI
+- AutoGen
+- LangGraph
+- Chai
+- Nomi
+- Kindroid
+- Paradot
+- Replika
+- Poketomo
+- Hume AI
+- Mersoom
+- Bot Madang
+
+#### AI/GPT
+
+[AI/GPT]
+- AI - Google Query
+- OpenAI
+- ChatGPT
+- Sora
+- Codex
+- Meta AI
+- Google AI
+- GeminI
+- Amazon AI
+- Nova AI
+- Anthropic
+- Claude
+- Claude Code
+- Kakao AI
+- Microsoft AI
+- Databricks
+- Perplexity AI
+- Cohere
+- ElevenLabs
+- Lovable
+- Stability AI
+- Inflection AI
+- Ayar Labs
+- Canva AI
+- Speak AI
+- Anysphere (Cursor)
+- Physical Intelligence
+- Thinking Machines Lab
+- Moonshot AI
+- Le Chat
+- Leonardo AI
+- Writer AI
+- Zeta
+- Kling AI
+- Seedance
+- Arc Browser
+- Dia Browser
+- Brave Browser
+- Microsoft Edge
+- Google Chrome
+- Comet Browser
+- Opera One
+- Sigma Browser (SigmaOS)
+- Zen Browser
+- Wavebox
+- Vivaldi Browser
+- Safari
+- Sidekick Browser
+- Shift Browser
+- Orion Browser
+- Maxthon Browser
+- Firefox
+- Samsung Internet
+- UC Browser
+- CryptoTab Browser
+
+#### Global Big Tech
+
+[Global Big Tech]
+- Meta
+- Facebook
+- Instagram
+- WhatsApp
+- Amazon
+- Amazon Prime
+- Apple
+- iOS
+- Netflix
+- Google
+- YouTube
+- Android
+- Gmail
+- Microsoft
+- Grab
+
+#### Asia Big Tech
+
+[Asia Big Tech]
+- Rakuten (楽天市場)
+- note（ノート)
+- DeNA
+- Gree (グリー)
+- Gunosy (グノシー)
+- Time Tree (タイムツリ)
+- Mercari(メルカリ)
+- The Bridge
+- Ascii Startup
+- CNET
+- Diamond
+- Kakao
+- 카카오
+- 카카오톡
+- Coupang
+- 쿠팡
+- Toss
+- 토스
+- Tencent
+- WeChat (微信)
+- ByteDance
+- Alibaba
+
+#### Social
+
+[Social]
+- TikTok
+- Douyin
+- Snapchat
+- Telegram
+- Pinterest
+- X
+- XChat
+- BlueSky
+- Twitch
+- BeReal
+- Discord
+
+#### Theme
+
+[Theme]
+- Super App (LinkedIn, Reddit, Spotify, VSCO, Paypal)
+- MZ Gen - Google Query
+- Gen Z - Google Query
+- 1020 trend - Google Query
+- Social app - Google Query
+- Tech Crunch Startup
+
+## Query와 우선 확인 링크 연결 방식
+
+- Query List의 각 항목은 먼저 `Google Query 전 우선 확인 링크`에 동일하거나 유사한 항목이 있는지 확인한다.
+- 동일한 이름의 공식 링크가 있으면 해당 링크를 1차 확인한다.
+- 이름이 약간 다른 경우에도 같은 서비스로 판단 가능한 경우 연결한다.
+  - 예: `Stability AI` ↔ `Stability.ai`
+  - 예: `Comet Browser` ↔ `Comet`
+  - 예: `Microsoft AI` ↔ `Microsoft`
+  - 예: `Kakao AI` ↔ `Kakao Brain / Kakao AI`
+  - 예: `Crack (크랙)` ↔ `Wrtn Crack`
+- 단, Sheet Query 표기는 변경하지 않는다.
+- 공식 링크가 없는 Query는 Google Query로 검색한다.
+- Query List에 없는 링크 항목은 링크 목록에는 유지할 수 있지만, 해당 시트의 Query 배열에는 임의로 추가하지 않는다.
+
+## Query별 Sheet 입력 방식
+
+- Sheet는 대분류 → Query / Service → 기사 리스트 순서로 입력한다.
+- 대분류와 Query / Service 순서는 해당 시트의 Query List 순서를 strict하게 따른다.
+- 기사 입력 시 Query / Service 순서를 바꾸지 않는다.
+- 특정 Query에서 기사가 여러 개 발견되면 해당 Query 아래에 여러 행으로 입력한다.
+- 특정 Query에서 해당 기간 기사가 없으면 `n/a`를 입력한다.
+- Query를 찾지 못했다고 임의로 삭제하지 않는다.
+- Query List에 없는 기사를 발견한 경우:
+  - Weekly IT Trend Sheet에서는 관련 Query 아래에 배치 가능한 경우에만 입력한다.
+  - Global IT Trend Sheet에서는 해당 카테고리와 가장 가까운 Query 아래에 배치한다.
+  - 어디에도 배치하기 어려우면 작업자 검토 대상으로 별도 보류하지 말고 입력하지 않는다.
+
+## Query별 검색 결과 정리 방식
+
+Query에서 발견한 기사는 반드시 아래 순서로 확인한다.
+
+1. 작업 대상 시트가 Weekly IT Trend Sheet인지 Global IT Trend Sheet인지 확인
+2. 해당 시트의 Query List 순서와 표기 확인
+3. 날짜 범위 적합 여부 확인
+4. 기사 원문 접근 가능 여부 확인
+5. Paywall 여부 확인
+6. 영어 URL 또는 공식 링크 존재 여부 확인
+7. 과거 동일 기사 또는 동일 이슈 사용 여부 확인
+8. 동일 이벤트 기사 Cluster 처리
+9. 대표 URL과 보조 출처 URL 판단
+10. Naver, LINE, LY Corporation 단독 기사 여부 확인
+11. Sheet 구조에 맞춰 `대분류`, `Query / Service`, `Korean Title`, `Check Box`, `URL` 입력
+12. 기사 없음이 확인된 Query / Service는 `n/a` 입력
+
+## 최종 검수 체크리스트
+
+- [ ] run_mode가 `weekly` 또는 `global` 중 하나로 지정되었는지 확인
+- [ ] run_mode에 맞는 Query List만 사용했는지 확인
+- [ ] Weekly Query와 Global Query를 섞지 않았는지 확인
+- [ ] 검색 기간이 `yyyy.m.d~yyyy.m.d` 형식인지 확인
+- [ ] Sheet 출력 컬럼이 `대분류 / Query / Service / Korean Title / Check Box / URL`만 포함하는지 확인
+- [ ] Original Title, Status, Note, Cluster ID 등 금지 컬럼이 없는지 확인
+- [ ] Check Box가 기본 미체크 상태인지 확인
+- [ ] `n/a`가 검색 완료 후 기사 없음에만 사용되었는지 확인
+- [ ] 검색 실패가 `n/a`로 처리되지 않았는지 확인
+- [ ] URL이 접속 가능하고 본문 확인 가능한지 확인
+- [ ] Paywall URL이 최종 URL로 사용되지 않았는지 확인
+- [ ] 중복 기사가 별도 행으로 반복 입력되지 않았는지 확인
+- [ ] 보완 링크는 URL 셀 줄바꿈으로 정리되었는지 확인
+- [ ] Korean Title이 `[회사명] 핵심 내용 (yyyy.m.d)` 형식인지 확인
+- [ ] 날짜에 `/` 또는 0 padding이 없는지 확인
+- [ ] Naver / LINE / LY Corporation 단독 기사가 제외되었는지 확인
+- [ ] 실행 로그에 검색 실패, Paywall, 제외 기사 등이 기록되었는지 확인
+- [ ] Weekly IT Trend Sheet Query와 Global IT Trend Sheet Query가 분리되어 있는지 확인
+- [ ] Weekly Query 순서가 제공된 순서와 일치하는지 확인
+- [ ] Global IT Trend Query 순서가 제공된 순서와 일치하는지 확인
+- [ ] Query 표기가 임의로 변경되지 않았는지 확인
+- [ ] `Wrtn Crack`과 `Crack (크랙)`의 시트별 표기가 구분되어 있는지 확인
+- [ ] Weekly Sheet Query와 Global IT Trend Sheet Query가 합쳐져 있지 않은지 확인
+- [ ] Query List에 없는 항목이 임의로 Query로 추가되지 않았는지 확인
+- [ ] Global IT / AI / Big Tech / Asia Tech / Social / Market Trend 관련 기사를 중요도와 관계없이 모두 리스트업했는지 확인
+- [ ] 각 Query 섹션 안에서 `시장 영향이 큰 기사 → 기업/서비스 변화 기사 → 일반 관련 기사 → 중복/보조 출처` 순서로 정렬했는지 확인
+- [ ] 공식 Newsroom, Blog, Release Notes, Changelog, GitHub Release 중 제품·서비스·기능·시장 변화가 있는 항목을 누락하지 않았는지 확인
+- [ ] 중복 기사도 완전히 삭제하지 않고 대표 기사 아래 보조 출처 또는 중복으로 기록했는지 확인
+- [ ] 절대 누락하면 안 되는 Global IT / AI / Big Tech / Social / Market Trend 주제를 확인했는지 점검
+- [ ] Google Query 전 우선 확인 링크의 공식 사이트, Blog, Newsroom, GitHub, release notes, changelog 확인
+- [ ] 입력한 날짜 범위에 맞는 기사만 포함
+- [ ] Google Query 전 우선 확인 소스 먼저 확인
+- [ ] `(Google Query)` 표기 항목은 Official Source 확인 없이 Google Query로만 검색
+- [ ] Official Source, GitHub, Changelog, Release Notes, Docs, Blogs 확인
+- [ ] 9to5Mac, 9to5Google, TechCrunch, Social Media Today 등 주요 Tech Media 확인
+- [ ] 카테고리 분류 정확성 확인
+- [ ] Global IT Trend Report에 AI 외 IT, 플랫폼, social media, 커머스, 규제, 유저 트렌드 기사 포함 여부 확인
+- [ ] AI/GPT 기사가 별도 시트에 반영
+- [ ] Naver, LINE, LY Corporation 단독 기사 제외
+- [ ] Google Query 기사 날짜 필터 해제 후 과거 중복 여부 확인
+- [ ] 동일 이벤트 기사 Cluster 단위 정리
+- [ ] 각 Cluster에서 대표 Source를 구분하고 보조 출처 또는 중복 기사 기록
+- [ ] Paywall 기사를 접근 가능한 기사로 대체
+- [ ] URL이 영어 원문 또는 영어 공식 링크 기준으로 정리
+- [ ] 한국어/일본어 링크가 예외 기업 또는 현지어 공식 링크 기준에 부합
+- [ ] 단순 PR성 기사나 비대상 기사 제외
+- [ ] URL 정상 접속 확인
+- [ ] 기사 날짜와 출처 정확성 확인
+- [ ] 최종 Korean Title 작성
+- [ ] Sheet 입력용 Korean Title이 `[회사명] 핵심 내용 (yyyy.m.d)` 형식에 부합
+- [ ] 기존 `O` 표시 방식 대신 클릭 가능한 `Check Box` 컬럼을 사용했는지 확인
+- [ ] 기사 없음 또는 해당 기간 업데이트 없음이 `n/a`로 입력되었는지 확인
+- [ ] Title이 명사형 종결
+- [ ] `[Market]` 사용 기준 정확히 적용
+- [ ] Weekly AI Trend Report와 Global IT Trend Report에 활용 가능한 기사만 유지
+
+## 최종 산출물
+
+- 기사 리스트업 Sheet의 주차별 탭
+- Weekly AI Trend Report 작성용 AI/GPT 기사 리스트
+- Global IT Trend Report 작성용 카테고리별 기사 리스트
+- Cluster 처리된 대표 기사 리스트
+- 제외 기사 및 중복 기사 확인 기록
+- Paywall 대체 기사 기록
+- 최종 Korean Title 리스트
+
+## 산출물 활용 방식
+
+- AI/GPT 기사는 Weekly AI Trend Report 작성에 활용
+- Global Big Tech, Asia Big Tech, Social, Theme 기사는 Global IT Trend Report 작성에 활용
+- Cluster 대표 기사는 최종 리포트 기사 후보로 활용
+- 제외 기사와 중복 기사 기록은 이후 중복 방지용으로 활용
+- 최종 Korean Title은 리포트 작성 및 Sheet 정리 시 그대로 활용 가능
+
+## Appendix A. Google Query 전 우선 확인 링크
 
 Google Query를 실행하기 전에 아래 공식 링크, 블로그, 뉴스룸, GitHub, release notes, changelog를 우선 확인한다. 공식 링크에서 관련 기사를 먼저 수집한 뒤, 공식 링크가 없거나 추가 확인이 필요한 항목만 Google Query를 사용한다.
 
@@ -2077,1269 +3589,120 @@ https://techcrunch.com/category/startups/
 
 (Google Query)
 
-## Query List 적용 방식
+## Appendix B. Official Source Map
 
-- 자동화 agent는 작업 대상 시트에 맞는 Query List만 사용한다.
-- Weekly IT Trend Sheet 작업 시 `Weekly Sheet Query`만 사용한다.
-- Global IT Trend Sheet 작업 시 `Global IT Trend Sheet Query`만 사용한다.
-- 두 Query List를 임의로 병합하지 않는다.
-- Query 순서는 아래에 정의된 순서를 strict하게 따른다.
-- Query 이름은 임의로 수정하지 않는다.
-- Query별 공식 링크가 있으면 Google Query 전 우선 확인 링크를 먼저 확인한다.
-- Query에 `Google Query`가 표시되어 있으면 Google Search 또는 Google News 중심으로 검색한다.
-- Query별 기사 입력 시 Sheet에는 `Korean Title`, `Check Box`, `URL` 중심으로 입력한다.
+아래 표는 Google Query 전 우선 확인할 공식 채널과 보완 소스를 정리한 기준이다.
+공식 채널이 존재하는 기업, 서비스, 제품은 Google Search 또는 Google News 검색 전 아래 소스를 먼저 확인한다.
 
-## Official Source 확인 방식
+| 대상 | 1차 확인 소스 | 2차 확인 소스 | Google Query 필요 여부 |
+| --- | --- | --- | --- |
+| OpenAI | OpenAI Blog / News | OpenAI Docs / Changelog | 필요 |
+| ChatGPT / Codex / Sora | OpenAI Blog | OpenAI Help Center / Docs | 필요 |
+| Anthropic / Claude | Anthropic News | Claude Docs | 필요 |
+| Google AI / Gemini | Google Blog / DeepMind Blog | Google Workspace Blog / Android Developers Blog | 필요 |
+| Microsoft / Copilot | Microsoft Blog | Microsoft 365 Blog / Azure Blog | 필요 |
+| Amazon AI / Bedrock / Nova | AWS Blog / Amazon News | Bedrock Docs / AWS What's New | 필요 |
+| Meta AI | Meta Newsroom | Meta AI Blog / Engineering Blog | 필요 |
+| Facebook / Instagram / WhatsApp | Meta Newsroom | 각 서비스 Help Center / Business Blog | 필요 |
+| Apple / iOS / Safari | Apple Newsroom | Apple Developer Release Notes | 필요 |
+| Netflix | Netflix Newsroom | Netflix Tech Blog | 필요 |
+| TikTok / Douyin | TikTok Newsroom | TikTok for Business / ByteDance Blog | 필요 |
+| Snapchat | Snap Newsroom | Snap for Business / Developer Docs | 필요 |
+| Telegram | Telegram Blog | Telegram FAQ / GitHub | 필요 |
+| Discord | Discord Blog | Discord Safety / Developer Docs | 필요 |
+| Pinterest | Pinterest Newsroom | Pinterest Business Blog | 필요 |
+| X / XChat | X Blog | Help Center / 공식 계정 | 필요 |
+| Kakao | Kakao Newsroom | Kakao Developers | 필요 |
+| Coupang | Coupang Newsroom | Coupang 공식 보도자료 | 필요 |
+| Toss | Toss Newsroom | Toss Tech Blog | 필요 |
+| Tencent / WeChat | Tencent News | WeChat Blog / 현지 Tech Media | 필요 |
+| ByteDance | ByteDance 공식 채널 | TikTok Newsroom / 현지 Tech Media | 필요 |
+| Alibaba | Alibaba News | Alibaba Cloud Blog | 필요 |
+| Rakuten | Rakuten Newsroom | Rakuten Tech Blog / 일본어 공식 발표 | 필요 |
+| Mercari | Mercari Newsroom | Mercari Engineering Blog | 필요 |
+| DeNA | DeNA News | DeNA Tech Blog | 필요 |
+| Note | note 공식 발표 | note pro / 일본어 공식 발표 | 필요 |
 
-- 기업별 공식 채널 먼저 확인:
-  - Blog
-  - Newsroom
-  - Developer Blog
-  - Product Update Page
-- Official Source 정보는 신뢰도 높게 우선순위 부여
+### 적용 방식
+
+- Official Source에서 확인한 업데이트는 신뢰도 높게 우선 반영
 - Official Source와 외부 기사 내용이 겹치면 Official Source 기준으로 내용 확인
-- 외부 기사는 아래 용도로 활용:
-  - 보완 설명
-  - 시장 반응
-  - 투자 규모
-  - 파트너십 맥락
-- 영어 Official Source가 있으면 영어 페이지 우선 사용
-- 영어 페이지가 없고 한국어/일본어 공식 링크만 있으면 현지어 공식 링크 사용 가능
-- `(Google Query)` 표시 항목은 Official Source 확인 없이 Google Query만 진행
-
-## Google Query 및 외부 기사 검색 방식
-
-- Official Source 및 우선 확인 소스 확인 후 Google News 또는 Google Search 활용
-- `(Google Query)` 표시 항목은 Google News 또는 Google Search만 활용
-- 검색어 조합 예시:
-  - 기업명
-  - 서비스명
-  - AI
-  - update
-  - launch
-  - partnership
-  - funding
-  - regulation
-- 검색 기간은 작업자 입력 `yyyy.mm.dd~yyyy.mm.dd` 범위 적용
-- 검색 결과는 최신순과 관련도 기준으로 확인
-- 동일 내용이 여러 매체에 반복되면 아래 우선순위 적용:
-  1. 원출처에 가까운 기사
-  2. Official Source
-  3. 신뢰도 높은 Tech Media
-  4. 본문 접근 가능한 영어 기사
-- Google Query 신규 발견 기사는 과거 중복 여부 확인 후 Sheet 입력
-
-## Google Query 기사 중복 확인 방식
-
-- Sheet 입력 전 반드시 과거 중복 여부 확인
-- 확인 방식:
-  1. 기존 검색 날짜 필터 해제
-  2. 기사 타이틀로 재검색
-  3. 핵심 키워드로 재검색
-  4. 동일 기사 또는 동일 이슈의 과거 주차 사용 여부 확인
-- 최신 발행 기사라도 아래 경우 제외:
-  - 과거 기사 재사용
-  - 재배포
-  - 업데이트 없는 반복 보도
-- 과거 동일 기사 또는 동일 이슈가 있으면 `중복` 또는 `보조 출처`로 표시하고 대표 기사 아래 기록
-- 신규 기사로 유지 가능한 경우:
-  - 후속 발표
-  - 신규 기능 추가
-  - 새로운 수치
-  - 새로운 지역 출시
-  - 새로운 파트너십
-- 애매한 경우 내부 판단 기준으로만 활용:
-  - `중복 가능성`
-  - `후속 기사`
-  - `기존 이슈 업데이트`
-
-## 기사 선별 기준
-
-- 아래 기준에 해당하면 선별 가능:
-  - AI 기능 출시
-  - AI Agent
-  - 생성형 AI
-  - LLM
-  - 모델 업데이트
-  - AI 인프라
-  - Big Tech 주요 제품 업데이트
-  - 플랫폼 전략
-  - 광고
-  - 커머스
-  - 검색
-  - OS
-  - Social 서비스 신규 기능
-  - 유저 성장
-  - 커뮤니티 기능
-  - 크리에이터 기능
-  - Asia Big Tech의 AI, 플랫폼, 콘텐츠, 커머스, 메신저, 앱 서비스
-  - 시장 구조 변화
-  - 유저 행동 변화
-  - 규제
-  - 투자
-  - 파트너십
-  - 플랫폼 수익화
-  - 광고 상품
-  - 구독 모델
-  - 크리에이터 생태계 변화
-  - 국가별 정책, 법안, 보안, 개인정보 이슈
-  - 시장 전반에 영향을 줄 수 있는 기사
-
-## Global IT Trend Report 기사 중요도 및 정렬 기준
-
-Global IT Trend Report의 기사 리스트업 목적은 중요한 기사만 선별하는 것이 아니라, Global IT / AI / Big Tech / Social / Asia Tech / Market Trend와 관련된 기사를 빠짐없이 수집한 뒤, 검토자가 보기 쉽도록 중요도에 따라 시트 내 배치 순서를 정리하는 것이다.
-
-- 중요도는 기사 포함/제외 기준이 아님
-- 중요도는 해당 Query 섹션 안에서 어떤 기사를 위에 배치할지 판단하기 위한 정렬 기준으로만 사용
-- 중요도가 낮아 보이는 기사라도 Global IT Trend Report의 카테고리와 관련성이 있으면 절대 누락하지 않고 반드시 리스트업
-
-### 기본 원칙
-
-- Global IT / AI / Big Tech / Asia Tech / Social / Market Trend 관련 기사는 중요도와 관계없이 모두 리스트업
-- 중요한 기사는 해당 Query 섹션의 위쪽에 배치
-- 중요도가 낮거나 단순 PR성 기사라도 관련성이 있으면 아래쪽에 배치
-- 자동으로 중요하지 않다고 판단해 기사 제외 금지
-- 최종적으로 각 Query 안에서는 `시장 영향이 큰 기사 → 기업/서비스 변화 기사 → 일반 관련 기사 → 중복/보조 출처` 순서로 정렬
-- 같은 내용의 중복 기사도 완전히 삭제하지 않고 대표 기사와 함께 보조 출처 또는 중복으로 기록
-- 공식 Newsroom, Blog, Release Notes, Changelog, GitHub Release도 제품·서비스·기능·시장 변화가 있으면 일반 기사처럼 리스트업
-- Weekly AI Trend Report보다 더 넓게 보되, Global IT Trend Report에서는 기술 자체보다 서비스화, 사업화, 시장 변화, 유저 접점 변화, 글로벌 경쟁 구도를 우선적으로 상단 배치
-
-### 상단 배치해야 하는 중요 기사 기준
-
-아래 내용에 해당하는 기사는 해당 Query 섹션의 위쪽에 배치한다.
-
-#### 1. 글로벌 Big Tech의 주요 제품·서비스 변화
-
-아래 기업의 주요 제품 출시, 기능 확장, 정책 변화, 수익화, 글로벌 확장, 파트너십, 규제 이슈는 상단에 배치한다.
-
-- Google
-- Apple
-- Meta
-- Amazon
-- Microsoft
-- Netflix
-- YouTube
-- Instagram
-- Facebook
-- WhatsApp
-- Android
-- iOS
-- Gmail
-- Chrome
-- AWS
-- OpenAI
-- Anthropic
-- NVIDIA
-- Salesforce
-- Adobe
-- Databricks
-- Cloudflare
-
-특히 기존 대규모 유저 기반 서비스에 AI, Agent, Search, Ads, Commerce, Creator, Payment, Productivity 기능이 들어가는 기사는 상단에 배치한다.
-
-#### 2. AI가 실제 서비스와 유저 접점으로 확장되는 기사
-
-AI 기술 자체보다 실제 앱, 서비스, 플랫폼, 업무 흐름에 적용되는 기사를 중요하게 본다.
-
-아래 내용은 상단에 배치한다.
-
-- ChatGPT, Gemini, Claude, Meta AI, Copilot, Grok 등 AI 서비스가 기존 앱이나 업무 도구에 통합되는 기사
-- Google Search, Chrome, Android, Gmail, Workspace, YouTube에 AI 기능이 들어가는 기사
-- Meta AI가 WhatsApp, Instagram, Facebook, Ads, Business tools, smart glasses에 적용되는 기사
-- Amazon Alexa, Rufus, Bedrock, AWS 기반 AI 서비스 확장 기사
-- Microsoft Copilot, Agent 365, Windows, Microsoft 365, Power Platform에 AI 기능이 들어가는 기사
-- Apple Intelligence, Siri, iOS, App Store, Safari, Messages 등 Apple 생태계 내 AI 변화 기사
-- Adobe, Canva, Figma, Notion, Roblox, Atlassian, Zoom 등 기존 대형 앱의 AI workflow 변화 기사
-- Kakao, SK Telecom, Samsung, Alibaba, Tencent, ByteDance, Huawei 등 Asia Big Tech의 AI 서비스 적용 기사
-
-#### 3. AI Agent / Agentic AI의 산업 적용 기사
-
-AI Agent 관련 기사는 Global IT Trend Report에서도 매우 중요하게 다룬다.
-다만 기술 자체보다 실제 산업과 기업 업무에 적용되는 의미가 큰 기사를 위에 배치한다.
-
-아래 내용은 상단에 배치한다.
-
-- AI Agent가 기업 업무, 고객 응대, 마케팅, 금융, 제조, 통신, 의료, 교육, 커머스, 리테일, 보안에 적용되는 기사
-- AI Agent가 결제, 거래, 구매, 예약, 주문, 데이터 분석, 코드 작성, 고객 상담, workflow 자동화를 수행하는 기사
-- AI Agent 플랫폼, agentic commerce, AI payment, AI shopping, AI trading 관련 기사
-- 기업이 AI Agent를 도입해 비용 절감, 매출 증가, 업무 시간 단축, 자동화 확대 효과를 공개한 기사
-- 대기업이 AI Agent를 전사 도입하거나 주요 산업 파트너십으로 확장하는 기사
-- AI Agent가 assistant에서 coworker, autonomous worker, digital employee, operating platform으로 진화하는 기사
-
-중소 기업 기사라도 AI Agent가 실제 산업 use case를 명확히 보여주면 반드시 리스트업하고, 산업 변화 의미가 크면 상단에 배치한다.
-
-#### 4. 시장 구조와 경쟁 구도를 보여주는 기사
-
-단순 제품 소식보다 시장 방향성을 설명할 수 있는 기사는 상단에 배치한다.
-
-아래 내용은 중요하게 본다.
-
-- AI Agent Loop, Agentic Web, AI Agent Identity, Agentic Commerce처럼 새로운 시장 개념이 등장하는 기사
-- OpenClaw, Codex, Claude Code, Cursor, Gemini, Grok 등 agentic coding 경쟁 구도 기사
-- Google, Apple, Meta, Microsoft, Amazon, OpenAI, Anthropic, xAI 간 AI 플랫폼 경쟁 기사
-- Big Tech의 AI 인프라 투자, 데이터센터, 반도체, GPU, AI PC, on-device AI 경쟁 기사
-- AI search, AI browser, AI shopping, AI ads, AI content creation처럼 기존 인터넷 사용 방식이 바뀌는 기사
-- AI 규제, 데이터 보호, 저작권, 청소년 안전, privacy, security 이슈가 시장 구조에 영향을 주는 기사
-- AI adoption, enterprise adoption, user growth, revenue, ARR, valuation 등 정량 지표가 포함된 기사
-
-#### 5. Asia Big Tech / 지역별 AI 확산 기사
-
-Global IT Trend Report에서는 Asia Big Tech와 지역별 서비스 확산도 중요하다.
-
-아래 내용은 상단에 배치한다.
-
-- Alibaba, Qwen, Alibaba Cloud, Tencent, ByteDance, Huawei, Baidu, Samsung, Kakao, SK Telecom, Rakuten, Mercari 등 주요 Asia Tech 기업의 AI·서비스 변화
-- China, Japan, Korea, India, Southeast Asia 지역에서 AI 서비스가 출시되거나 확장되는 기사
-- AI 모델, AI assistant, AI Agent, AI cloud, AI commerce, AI payment, AI device 관련 지역별 경쟁 기사
-- India, Japan, Korea, China, Southeast Asia 등 특정 시장 현지화 전략
-- Alexa+ Hindi 지원, Kakao AI 서비스, Alibaba Qwen, Tencent AI Agent, Huawei Cloud, SK Telecom AI Agent 등 지역 기반 서비스 변화
-- Asia 기업이 글로벌 AI 생태계나 Big Tech 경쟁에 영향을 주는 기사
-
-단순 로컬 PR이라도 AI, Big Tech, platform, commerce, social, cloud, device, regulation과 연결되면 리스트업한다.
-
-#### 6. Social / Creator / Ads / Commerce 변화 기사
-
-Social 및 creator platform 관련 기사는 유저 행동, 광고, 커머스, 콘텐츠 제작 방식 변화가 있으면 상단에 배치한다.
-
-아래 내용은 중요하게 본다.
-
-- Instagram, Facebook, WhatsApp, TikTok, Snapchat, Pinterest, Reddit, LinkedIn, X, Discord, Twitch 등의 AI 기능 추가
-- Creator tool, AI video editing, AI ad tool, AI sponsored content, AI recommendation, AI search, AI shopping 관련 기사
-- social media 내 광고 상품, measurement, creator monetization, shopping, brand safety 변화
-- AI가 콘텐츠 제작, 유통, 추천, 광고 집행, 쇼핑 전환에 적용되는 기사
-- 플랫폼 정책 변화, teen safety, privacy, moderation, misinformation, bot, synthetic content 관련 기사
-- user engagement, MAU, creator economy, Gen Z/MZ trend와 연결되는 기사
-
-단순 캠페인이나 이벤트성 기사라도 social platform의 광고, creator, commerce, AI 기능 변화와 연결되면 리스트업한다.
-
-#### 7. AI 인프라, 반도체, 클라우드, 디바이스 기사
-
-AI 서비스 변화와 연결되는 인프라 기사는 상단에 배치한다.
-
-아래 내용은 중요하게 본다.
-
-- NVIDIA, AMD, Intel, Qualcomm, Apple Silicon, Google TPU, AWS Trainium 등 AI chip 관련 기사
-- AI PC, AI smartphone, smart glasses, wearable AI, edge AI, on-device AI 관련 기사
-- AWS, Google Cloud, Microsoft Azure, Alibaba Cloud, Oracle Cloud, Cloudflare 등 AI cloud infrastructure 기사
-- 데이터센터, GPU cluster, AI factory, sovereign AI, energy, water, cooling, compute shortage 관련 기사
-- AI Agent 실행을 위한 local runtime, edge deployment, secure runtime, sandbox, memory, gateway 관련 기사
-- AI infrastructure가 비용, 성능, 기업 도입, 생태계 경쟁에 영향을 주는 기사
-
-단순 하드웨어 기사라도 AI 서비스 확장, AI Agent, on-device AI, cloud AI, model deployment와 연결되면 리스트업한다.
-
-#### 8. 보안, 개인정보, 규제, 저작권 기사
-
-Global IT Trend Report에서는 AI와 플랫폼 확산에 따른 리스크 기사도 중요하게 다룬다.
-
-아래 내용은 상단에 배치한다.
-
-- AI Agent 보안, agent identity, access control, governance, compliance
-- prompt injection, RCE, MCP vulnerability, browser agent takeover, extension takeover
-- AI 모델의 개인정보, 학습 데이터, 저작권, content provenance, synthetic media 이슈
-- App Store, Android, social platform, browser, cloud, AI service 관련 규제
-- EU, US, China, Korea, Japan 등 주요 지역의 AI regulation 또는 platform regulation
-- 청소년 보호, AI companion safety, chatbot lawsuit, moderation, privacy 관련 기사
-- 데이터 유출, 보안 사고, 취약점, 계정 탈취, 인증, payment fraud 관련 기사
-
-보안·규제 기사는 제품 출시가 아니더라도 시장 영향이나 플랫폼 운영 방식 변화와 연결되면 상단에 배치한다.
-
-#### 9. 수치가 있는 기사
-
-정량 지표가 포함된 기사는 중요하게 배치한다.
-
-아래 지표가 있으면 상단 배치 우선순위를 높인다.
-
-- 사용자 수
-- MAU / WAU
-- paid users
-- revenue
-- ARR
-- enterprise revenue
-- adoption rate
-- valuation
-- funding 규모
-- usage growth
-- market share
-- 비용 절감 수치
-- 생산성 향상 수치
-- 업무 시간 단축 수치
-- 성능 개선 수치
-- 처리량, 속도, latency, throughput
-- 파트너 수, 고객사 수, 국가 수, rollout 범위
-
-단순 funding 기사라도 기업이 AI 시장 구조에 영향을 줄 가능성이 있거나, Big Tech/AI platform/Agentic AI와 연결되면 리스트업한다.
-
-#### 10. Release Notes / Changelog / GitHub Release
-
-Global IT Trend Report에서도 Release Notes, Changelog, GitHub Release는 누락하면 안 된다.
-
-아래 내용이 있으면 리스트업한다.
-
-- AI 기능 추가
-- AI Agent 기능 추가
-- 모델 업데이트
-- 검색, 브라우저, 광고, 커머스, 크리에이터 도구 기능 변화
-- developer workflow 변화
-- API, SDK, MCP, plugin, connector, integration 변화
-- security, identity, permission, compliance 관련 변화
-- 성능 개선, 비용 절감, 배포 안정성 개선
-- provider integration, channel integration, memory, runtime, gateway 개선
-
-작은 업데이트라도 Global IT Trend Report 카테고리와 관련성이 있으면 하단에 배치하되 누락하지 않는다.
-시장 영향이 크거나 핵심 기업/서비스와 연결되면 상단에 배치한다.
-
-### 하단 배치하되 누락하면 안 되는 기사
-
-아래 유형은 상대적으로 중요도가 낮을 수 있지만, 관련성이 있으면 반드시 리스트업하고 해당 Query 섹션의 아래쪽에 배치한다.
-
-- 중소 SaaS 기업의 AI 기능 출시
-- 특정 산업용 AI Agent 또는 AI workflow 발표
-- PRNewswire, BusinessWire, GlobeNewswire 기반 제품 출시 기사
-- 단순 funding 기사
-- 기업 내부 AI 도입 사례
-- survey / report / thought leadership 기사
-- 특정 vertical use case 기사
-- AI Healthcare, AI Education, AI Advertising, AI Shopping, AI Browser, AI Security 관련 기사
-- Asia 지역 로컬 기업의 AI 서비스 출시
-- social platform의 작은 기능 변화
-- 공식 블로그의 작은 product update
-- release note / changelog의 작은 기능 변화
-
-주의:
-
-- 하단 배치 대상이라는 이유로 기사를 제외하지 않음
-- 중요도가 낮아 보여도 Global IT Trend Report 카테고리와 관련성이 있으면 반드시 기사 리스트에 포함
-
-### 중복 기사 처리 기준
-
-같은 내용을 여러 출처가 보도한 경우에도 완전히 삭제하지 않는다.
-
-- 공식 발표가 있으면 공식 출처를 대표 URL로 둠
-- TechCrunch, Reuters, CNBC, Bloomberg, 9to5Google, 9to5Mac, Social Media Today 등 해설 가치가 있는 기사는 보조 URL로 함께 둠
-- 같은 내용을 반복한 기사라면 `중복` 또는 `보조 출처`로 표시
-- 중복 기사라도 나중에 검토자가 판단할 수 있도록 기록은 남김
-- 완전히 동일하고 정보 가치가 없는 경우에만 대표 URL 아래에 묶음
-
-### 절대 누락하면 안 되는 주제
-
-아래 주제와 직접 관련된 기사는 중요도와 관계없이 반드시 확인하고, 관련성이 있으면 리스트업한다.
-
-- AI
-- Generative AI
-- AI Agent
-- Agentic AI
-- ChatGPT
-- OpenAI
-- Codex
-- Claude
-- Claude Code
-- Gemini
-- Google AI Mode
-- DeepMind
-- Meta AI
-- Copilot
-- Grok
-- OpenClaw
-- MCP
-- AI coding
-- AI browser
-- AI search
-- AI commerce
-- AI payment
-- AI shopping
-- AI advertising
-- AI security
-- AI governance
-- AI model release
-- AI assistant
-- AI companion
-- AI character
-- AI healthcare
-- AI education
-- enterprise AI adoption
-- Big Tech AI partnership
-- AI cloud
-- AI chip
-- AI PC
-- on-device AI
-- social platform AI
-- creator AI tools
-- AI regulation
-- AI privacy
-- AI copyright
-- platform policy change
-- app ecosystem change
-- release notes
-- changelog
-- GitHub release
-
-### 제외 기준
-
-아래에 해당하는 경우에만 제외한다.
-
-- IT/AI/Big Tech/Social/Market Trend와 직접 관련이 없는 기사
-- AI 관련성이 전혀 없는 일반 기업 홍보 기사
-- 단순 인사, 채용, 행사, 프로모션 기사
-- 제품·시장·기술 변화가 없는 단순 이벤트 안내
-- Naver/LINE 단독 기사
-- 동일 내용이 이미 대표 기사로 정리되어 있고, 보조 출처로도 가치가 없는 완전 중복 기사
-
-주의:
-
-- `중요도가 낮아 보인다`는 제외 사유가 아님
-- 관련성이 있으면 반드시 리스트업하고, 중요도에 따라 아래쪽에 배치
-
-### 한 줄 원칙
-
-Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하지 않는다.
-중요도는 제외 기준이 아니라, 해당 Query 섹션 안에서 어떤 기사를 위에 배치할지 판단하는 정렬 기준이다.
-
-## 기사 제외 기준
-
-- 아래 기준에 해당하면 제외:
-  - AI/GPT 카테고리에서 AI 또는 AI Agent 관련성이 약한 기사
-  - Global IT Trend Report 관점에서 IT, 플랫폼, social media, 커머스, 광고, 콘텐츠, 규제, 유저 행동 변화와 연결성이 낮은 기사
-  - Naver 단독 기사
-  - LINE 단독 기사
-  - LY Corporation 단독 기사
-  - 단순 이벤트 안내
-  - 단순 할인
-  - 단순 인사 이동 기사
-  - 의미 있는 기능 변화 없는 홍보성 기사
-  - 동일 내용 반복 보도
-  - 과거 주차 사용 기사
-  - 동일 이슈 단순 재사용 기사
-  - 출처 신뢰도가 낮은 기사
-  - 원문 확인이 어려운 기사
-  - Weekly AI Trend Report 또는 Global IT Trend Report 활용이 어려운 기사
-  - 본문 접근 불가능한 Paywall 기사
-  - 제목만 확인 가능한 기사
-
-## 국가 중요도 우선순위
-
-- 국가 우선순위는 절대 제외 기준이 아님
-- 기사 중요도와 리포트 반영 우선순위 판단 기준으로 사용
-
-### 1순위
-
-- US
-- Global
-
-### 2순위
-
-- China
-- Japan
-- Korea
-
-### 3순위
-
-- Taiwan
-- Thailand
-- Singapore
-- India
-
-### 4순위
-
-- UK
-- EU
-- Canada
-- Australia
-
-### 5순위
-
-- Indonesia
-- Vietnam
-- Malaysia
-- Philippines
-
-### 6순위
-
-- Middle East
-- LATAM
-- Africa
-- 기타 지역
-
-## 국가 우선순위 적용 방식
-
-- US, Global:
-  - Big Tech, AI, 플랫폼 전략, 광고, 커머스, social media 변화와 연결 시 우선 검토
-- China, Japan, Korea:
-  - Asia Big Tech 및 주요 플랫폼 변화와 연결 시 우선 검토
-- Taiwan, Thailand, Singapore, India:
-  - AI, social media, 커머스, 메신저, 슈퍼앱, 플랫폼 성장 관련 시 적극 검토
-- UK, EU:
-  - 규제, AI 법안, 플랫폼 정책, 개인정보, 광고 정책 변화 관련 시 우선 검토
-- Southeast Asia:
-  - Grab, TikTok, LINE, Shopee, Lazada, social commerce, creator economy 관련 시 검토
-- 낮은 우선순위 국가라도 포함 가능한 경우:
-  - 글로벌 확산 가능성
-  - 신규 시장 진입
-  - Big Tech 전략 변화
-  - 대규모 투자
-  - 규제 영향
-- 높은 우선순위 국가라도 제외 가능한 경우:
-  - 단순 이벤트
-  - 단순 PR
-  - 영향도 낮은 기사
-
-## Cluster 처리 방식
-
-- 동일 이벤트 기사는 하나의 Cluster로 묶어 관리
-- Cluster 판단 기준:
-  - 같은 기업
-  - 같은 기능
-  - 같은 발표
-  - 같은 파트너십
-  - 같은 투자
-  - 같은 규제 이슈
-- Cluster 내 최종 유지 원칙:
-  1. Official Source 우선
-  2. 접근 가능한 영어 원문 기사
-  3. 신뢰도 높은 Tech Media
-- 제외:
-  - 단순 재보도
-  - 내용 반복
-  - 출처 불명확 기사
-- 보완 기사 유지 가능 조건:
-  - 새로운 수치
-  - 신규 지역 출시
-  - 후속 발표
-  - 추가 기능
-  - 시장 반응
-- 내부 판단 기준으로만 활용 예시:
-  - `대표 기사 유지`
-  - `중복 제외`
-  - `보완 기사 유지`
-
-## Paywall 기사 처리 방식
-
-- Bloomberg, Reuters, NYTimes 등은 본문 접근 가능 여부 확인
-- 본문 확인이 어려운 Paywall 기사는 최종 URL로 사용 금지
-- Paywall 기사는 이슈 파악용 Seed로만 활용
-- 접근 불가 시 처리 순서:
-  1. 동일 타이틀로 Google Query 재검색
-  2. 핵심 키워드로 Google Query 재검색
-  3. 동일 이슈의 접근 가능한 기사 확인
-  4. 원문성과 신뢰도 확인
-  5. 최종 URL 교체
-- 대체 기사도 단순 인용이면 원출처 또는 공식 발표 재확인
-- 최종 URL은 작업자가 실제 열람 가능한 링크만 입력
-
-## URL 언어 기준
-
-- 기본 원칙:
-  - 영어 원문 기사 우선
-  - 영어 공식 링크 우선
-- 동일 이슈에 영어 기사와 비영어 기사가 모두 있으면 영어 기사 우선
-- 기업 공식 Blog, Newsroom, Docs에 영어 페이지가 있으면 영어 페이지 사용
-- 한국/일본 기업 관련 기사는 한국어/일본어 링크 사용 가능
-- 예외 기업 예시:
-  - Coupang
-  - Kakao
-  - Toss
-  - DeNA
-  - Mercari
-  - Rakuten
-  - Note
-  - Gree
-  - Gunosy
-- 영어 링크가 없고 현지어 공식 링크만 있으면 현지어 공식 링크 사용 가능
-- 단순 번역 기사보다 기업 공식 발표 또는 원출처에 가까운 링크 우선
-- 최종 URL은 실제 접속 가능하고 본문 확인 가능한 링크 사용
-
-## Sheet 정리 방식
-
-- 주차별 새 탭 생성
-- 기존 템플릿 서식 유지
-- 대분류 카테고리별 구역 생성
-- 각 대분류 아래 Query List 또는 세부 서비스명 배치
-- 각 Query List 항목 아래 해당 기간 내 확인된 기사 입력
-- 최종 Sheet는 Include 기사 중심으로 입력
-- 제외 기사나 중복 제외 기사는 별도 컬럼으로 관리하지 않음
-- 기사 원문 제목은 별도 컬럼으로 입력하지 않고, 최종 리포트용 `Korean Title` 중심으로 정리
-- URL은 실제 접속 가능하고 본문 확인 가능한 링크만 입력
-- 기사 없음 또는 해당 기간 업데이트 없음은 `n/a`로 입력
-- 기존 `O` 표시 방식은 사용하지 않고 `Check Box` 컬럼 사용
-- 중복 제거, Cluster 처리, 제외 판단, AI 관련성 판단은 업무 프로세스 기준으로 수행하되 Sheet 컬럼으로 입력하지 않음
-
-## Sheet 입력 권장 컬럼
-
-### Sheet 입력 기본 원칙
-
-기사 리스트업 Sheet는 일반적인 데이터베이스형 테이블이 아니라, 카테고리와 Query List를 기준으로 기사 제목과 URL을 입력하는 구조로 관리한다.
-
-- 대분류 카테고리별로 구역을 나눔
-- 대분류 카테고리 예시: `AI Agent`, `AI/GPT`, `Global Big Tech`, `Asia Big Tech`, `Social`, `Theme`
-- 각 대분류 아래에 Query List 또는 세부 서비스명을 배치
-- 각 Query List 항목 아래에 해당 기간 내 확인된 기사 입력
-- 기사 입력 시 원문 제목은 입력하지 않고, 최종 리포트용 국문 제목만 입력
-- 기사 제목은 반드시 기존 제목 작성 규칙에 맞춰 작성
-- URL은 실제 접속 가능하고 본문 확인 가능한 링크만 입력
-- 기사 없음 또는 해당 기간 업데이트 없음은 `n/a`로 입력
-- 기존 `O` 표시 방식은 사용하지 않고, 실제 Sheet에서 클릭 가능한 체크박스 컬럼 사용
-- 체크박스는 사람이 최종 선정 여부나 검토 완료 여부를 직접 체크할 수 있도록 구성
-- 체크박스 컬럼은 `Status`, `Note`, `AI Relevance`, `Report Relevance` 같은 판단용 컬럼으로 확장하지 않음
-
-### Sheet 입력 시 사용하지 않는 컬럼
-
-아래 컬럼들은 실제 기사 리스트업 Sheet에서 사용하지 않는다.
-
-- Original Title
-- Key Update
-- AI Relevance
-- Report Relevance
-- Cluster ID
-- Duplicate Check Keyword
-- Status
-- Note
-
-### Sheet 입력 권장 구조
-
-Sheet 입력 구조는 아래 형태를 따른다.
-
-| 대분류 | Query / Service | Korean Title | Check Box | URL |
-| --- | --- | --- | --- | --- |
-| AI Agent | AI Agent | [Agentshub.AI] 완전한 노코드 기반 AI Agent Platform 공개하며 기업용 AI 워크포스 구축 지원 (2026.4.6) | ☐ | https://finance.yahoo.com/sectors/technology/articles/agentshub-ai-launches-complete-no-130800495.html |
-|  |  | [Razorpay] Codex 및 ChatGPT 연동 통해 자연어 명령만으로 결제 설정과 데이터 분석 수행하는 Agentic 결제 인프라 확장 (2026.4.7) | ☐ | https://razorpay.com/blog/ai-app-monetisation-razorpay-codex/ |
-|  |  | [Meta] 내부 데이터 파이프라인에 50+ AI Agent 투입해 4.1K+ 파일 분석 및 59개 컨텍스트 파일 기반 지식 구조화 사례 공개 (2026.4.6) | ☐ | https://engineering.fb.com/2026/04/06/developer-tools/how-meta-used-ai-to-map-tribal-knowledge-in-large-scale-data-pipelines/ |
-|  | OpenClaw (Moltbot, Clawdbot) | [OpenClaw] 38M 월간 방문자와 3.2M MAU 기록하며 글로벌 AI Agent 플랫폼 성장 가속 (2026.4.7) | ☐ | https://www.trendingtopics.eu/openclaw-numbers/ |
-|  | OpenClaw (Moltbot, Clawdbot) | [OpenClaw] 2026.4.7 버전 업데이트, Gemma 4 지원 추가와 memory-wiki 복원 적용 (2026.4.7) | ☐ | https://github.com/openclaw/openclaw/releases/tag/v2026.4.7 |
-|  | Paperclip | n/a |  |  |
-|  | BabyAGI | n/a |  |  |
-|  | Microsoft AutoGen | n/a |  |  |
-| AI/GPT | AI | [Zero Shot] Ex-OpenAI 창업자들, $100M 목표 AI 투자 펀드 조성하며 초기 투자 집행 (2026.4.6) | ☐ | https://techcrunch.com/2026/04/06/openai-alums-have-been-quietly-investing-from-a-new-potentially-100m-fund/ |
-|  | OpenAI | [OpenAI] "Safety Fellowship" 공개하며 AI 안전과 정렬 연구 인재 육성 프로그램 운영 (2026.4.6) | ☐ | https://openai.com/index/introducing-openai-safety-fellowship/ |
-|  | Google AI | [Google] 오프라인 Dictation 앱 "AI Edge Eloquent" 공개하며 음성 입력 생산성 기능 강화 (2026.4.6) | ☐ | https://techcrunch.com/2026/04/06/google-quietly-releases-an-offline-first-ai-dictation-app-on-ios/ |
-|  | Gemini | [Google] Gemini overlay와 Gemini Live UI 통합 재설계 통해 AOS 상호작용 방식과 Multi-modal 접근성 개선 (2026.4.7) | ☐ | https://9to5google.com/2026/04/07/gemini-live-redesign-android/ |
-|  | Nova AI | [Amazon] Nova 2 Sonic, 실시간 대화형 Podcast 생성 가능한 음성 기반 AI 모델 활용 아키텍처 공개 (2026.4.7) | ☐ | https://aws.amazon.com/ko/blogs/machine-learning/building-real-time-conversational-podcasts-with-amazon-nova-2-sonic/ |
-
-### 체크박스 컬럼 적용 기준
-
-md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Google Sheet 또는 Excel 템플릿을 생성할 때는 해당 열을 반드시 클릭 가능한 체크박스 형식으로 설정한다.
-
-- Google Sheets 기준: `Insert > Checkbox` 기능이 적용된 열로 구성
-- Excel 기준: 실제 체크박스 삽입이 어렵다면 `TRUE/FALSE` 또는 빈 체크박스 기호 `☐` 사용 가능
-- 단순히 `O` 문자로 표시하지 않음
-- 사람이 직접 클릭하거나 선택할 수 있는 체크용 컬럼으로 구성
-- 체크박스는 최종 포함 여부 또는 검토 완료 여부를 사람이 확인하기 위한 용도
-- 자동화 agent가 임의로 체크하지 않도록 관리
-
-### Sheet 입력 예시 작성 방식
-
-- 원문 제목 컬럼은 만들지 않음
-- 핵심 요약 컬럼은 만들지 않음
-- AI Relevance, Report Relevance, Status, Note 등 판단용 컬럼은 만들지 않음
-- 기존 `O` 표시 컬럼은 사용하지 않고 `Check Box` 컬럼 사용
-- 국문 제목은 `[회사명] 핵심 내용 (yyyy.m.d)` 형식 적용
-- 산업 전반 또는 특정 기업 중심이 아닌 경우 `[Market]` 사용
-- 날짜는 `2026.4.7`처럼 0 padding 없이 작성
-- 신규 공개 서비스나 기능명에만 큰따옴표 사용
-- URL이 여러 개인 경우 한 셀에 줄바꿈으로 입력 가능
-- 해당 Query 항목에서 기사 없음 또는 업데이트 없음은 `n/a`로 입력
-
-## Check Box 운영 기준
-
-- Check Box는 사람이 최종 리포트 반영 후보를 선택하기 위한 용도다.
-- 자동화 agent는 신규 입력 기사의 Check Box를 기본 미체크 상태로 생성한다.
-- 자동화 agent가 기사 중요도를 판단해 임의로 체크하지 않는다.
-- 작업자는 기사 중요도, 중복 여부, 리포트 활용 가능성을 검토한 뒤 직접 체크한다.
-- Google Sheets에서는 실제 클릭 가능한 체크박스 형식으로 설정한다.
-- Google Sheets 기준으로는 `Insert > Checkbox` 또는 데이터 유효성 체크박스를 사용한다.
-- Excel에서 실제 체크박스 구현이 어려운 경우 `TRUE/FALSE` 또는 빈 체크박스 기호 `☐`를 임시로 사용할 수 있다.
-- 기존 `O` 표시는 사용하지 않는다.
-
-## n/a 입력 기준
-
-- Query / Service 항목을 확인했지만 해당 기간 내 입력할 기사가 없으면 Korean Title 칸에 `n/a`를 입력한다.
-- `n/a`가 입력된 행은 Check Box와 URL을 비워둔다.
-- 검색 자체를 수행하지 않은 항목에는 `n/a`를 입력하지 않는다.
-- `n/a`는 “확인 완료 후 해당 기간 업데이트 없음”을 의미한다.
-
-## URL 입력 기준
-
-- URL은 실제 접속 가능하고 본문 확인 가능한 링크만 입력한다.
-- Official Source와 Tech Media가 모두 중요한 경우 URL 셀에 공식 링크를 첫 줄, 보완 기사 링크를 두 번째 줄에 입력할 수 있다.
-- URL이 여러 개인 경우 한 셀 안에서 줄바꿈으로 입력한다.
-- 단순 재보도 링크는 여러 개 넣지 않는다.
-- Paywall 링크는 최종 URL로 사용하지 않고, 접근 가능한 대체 링크를 입력한다.
-- 공식 발표와 외부 보완 기사가 같은 이슈를 다루지만 각각 정보 가치가 있으면 함께 입력할 수 있다.
-
-## 중복 기사 및 보조 출처 처리 방식
-
-- 중복 기사나 보조 출처는 별도 `Status`, `Note`, `Cluster ID` 컬럼으로 관리하지 않는다.
-- 같은 이슈를 다룬 기사 중 공식 발표가 있으면 공식 발표를 대표 URL로 우선 사용한다.
-- Tech Media 기사에 시장 반응, 수치, 경쟁사 맥락 등 추가 정보가 있으면 같은 URL 셀에 줄바꿈으로 함께 입력한다.
-- 단순 재보도나 정보 가치가 낮은 중복 기사는 Sheet에 별도로 입력하지 않는다.
-- 완전히 동일한 내용의 반복 보도는 대표 기사 1개만 유지한다.
-- 후속 기사로 볼 수 있는 경우에는 별도 기사로 입력할 수 있다.
-- 후속 기사 판단 기준은 신규 수치, 신규 지역 출시, 신규 기능 추가, 신규 파트너십, 신규 규제 변화가 있는지 여부다.
-- Paywall 기사는 최종 URL로 사용하지 않고, 본문 접근 가능한 대체 기사 또는 공식 발표로 대체한다.
-
-## 수집과 최종 선택의 구분
-
-- 기사 리스트업 Sheet의 목적은 처음부터 최종 리포트 기사만 남기는 것이 아니라, Query별 관련 기사를 수집한 뒤 검토자가 빠르게 판단할 수 있도록 정리하는 것이다.
-- 1차 수집 단계에서는 Global IT / AI / Big Tech / Asia Tech / Social / Market Trend와 관련된 기사를 넓게 리스트업한다.
-- 관련성이 있는 기사는 중요도가 낮아 보여도 누락하지 않고 Query 섹션 안에 입력한다.
-- 중요한 기사는 해당 Query 섹션의 위쪽에 배치한다.
-- 중요도가 낮거나 단순 PR성에 가까운 기사는 아래쪽에 배치한다.
-- 최종 리포트 반영 여부는 사람이 Check Box로 선택한다.
-- 단, 명백한 비대상 기사, Naver/LINE/LY Corporation 단독 기사, 완전 중복 기사, 본문 확인 불가 기사, AI/IT/플랫폼 관련성이 거의 없는 기사는 입력하지 않는다.
-
-## AI Agent 구역 처리 방식
-
-- `AI Agent`는 Weekly AI Trend Report에서 별도 상단 구역으로 관리할 수 있다.
-- 리포트 카테고리 기준으로는 `AI/GPT`에 포함된다.
-- Sheet에서는 AI Agent 관련 Query가 많기 때문에 `AI Agent`를 별도 대분류처럼 배치할 수 있다.
-- AI Agent 구역에는 OpenClaw, AutoGPT, AgentGPT, CrewAI, LangGraph, Claude Code, agentic workflow, enterprise AI agent, agentic commerce, AI payment, AI security 등 관련 기사를 입력한다.
-
-## 대분류별 기사 수 표기 방식
-
-대분류 행에는 필요 시 선정 기사 수와 전체 후보 기사 수를 표시한다.
-
-예시:
-
-- `AI Agent 5 14`
-- `AI/GPT 12 37`
-
-의미:
-
-- 앞 숫자: 사람이 Check Box로 선택한 주요 후보 기사 수
-- 뒤 숫자: 해당 대분류에서 수집된 전체 기사 수
-- 자동화 agent가 숫자를 정확히 계산할 수 있는 경우 자동 입력한다.
-- 자동 계산이 어렵다면 숫자 칸은 비워두고 작업자가 최종 검토 후 수동 업데이트한다.
-
-## 자동화 입력값
-
-자동화 agent가 작업을 수행할 때 필요한 입력값은 아래와 같다.
-
-- 검색 기간: `yyyy.mm.dd~yyyy.mm.dd`
-- 입력 예시: `2026.6.18~2026.6.24`
-- 작업 주차명: 예: `6월 4주`
-- 작업 대상 Sheet 또는 파일
-- 적용 Query List
-- Google Query 전 우선 확인 링크 목록
-- 제외 대상: Naver / LINE / LY Corporation 단독 기사
-- 기존 주차 Sheet 또는 과거 기사 목록
-- 기존 Sheet 템플릿
-
-## 자동화 출력값
-
-자동화 agent는 아래 구조로 결과를 생성한다.
-
-- 대분류
-- Query / Service
-- Korean Title
-- Check Box
-- URL
-
-출력 기준:
-
-- Check Box는 기본 미체크 상태로 생성한다.
-- URL은 실제 접속 가능하고 본문 확인 가능한 링크만 입력한다.
-- 원문 제목은 별도 컬럼으로 출력하지 않는다.
-- Status, Note, AI Relevance, Report Relevance 등 판단용 컬럼은 출력하지 않는다.
-- 기사 없음이 확인된 Query / Service 항목은 `n/a`로 입력한다.
-
-## 중복 기사 처리 방식
-
-- 같은 기업, 같은 기능, 같은 발표 내용은 중복 처리하되 Sheet 기록은 남김
-- 동일 이벤트 기사는 Cluster 단위로 관리
-- 각 Cluster에서 가장 적합한 Source 1개를 대표 기사로 유지하고 나머지는 `중복` 또는 `보조 출처`로 기록
-- Official Source와 외부 기사 중복 시 Official Source 우선
-- Paywall 기사는 최종 URL로 사용하지 않고 접근 가능한 기사로 대체
-- 외부 기사 우선순위 예시:
-  - TechCrunch
-  - The Verge
-  - 9to5Mac
-  - 9to5Google
-  - Social Media Today
-- Google Query 기사는 날짜 필터 해제 후 타이틀 또는 핵심 키워드로 과거 사용 여부 확인
-- 과거 사용 기사 또는 동일 이슈 단순 재사용 기사는 신규 정보가 없으면 대표 기사 아래 중복 기록
-- 실질적 업데이트가 있으면 신규 기사로 유지:
-  - 후속 발표
-  - 신규 수치
-  - 신규 지역 출시
-  - 신규 기능 추가
-- 중복 기사 정리 시 내부 판단 기준으로 대표 기사와 보조 출처를 구분
-
-## 최종 Title 작성 방식
-
-최종 선별된 기사에는 `Korean Title`을 반드시 작성한다.
-
-### Title 기본 형식
-
-- `[회사명] 핵심 내용 (yyyy.m.d)`
-
-### Title 작성 규칙
-
-- 회사명은 English로 작성
-- Title 본문은 Korean으로 작성
-- 날짜는 기사 발행일 기준으로 작성
-- 날짜는 0 padding 없이 작성
-  - 예시: `2026.4.7`
-- 제목 안 날짜에는 `/`를 사용하지 않음
-- URL은 제목 뒤에 붙이지 않고 별도 URL 칸에 입력
-- Title은 항상 명사형 종결
-- 문장 끝 금지 표현:
-  - `함`
-  - `있음`
-  - `없음`
-  - `됨`
-- 기업명, 서비스명, 기능명은 English로 작성
-- 신규 공개 서비스나 기능명에만 필요한 경우 큰따옴표 사용
-- 기존 서비스명, 기존 기능명에는 불필요한 큰따옴표 사용 금지
-- 제목은 핵심 변화 중심으로 간결하게 작성
-- 쉼표는 최대 1개만 사용
-
-### `[Market]` 사용 기준
-
-- 여러 기업을 함께 다루는 기사
-- market-wide trends 기사
-- country-level trends 기사
-- industry changes 기사
-- company strategy comparisons 기사
-- 특정 기업보다 시장 구조 변화가 더 중요한 기사
-- 특정 국가의 유저 행동, 규제, 산업 변화, 소비 트렌드 기사
-
-### Title 예시
-
-- `[OpenAI] "Safety Fellowship" 공개하며 AI 안전과 정렬 연구 인재 육성 프로그램 운영 (2026.4.6)`
-- `[Google] Gemini overlay와 Gemini Live UI 통합 재설계 통해 AOS 상호작용 방식과 Multi-modal 접근성 개선 (2026.4.7)`
-- `[Market] AI data center, 투자자 요구로 Big Tech 대상 전력과 수자원 사용량 공개 압박 확대 (2026.4.8)`
-
-## Weekly IT Trend Sheet와 Global IT Trend Sheet 구분
-
-Weekly IT Trend Sheet와 Global IT Trend Sheet는 서로 다른 시트이며, 사용하는 Query List도 다르다.
-
-- Weekly IT Trend Sheet:
-  - AI Agent, AI, Browser 중심 Query를 사용한다.
-  - Weekly AI Trend Report 및 AI 중심 아카이빙에 활용한다.
-  - AI Agent / AI / Browser 관련 항목을 넓게 확인한다.
-
-- Global IT Trend Sheet:
-  - AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme Query를 사용한다.
-  - Global IT Trend Report 작성에 활용한다.
-  - AI뿐 아니라 Big Tech, Asia Big Tech, Social, Theme 관련 IT/플랫폼/시장 트렌드까지 포함한다.
-
-두 시트의 Query List는 서로 섞지 않는다.
-자동화 agent는 작업 대상 시트가 Weekly IT Trend Sheet인지 Global IT Trend Sheet인지 먼저 확인한 뒤, 해당 시트의 Query List만 사용한다.
-
-## Query 전체 리스트
-
-Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`로 분리한다.
-자동화 agent는 작업 대상 시트에 해당하는 Query List만 사용하고, 두 Query List를 임의로 병합하지 않는다.
-
-### Weekly Sheet Query
-
-아래 Query List는 `Weekly IT Trend Sheet`에 사용하는 Query이다.
-아래 순서와 표기를 strict하게 유지한다.
-
-#### AI Agent
-
-[AI Agent]
-- AI Agent
-- OpenClaw (Moltbot, Clawdbot)
-- Paperclip
-- BabyAGI
-- Microsoft AutoGen
-- AutoGPT
-- AgentGPT
-- Claude Cowork
-- A.(에이닷)
-- KIRA
-- Wrtn Crack
-- Rinna
-- Cotomo
-- CrewAI
-- AutoGen
-- LangGraph
-- Chai
-- Nomi
-- Kindroid
-- Paradot
-- Replika
-- Poketomo
-- Hume AI
-- Mersoom
-- Bot Madang
-
-#### AI
-
-[AI]
-- Lovable
-- Generative AI
-- OpenAI
-- ChatGPT
-- Codex
-- Sora
-- Meta AI
-- Scale AI
-- Google AI
-- Gemini
-- Veo
-- NotebookLM
-- Google Chrome
-- Amazon AI
-- Nova AI
-- Trainium
-- Anthropic
-- Claude
-- Claude Code
-- Microsoft
-- Microsoft Edge
-- Bing
-- Copilot
-- Apple AI
-- Safari
-- Databricks
-- Thinking Machines Lab
-- Perplexity AI
-- Comet
-- Stability.ai
-- Anysphere (Cursor)
-- ElevenLabs
-- Speak AI
-- Writer AI
-- Ayar Labs
-- Physical Intelligence
-- Inflection AI
-- Moonshot AI
-- Canva AI
-- Le Chat
-- Leonardo AI
-- Cohere
-- Skywalker.ai
-- Kling AI
-- Seedance
-
-#### Browser
-
-[Browser]
-- Arc Browser
-- Dia Browser
-- Brave Browser
-- Opera One
-- Sigma Browser (SigmaOS)
-- Zen Browser
-- Wavebox
-- Vivaldi Browser
-- Sidekick Browser
-- Shift Browser
-- Orion Browser
-- Maxthon Browser
-- Firefox
-- Samsung Internet
-- UC Browser
-- CryptoTab Browser
-- AI Startup
-- Stable Diffusion
-- DALL-E
-- Content Generator
-- Craiyon
-- Midjourney
-- MyHeritage
-- Voice Synthesis
-- Dream Fusion
-- AI Bot
-- AI Healthcare
-- Image AI
-- AI Assistant
-- AI Plugin
-- Sam Altman
-- LLM
-- Inflection AI (Pi)
-- Chatbot
-- Adobe AI
-- Adobe Firefly
-- character.ai
-- MDM
-- yandex
-- Kakao Brain
-- Kakao AI
-- Japan AI
-- Korea AI
-- China AI
-- US AI
-- AI Character
-- Copyright Shield
-- Microsoft Industry Blogs
-- blog.google
-
-### Global IT Trend Sheet Query
-
-아래 Query List는 `Global IT Trend Sheet`에 사용하는 Query이다.
-아래 순서와 표기를 strict하게 유지한다.
-
-#### AI Agent
-
-[AI Agent]
-- AI Agent - Google Query
-- OpenClaw (Moltbot, Clawdbot)
-- Paperclip
-- BabyAGI
-- Microsoft AutoGen
-- AutoGPT
-- AgentGPT
-- Claude Cowork
-- A.(에이닷)
-- KIRA
-- Crack (크랙)
-- Rinna
-- Cotomo
-- CrewAI
-- AutoGen
-- LangGraph
-- Chai
-- Nomi
-- Kindroid
-- Paradot
-- Replika
-- Poketomo
-- Hume AI
-- Mersoom
-- Bot Madang
-
-#### AI/GPT
-
-[AI/GPT]
-- AI - Google Query
-- OpenAI
-- ChatGPT
-- Sora
-- Codex
-- Meta AI
-- Google AI
-- GeminI
-- Amazon AI
-- Nova AI
-- Anthropic
-- Claude
-- Claude Code
-- Kakao AI
-- Microsoft AI
-- Databricks
-- Perplexity AI
-- Cohere
-- ElevenLabs
-- Lovable
-- Stability AI
-- Inflection AI
-- Ayar Labs
-- Canva AI
-- Speak AI
-- Anysphere (Cursor)
-- Physical Intelligence
-- Thinking Machines Lab
-- Moonshot AI
-- Le Chat
-- Leonardo AI
-- Writer AI
-- Zeta
-- Kling AI
-- Seedance
-- Arc Browser
-- Dia Browser
-- Brave Browser
-- Microsoft Edge
-- Google Chrome
-- Comet Browser
-- Opera One
-- Sigma Browser (SigmaOS)
-- Zen Browser
-- Wavebox
-- Vivaldi Browser
-- Safari
-- Sidekick Browser
-- Shift Browser
-- Orion Browser
-- Maxthon Browser
-- Firefox
-- Samsung Internet
-- UC Browser
-- CryptoTab Browser
-
-#### Global Big Tech
-
-[Global Big Tech]
-- Meta
-- Facebook
-- Instagram
-- WhatsApp
-- Amazon
-- Amazon Prime
-- Apple
-- iOS
-- Netflix
-- Google
-- YouTube
-- Android
-- Gmail
-- Microsoft
-- Grab
-
-#### Asia Big Tech
-
-[Asia Big Tech]
-- Rakuten (楽天市場)
-- note（ノート)
-- DeNA
-- Gree (グリー)
-- Gunosy (グノシー)
-- Time Tree (タイムツリ)
-- Mercari(メルカリ)
+- 외부 기사는 시장 반응, 보완 설명, 투자 규모, 파트너십 맥락 확인용으로 활용
+- Official Source가 없거나 업데이트가 늦은 서비스는 Google Query와 신뢰도 높은 외부 기사로 보완
+- `(Google Query)` 표시 항목은 기존 규칙대로 Official Source 확인 없이 Google Query만 진행
+
+## Appendix C. Source 우선순위 세부 기준
+
+### 공통 우선순위
+
+1. Official Blog / Newsroom / Docs / Changelog
+2. 원출처에 가까운 전문 매체
+3. 신뢰도 높은 Tech Media
+4. 현지 전문 매체
+5. 일반 경제지 또는 종합지
+6. 단순 재보도 매체
+
+### Global Big Tech / AI
+
+- TechCrunch
+- The Verge
+- 9to5Google
+- 9to5Mac
+- VentureBeat
+- SiliconANGLE
+- ZDNET
+- CNBC
+- Bloomberg, Reuters, NYTimes, The Information은 Paywall 여부 확인 후 접근 가능한 대체 기사 검토
+
+### Social / Platform
+
+- Social Media Today
+- TechCrunch
+- The Verge
+- 9to5Google
+- 9to5Mac
+- 공식 Help Center
+- 공식 Product Blog
+- 공식 Business Blog
+
+### Asia Big Tech
+
+- 기업 공식 Newsroom
+- 기업 공식 Blog
 - The Bridge
-- Ascii Startup
-- CNET
-- Diamond
-- Kakao
-- 카카오
-- 카카오톡
-- Coupang
-- 쿠팡
-- Toss
-- 토스
-- Tencent
-- WeChat (微信)
-- ByteDance
-- Alibaba
+- CNET Japan
+- ASCII Startup
+- 현지 공식 보도자료
+- 현지 Tech Media
+- 영어 기사 존재 시 영어 링크 우선
 
-#### Social
+### Theme
 
-[Social]
-- TikTok
-- Douyin
-- Snapchat
-- Telegram
-- Pinterest
-- X
-- XChat
-- BlueSky
-- Twitch
-- BeReal
-- Discord
+- 신뢰도 높은 Tech Media
+- 시장조사기관 발표
+- 정부, 규제기관, 공식 통계
+- 주요 경제지 또는 산업 전문 매체
+- 단순 블로그, 광고성 콘텐츠, 출처 불명확 콘텐츠는 제외
 
-#### Theme
+### Source 선택 원칙
 
-[Theme]
-- Super App (LinkedIn, Reddit, Spotify, VSCO, Paypal)
-- MZ Gen - Google Query
-- Gen Z - Google Query
-- 1020 trend - Google Query
-- Social app - Google Query
-- Tech Crunch Startup
-
-## Query와 우선 확인 링크 연결 방식
-
-- Query List의 각 항목은 먼저 `Google Query 전 우선 확인 링크`에 동일하거나 유사한 항목이 있는지 확인한다.
-- 동일한 이름의 공식 링크가 있으면 해당 링크를 1차 확인한다.
-- 이름이 약간 다른 경우에도 같은 서비스로 판단 가능한 경우 연결한다.
-  - 예: `Stability AI` ↔ `Stability.ai`
-  - 예: `Comet Browser` ↔ `Comet`
-  - 예: `Microsoft AI` ↔ `Microsoft`
-  - 예: `Kakao AI` ↔ `Kakao Brain / Kakao AI`
-  - 예: `Crack (크랙)` ↔ `Wrtn Crack`
-- 단, Sheet Query 표기는 변경하지 않는다.
-- 공식 링크가 없는 Query는 Google Query로 검색한다.
-- Query List에 없는 링크 항목은 링크 목록에는 유지할 수 있지만, 해당 시트의 Query 배열에는 임의로 추가하지 않는다.
-
-## Query별 Sheet 입력 방식
-
-- Sheet는 대분류 → Query / Service → 기사 리스트 순서로 입력한다.
-- 대분류와 Query / Service 순서는 해당 시트의 Query List 순서를 strict하게 따른다.
-- 기사 입력 시 Query / Service 순서를 바꾸지 않는다.
-- 특정 Query에서 기사가 여러 개 발견되면 해당 Query 아래에 여러 행으로 입력한다.
-- 특정 Query에서 해당 기간 기사가 없으면 `n/a`를 입력한다.
-- Query를 찾지 못했다고 임의로 삭제하지 않는다.
-- Query List에 없는 기사를 발견한 경우:
-  - Weekly IT Trend Sheet에서는 관련 Query 아래에 배치 가능한 경우에만 입력한다.
-  - Global IT Trend Sheet에서는 해당 카테고리와 가장 가까운 Query 아래에 배치한다.
-  - 어디에도 배치하기 어려우면 작업자 검토 대상으로 별도 보류하지 말고 입력하지 않는다.
-
-## Query별 검색 결과 정리 방식
-
-Query에서 발견한 기사는 반드시 아래 순서로 확인한다.
-
-1. 작업 대상 시트가 Weekly IT Trend Sheet인지 Global IT Trend Sheet인지 확인
-2. 해당 시트의 Query List 순서와 표기 확인
-3. 날짜 범위 적합 여부 확인
-4. 기사 원문 접근 가능 여부 확인
-5. Paywall 여부 확인
-6. 영어 URL 또는 공식 링크 존재 여부 확인
-7. 과거 동일 기사 또는 동일 이슈 사용 여부 확인
-8. 동일 이벤트 기사 Cluster 처리
-9. 대표 URL과 보조 출처 URL 판단
-10. Naver, LINE, LY Corporation 단독 기사 여부 확인
-11. Sheet 구조에 맞춰 `대분류`, `Query / Service`, `Korean Title`, `Check Box`, `URL` 입력
-12. 기사 없음이 확인된 Query / Service는 `n/a` 입력
-
-## 최종 검수 체크리스트
-
-- [ ] Weekly IT Trend Sheet Query와 Global IT Trend Sheet Query가 분리되어 있는지 확인
-- [ ] Weekly Query 순서가 제공된 순서와 일치하는지 확인
-- [ ] Global IT Trend Query 순서가 제공된 순서와 일치하는지 확인
-- [ ] Query 표기가 임의로 변경되지 않았는지 확인
-- [ ] `Wrtn Crack`과 `Crack (크랙)`의 시트별 표기가 구분되어 있는지 확인
-- [ ] Weekly Sheet Query와 Global IT Trend Sheet Query가 합쳐져 있지 않은지 확인
-- [ ] Query List에 없는 항목이 임의로 Query로 추가되지 않았는지 확인
-- [ ] Global IT / AI / Big Tech / Asia Tech / Social / Market Trend 관련 기사를 중요도와 관계없이 모두 리스트업했는지 확인
-- [ ] 각 Query 섹션 안에서 `시장 영향이 큰 기사 → 기업/서비스 변화 기사 → 일반 관련 기사 → 중복/보조 출처` 순서로 정렬했는지 확인
-- [ ] 공식 Newsroom, Blog, Release Notes, Changelog, GitHub Release 중 제품·서비스·기능·시장 변화가 있는 항목을 누락하지 않았는지 확인
-- [ ] 중복 기사도 완전히 삭제하지 않고 대표 기사 아래 보조 출처 또는 중복으로 기록했는지 확인
-- [ ] 절대 누락하면 안 되는 Global IT / AI / Big Tech / Social / Market Trend 주제를 확인했는지 점검
-- [ ] Google Query 전 우선 확인 링크의 공식 사이트, Blog, Newsroom, GitHub, release notes, changelog 확인
-- [ ] 입력한 날짜 범위에 맞는 기사만 포함
-- [ ] Google Query 전 우선 확인 소스 먼저 확인
-- [ ] `(Google Query)` 표기 항목은 Official Source 확인 없이 Google Query로만 검색
-- [ ] Official Source, GitHub, Changelog, Release Notes, Docs, Blogs 확인
-- [ ] 9to5Mac, 9to5Google, TechCrunch, Social Media Today 등 주요 Tech Media 확인
-- [ ] 카테고리 분류 정확성 확인
-- [ ] Global IT Trend Report에 AI 외 IT, 플랫폼, social media, 커머스, 규제, 유저 트렌드 기사 포함 여부 확인
-- [ ] AI/GPT 기사가 별도 시트에 반영
-- [ ] Naver, LINE, LY Corporation 단독 기사 제외
-- [ ] Google Query 기사 날짜 필터 해제 후 과거 중복 여부 확인
-- [ ] 동일 이벤트 기사 Cluster 단위 정리
-- [ ] 각 Cluster에서 대표 Source를 구분하고 보조 출처 또는 중복 기사 기록
-- [ ] Paywall 기사를 접근 가능한 기사로 대체
-- [ ] URL이 영어 원문 또는 영어 공식 링크 기준으로 정리
-- [ ] 한국어/일본어 링크가 예외 기업 또는 현지어 공식 링크 기준에 부합
-- [ ] 단순 PR성 기사나 비대상 기사 제외
-- [ ] URL 정상 접속 확인
-- [ ] 기사 날짜와 출처 정확성 확인
-- [ ] 최종 Korean Title 작성
-- [ ] Sheet 입력용 Korean Title이 `[회사명] 핵심 내용 (yyyy.m.d)` 형식에 부합
-- [ ] 기존 `O` 표시 방식 대신 클릭 가능한 `Check Box` 컬럼을 사용했는지 확인
-- [ ] 기사 없음 또는 해당 기간 업데이트 없음이 `n/a`로 입력되었는지 확인
-- [ ] Title이 명사형 종결
-- [ ] `[Market]` 사용 기준 정확히 적용
-- [ ] Weekly AI Trend Report와 Global IT Trend Report에 활용 가능한 기사만 유지
-
-## 최종 산출물
-
-- 기사 리스트업 Sheet의 주차별 탭
-- Weekly AI Trend Report 작성용 AI/GPT 기사 리스트
-- Global IT Trend Report 작성용 카테고리별 기사 리스트
-- Cluster 처리된 대표 기사 리스트
-- 제외 기사 및 중복 기사 확인 기록
-- Paywall 대체 기사 기록
-- 최종 Korean Title 리스트
-
-## 산출물 활용 방식
-
-- AI/GPT 기사는 Weekly AI Trend Report 작성에 활용
-- Global Big Tech, Asia Big Tech, Social, Theme 기사는 Global IT Trend Report 작성에 활용
-- Cluster 대표 기사는 최종 리포트 기사 후보로 활용
-- 제외 기사와 중복 기사 기록은 이후 중복 방지용으로 활용
-- 최종 Korean Title은 리포트 작성 및 Sheet 정리 시 그대로 활용 가능
+- 최종 URL은 실제 접속 가능하고 본문 확인 가능한 링크만 사용
+- Paywall 기사는 최종 URL로 사용하지 않음
+- 동일 이슈에서 Official Source와 외부 기사가 모두 있으면 Official Source 우선
+- 단, 외부 기사에 신규 수치, 시장 반응, 경쟁사 맥락이 추가되어 있으면 보완 기사로 검토 가능
+- 단순 재보도 기사보다 원출처에 가까운 기사 우선
+- 영어 URL이 있으면 영어 URL 우선 사용
+- 한국어/일본어 기업 공식 발표만 존재하는 경우 현지어 공식 링크 사용 가능
 
 ## 수정 요약
 
-- Weekly IT Trend Sheet와 Global IT Trend Sheet Query를 분리
-- Query List를 실제 사용하는 Sheet Query 순서와 표기 기준으로 재정렬
-- 기존 Google Query 전 우선 확인 링크와 Official Source Map은 유지
-- Sheet 입력 구조와 날짜 형식 기준은 유지
-- 자동화 agent 실행 기준에 맞춰 전체 작업 순서를 공식 링크 우선 확인, 보완 검색, Sheet 입력, 사람의 Check Box 검토 순서로 정리
-- Sheet 입력 구조를 `대분류`, `Query / Service`, `Korean Title`, `Check Box`, `URL` 중심으로 통일
-- `Original Title`, `Status`, `Note`, `AI Relevance`, `Report Relevance`, `Cluster ID`, `Duplicate Check Keyword`, `Key Update`를 Sheet 컬럼으로 만들지 않도록 정리
-- Korean Title 날짜 형식을 `[회사명] 핵심 내용 (yyyy.m.d)`로 통일하고 URL은 별도 URL 칸에 입력하도록 수정
-- Check Box, `n/a`, URL 복수 입력, 중복 기사 및 보조 출처 처리, 자동화 입력값/출력값 기준을 추가
-- Naver / LINE / LY Corporation 단독 기사 제외 기준과 공식 링크 우선 확인 후 Google Query 실행 원칙은 유지
+- 자동화 실행 모드(`weekly`, `global`) 추가
+- 자동화 입력값과 Output Schema 구체화
+- 중복 기사 처리 방식 통합
+- 검색 실패와 `n/a` 상태 구분
+- 자동화 실행 로그 기준 추가
+- URL 입력 및 검증 기준 보강
+- Korean Title 자동 검증 기준 추가
+- Query Source Mapping 예시 추가
+- 긴 공식 링크 목록을 Appendix로 이동
+- Sheet 금지 컬럼 기준 재정리
