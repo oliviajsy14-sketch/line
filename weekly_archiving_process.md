@@ -26,6 +26,7 @@
 - [Paywall 기사 처리 방식](#paywall-기사-처리-방식)
 - [URL 언어 기준](#url-언어-기준)
 - [Sheet 정리 방식](#sheet-정리-방식)
+- [Sheet 입력 권장 컬럼](#sheet-입력-권장-컬럼)
 - [중복 기사 처리 방식](#중복-기사-처리-방식)
 - [최종 Title 작성 방식](#최종-title-작성-방식)
 - [Query 전체 리스트](#query-전체-리스트)
@@ -2631,25 +2632,57 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
 - 주차별 새 탭 생성
 - 기존 템플릿 서식 유지
 - 카테고리별 기사 정리
-- 입력 기준:
-  - 기사 제목: 원문 제목
-  - 날짜: 기사 발행일
-  - URL: 바로 접근 가능한 원문 링크
-  - 카테고리: AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme 중 선택
-  - 주요 내용: 핵심 변화 중심으로 간단히 작성
-  - 포함 여부/비고: 상태값 입력
-- 상태값 예시:
-  - `PASS`
-  - `중복`
-  - `보류`
-  - `Paywall 대체`
-  - `대표 기사 유지`
-  - `중복 가능성`
-  - `후속 기사`
-  - `기존 이슈 업데이트`
-- 필요한 경우 선정 사유 또는 제외 사유 작성
-- Cluster 처리 기사는 대표 기사와 제외 기사 구분 표시
-- 과거 중복 확인 필요 기사는 비고란에 확인 결과 작성
+- 최종 Sheet는 포함 기사 중심으로 정리
+- Sheet 입력 컬럼은 `Sheet 입력 권장 컬럼` 기준 사용
+- 기사 원문 제목은 별도 컬럼으로 입력하지 않고, 최종 리포트용 `Korean Title` 중심으로 정리
+- 날짜는 기사 발행일 기준으로 입력
+- URL은 바로 접근 가능하고 본문 확인 가능한 원문 링크 입력
+- Source Type은 `Official`, `Tech Media`, `Local Media`, `General Media`, `Paywall Seed` 중 선택
+- 중복 제거, Cluster 처리, 제외 판단, AI 관련성 판단은 업무 프로세스 기준으로 수행하되 Sheet 필수 컬럼으로 추가하지 않음
+- Paywall 대체 기사는 최종 접근 가능한 URL만 `URL` 컬럼에 입력
+
+## Sheet 입력 권장 컬럼
+
+기사 리스트업 Sheet에는 아래 컬럼을 기준으로 입력한다.
+
+| 컬럼명 | 입력 내용 |
+| --- | --- |
+| Search Query | 기사를 발견한 검색어 또는 Query List 항목 |
+| Category | AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme 중 선택 |
+| Company / Service | 기업명 또는 서비스명 |
+| Korean Title | 최종 리포트용 국문 제목 |
+| Published Date | 기사 발행일 |
+| Source | 매체명 또는 공식 소스명 |
+| Source Type | Official / Tech Media / Local Media / General Media / Paywall Seed 중 선택 |
+| URL | 실제 접속 가능하고 본문 확인 가능한 링크 |
+| Country / Region | 관련 국가 또는 지역 |
+
+### Sheet 입력 예시
+
+아래는 실제 기사 리스트업 Sheet에 입력할 때 참고하는 예시 형식이다.
+예시는 컬럼 구조와 작성 톤을 보여주기 위한 것이며, 실제 입력 시에는 확인된 기사 원문 기준으로 작성한다.
+
+| Search Query | Category | Company / Service | Korean Title | Published Date | Source | Source Type | URL | Country / Region |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Gemini | AI/GPT | Google / Gemini | [Google] Gemini, 개발자용 신규 업데이트 공개하며 AI 개발 워크플로우 지원 확대 (2026.6.12) | 2026.6.12 | Google Blog | Official | 실제 기사 URL 입력 | US |
+| Claude Code | AI/GPT | Anthropic / Claude Code | [Anthropic] Claude Code, 정식 제공 전환하며 개발자용 AI Agent 활용 확대 (2026.6.18) | 2026.6.18 | Anthropic News | Official | 실제 기사 URL 입력 | US |
+| Meta AI | Global Big Tech | Meta | [Meta] 광고주용 AI 도구 확대하며 생성형 광고 제작과 캠페인 운영 자동화 강화 (2026.6.17) | 2026.6.17 | Meta Newsroom | Official | 실제 기사 URL 입력 | US |
+| TikTok AI Advertising | Social | TikTok | [TikTok] AI 광고 솔루션 공개하며 크리에이티브 제작과 브랜드 캠페인 효율화 지원 (2026.6.19) | 2026.6.19 | TikTok Newsroom | Official | 실제 기사 URL 입력 | Global |
+| AI Agent startup funding | Theme | AI Agent Startup | [Market] AI Agent 스타트업, 기업 워크플로우 자동화 수요 기반 투자 유치 확대 (2026.6.20) | 2026.6.20 | TechCrunch | Tech Media | 실제 기사 URL 입력 | US |
+
+### Sheet 입력 원칙
+
+- 기사 원문 제목은 Sheet에 별도 컬럼으로 입력하지 않음
+- 최종 Sheet는 포함 기사 중심으로 정리
+- 중복 제거, Cluster 처리, 제외 판단, AI 관련성 판단은 업무 프로세스에서 수행하되 별도 Sheet 컬럼으로 요구하지 않음
+- `Korean Title`은 최종 리포트에서 바로 활용 가능한 제목으로 작성
+- `Korean Title` 작성 규칙은 [최종 Title 작성 방식](#최종-title-작성-방식)과 [Korean Title 품질 체크](#korean-title-품질-체크)를 따른다
+- Sheet 입력용 `Korean Title`에는 URL을 넣지 않고, URL은 `URL` 컬럼에만 입력
+- `Korean Title` 형식: `[회사명] 핵심 내용 (YYYY.M.DD)`
+- 산업 전반 또는 특정 기업 중심이 아닌 경우 `[Market]` 사용
+- 날짜는 0 padding 없이 작성
+- 쉼표는 최대 1개만 사용
+- 신규 공개 서비스나 기능명에만 큰따옴표 사용
 
 ## 중복 기사 처리 방식
 
@@ -3101,7 +3134,7 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
 - [ ] Naver, LINE, LY Corporation 단독 기사 제외
 - [ ] Google Query 기사 날짜 필터 해제 후 과거 중복 여부 확인
 - [ ] 동일 이벤트 기사 Cluster 단위 정리
-- [ ] 각 Cluster에서 가장 적합한 Source 1개만 유지
+- [ ] 각 Cluster에서 대표 Source를 구분하고 보조 출처 또는 중복 기사 기록
 - [ ] Paywall 기사를 접근 가능한 기사로 대체
 - [ ] URL이 영어 원문 또는 영어 공식 링크 기준으로 정리
 - [ ] 한국어/일본어 링크가 예외 기업 또는 현지어 공식 링크 기준에 부합
@@ -3109,7 +3142,7 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
 - [ ] URL 정상 접속 확인
 - [ ] 기사 날짜와 출처 정확성 확인
 - [ ] 최종 Korean Title 작성
-- [ ] Title이 `[Company Name] Korean Title (YYYY/M/DD) - URL` 형식에 부합
+- [ ] Sheet 입력용 Korean Title이 `[회사명] 핵심 내용 (YYYY.M.DD)` 형식에 부합
 - [ ] Title이 명사형 종결
 - [ ] `[Market]` 사용 기준 정확히 적용
 - [ ] Weekly AI Trend Report와 Global IT Trend Report에 활용 가능한 기사만 유지

@@ -2890,25 +2890,14 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
 - 주차별 새 탭 생성
 - 기존 템플릿 서식 유지
 - 카테고리별 기사 정리
-- 입력 기준:
-  - 기사 제목: 원문 제목
-  - 날짜: 기사 발행일
-  - URL: 바로 접근 가능한 원문 링크
-  - 카테고리: AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme 중 선택
-  - 주요 내용: 핵심 변화 중심으로 간단히 작성
-  - 포함 여부/비고: 상태값 입력
-- 상태값 예시:
-  - `PASS`
-  - `중복`
-  - `보류`
-  - `Paywall 대체`
-  - `대표 기사 유지`
-  - `중복 가능성`
-  - `후속 기사`
-  - `기존 이슈 업데이트`
-- 필요한 경우 선정 사유 또는 제외 사유 작성
-- Cluster 처리 기사는 대표 기사와 제외 기사 구분 표시
-- 과거 중복 확인 필요 기사는 비고란에 확인 결과 작성
+- 최종 Sheet는 포함 기사 중심으로 정리
+- Sheet 입력 컬럼은 `Sheet 입력 권장 컬럼` 기준 사용
+- 기사 원문 제목은 별도 컬럼으로 입력하지 않고, 최종 리포트용 `Korean Title` 중심으로 정리
+- 날짜는 기사 발행일 기준으로 입력
+- URL은 바로 접근 가능하고 본문 확인 가능한 원문 링크 입력
+- Source Type은 `Official`, `Tech Media`, `Local Media`, `General Media`, `Paywall Seed` 중 선택
+- 중복 제거, Cluster 처리, 제외 판단, AI 관련성 판단은 업무 프로세스 기준으로 수행하되 Sheet 필수 컬럼으로 추가하지 않음
+- Paywall 대체 기사는 최종 접근 가능한 URL만 `URL` 컬럼에 입력
 
 ## Sheet 입력 권장 컬럼
 
@@ -2919,45 +2908,39 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
 | Search Query | 기사를 발견한 검색어 또는 Query List 항목 |
 | Category | AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme 중 선택 |
 | Company / Service | 기업명 또는 서비스명 |
-| Original Title | 기사 원문 제목 |
 | Korean Title | 최종 리포트용 국문 제목 |
 | Published Date | 기사 발행일 |
 | Source | 매체명 또는 공식 소스명 |
-| Source Type | Official / Tech Media / Local Media / General Media / Paywall Seed 등 |
+| Source Type | Official / Tech Media / Local Media / General Media / Paywall Seed 중 선택 |
 | URL | 실제 접속 가능하고 본문 확인 가능한 링크 |
 | Country / Region | 관련 국가 또는 지역 |
-| Key Update | 핵심 변화 요약 |
-| AI Relevance | High / Medium / Low |
-| Report Relevance | High / Medium / Low |
-| Cluster ID | 동일 이슈 묶음 식별용 값 |
-| Duplicate Check Keyword | 중복 확인에 사용한 핵심 키워드 |
-| Status | Include / PASS / 보류 / 중복 제외 / 대표 기사 유지 등 |
-| Note | 선정 사유, 제외 사유, 대체 기사 여부 등 |
 
-### Status 값
+### Sheet 입력 예시
 
-- `Include`
-- `PASS`
-- `보류`
-- `중복 제외`
-- `대표 기사 유지`
-- `후속 기사 유지`
-- `Paywall 대체`
-- `Source 교체 필요`
-- `중복 가능성`
-- `기존 이슈 업데이트`
-- `AI 관련성 약함`
-- `리포트 활용성 낮음`
+아래는 실제 기사 리스트업 Sheet에 입력할 때 참고하는 예시 형식이다.
+예시는 컬럼 구조와 작성 톤을 보여주기 위한 것이며, 실제 입력 시에는 확인된 기사 원문 기준으로 작성한다.
 
-### 입력 원칙
+| Search Query | Category | Company / Service | Korean Title | Published Date | Source | Source Type | URL | Country / Region |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Gemini | AI/GPT | Google / Gemini | [Google] Gemini, 개발자용 신규 업데이트 공개하며 AI 개발 워크플로우 지원 확대 (2026.6.12) | 2026.6.12 | Google Blog | Official | 실제 기사 URL 입력 | US |
+| Claude Code | AI/GPT | Anthropic / Claude Code | [Anthropic] Claude Code, 정식 제공 전환하며 개발자용 AI Agent 활용 확대 (2026.6.18) | 2026.6.18 | Anthropic News | Official | 실제 기사 URL 입력 | US |
+| Meta AI | Global Big Tech | Meta | [Meta] 광고주용 AI 도구 확대하며 생성형 광고 제작과 캠페인 운영 자동화 강화 (2026.6.17) | 2026.6.17 | Meta Newsroom | Official | 실제 기사 URL 입력 | US |
+| TikTok AI Advertising | Social | TikTok | [TikTok] AI 광고 솔루션 공개하며 크리에이티브 제작과 브랜드 캠페인 효율화 지원 (2026.6.19) | 2026.6.19 | TikTok Newsroom | Official | 실제 기사 URL 입력 | Global |
+| AI Agent startup funding | Theme | AI Agent Startup | [Market] AI Agent 스타트업, 기업 워크플로우 자동화 수요 기반 투자 유치 확대 (2026.6.20) | 2026.6.20 | TechCrunch | Tech Media | 실제 기사 URL 입력 | US |
 
-- Search Query는 추후 검색 루트 확인을 위해 반드시 입력
-- Cluster ID는 동일 이슈 기사끼리 같은 값으로 입력
-- Duplicate Check Keyword는 과거 중복 확인에 사용한 키워드 입력
-- AI Relevance는 AI/GPT 카테고리에서 특히 중요하게 작성
-- Report Relevance는 최종 리포트 활용 가능성을 기준으로 판단
-- PASS 기사도 필요한 경우 제외 사유를 Note에 간단히 기록
-- Paywall 대체 기사는 원 Paywall 기사와 대체 URL을 구분해 기록
+### Sheet 입력 원칙
+
+- 기사 원문 제목은 Sheet에 별도 컬럼으로 입력하지 않음
+- 최종 Sheet는 포함 기사 중심으로 정리
+- 중복 제거, Cluster 처리, 제외 판단, AI 관련성 판단은 업무 프로세스에서 수행하되 별도 Sheet 컬럼으로 요구하지 않음
+- `Korean Title`은 최종 리포트에서 바로 활용 가능한 제목으로 작성
+- `Korean Title` 작성 규칙은 [최종 Title 작성 방식](#최종-title-작성-방식)과 [Korean Title 품질 체크](#korean-title-품질-체크)를 따른다
+- Sheet 입력용 `Korean Title`에는 URL을 넣지 않고, URL은 `URL` 컬럼에만 입력
+- `Korean Title` 형식: `[회사명] 핵심 내용 (YYYY.M.DD)`
+- 산업 전반 또는 특정 기업 중심이 아닌 경우 `[Market]` 사용
+- 날짜는 0 padding 없이 작성
+- 쉼표는 최대 1개만 사용
+- 신규 공개 서비스나 기능명에만 큰따옴표 사용
 
 ## 중복 기사 처리 방식
 
@@ -3478,8 +3461,7 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
 - [ ] AI/GPT 기사의 AI 중심성 확인
 - [ ] 기사 포함 여부 판단 점수표 기준으로 Include / PASS / 보류 판단
 - [ ] 후속 기사와 중복 기사 구분 기준 적용
-- [ ] Search Query, Cluster ID, Duplicate Check Keyword 입력 여부 확인
-- [ ] Source Type 구분 여부 확인
+- [ ] Search Query, Category, Company / Service, Korean Title, Published Date, Source, Source Type, URL, Country / Region 입력 여부 확인
 - [ ] Official Source Map 기준으로 1차 소스 확인 여부 검토
 - [ ] Source 우선순위 기준으로 최종 URL 선택 여부 확인
 - [ ] 카테고리별 우선 포함 기준에 맞는 기사인지 확인
@@ -3498,7 +3480,7 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
 - [ ] Naver, LINE, LY Corporation 단독 기사 제외
 - [ ] Google Query 기사 날짜 필터 해제 후 과거 중복 여부 확인
 - [ ] 동일 이벤트 기사 Cluster 단위 정리
-- [ ] 각 Cluster에서 가장 적합한 Source 1개만 유지
+- [ ] 각 Cluster에서 대표 Source를 구분하고 보조 출처 또는 중복 기사 기록
 - [ ] Paywall 기사를 접근 가능한 기사로 대체
 - [ ] URL이 영어 원문 또는 영어 공식 링크 기준으로 정리
 - [ ] 한국어/일본어 링크가 예외 기업 또는 현지어 공식 링크 기준에 부합
@@ -3506,7 +3488,7 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
 - [ ] URL 정상 접속 확인
 - [ ] 기사 날짜와 출처 정확성 확인
 - [ ] 최종 Korean Title 작성
-- [ ] Title이 `[Company Name] Korean Title (YYYY/M/DD) - URL` 형식에 부합
+- [ ] Sheet 입력용 Korean Title이 `[회사명] 핵심 내용 (YYYY.M.DD)` 형식에 부합
 - [ ] Title이 명사형 종결
 - [ ] `[Market]` 사용 기준 정확히 적용
 - [ ] Weekly AI Trend Report와 Global IT Trend Report에 활용 가능한 기사만 유지
