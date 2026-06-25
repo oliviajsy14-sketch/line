@@ -5,6 +5,7 @@
 - [업무 목적](#업무-목적)
 - [기본 작업 단위](#기본-작업-단위)
 - [카테고리 구분](#카테고리-구분)
+- [AI Agent 구역 처리 방식](#ai-agent-구역-처리-방식)
 - [카테고리별 기준](#카테고리별-기준)
 - [Global IT Trend Report 기사 범위](#global-it-trend-report-기사-범위)
 - [Naver / LINE 아카이빙 제외 기준](#naver--line-아카이빙-제외-기준)
@@ -19,6 +20,7 @@
 - [Google Query 기사 중복 확인 방식](#google-query-기사-중복-확인-방식)
 - [기사 선별 기준](#기사-선별-기준)
 - [Global IT Trend Report 기사 중요도 및 정렬 기준](#global-it-trend-report-기사-중요도-및-정렬-기준)
+- [수집과 최종 선택의 구분](#수집과-최종-선택의-구분)
 - [기사 제외 기준](#기사-제외-기준)
 - [국가 중요도 우선순위](#국가-중요도-우선순위)
 - [국가 우선순위 적용 방식](#국가-우선순위-적용-방식)
@@ -27,6 +29,13 @@
 - [URL 언어 기준](#url-언어-기준)
 - [Sheet 정리 방식](#sheet-정리-방식)
 - [Sheet 입력 권장 컬럼](#sheet-입력-권장-컬럼)
+- [Check Box 운영 기준](#check-box-운영-기준)
+- [n/a 입력 기준](#na-입력-기준)
+- [URL 입력 기준](#url-입력-기준)
+- [중복 기사 및 보조 출처 처리 방식](#중복-기사-및-보조-출처-처리-방식)
+- [대분류별 기사 수 표기 방식](#대분류별-기사-수-표기-방식)
+- [자동화 입력값](#자동화-입력값)
+- [자동화 출력값](#자동화-출력값)
 - [중복 기사 처리 방식](#중복-기사-처리-방식)
 - [최종 Title 작성 방식](#최종-title-작성-방식)
 - [Query 전체 리스트](#query-전체-리스트)
@@ -34,6 +43,7 @@
 - [최종 검수 체크리스트](#최종-검수-체크리스트)
 - [최종 산출물](#최종-산출물)
 - [산출물 활용 방식](#산출물-활용-방식)
+- [수정 요약](#수정-요약)
 
 ## 업무 목적
 
@@ -41,7 +51,7 @@
 - 수집 기사를 기사 리스트업 Sheet에 카테고리별 정리
 - Weekly AI Trend Report 및 Global IT Trend Report 작성에 활용
 - 중복 기사, 비대상 기사, 단순 PR성 기사 제외
-- 리포트에 활용 가능한 유의미한 기사만 최종 선별
+- Query별 관련 기사를 넓게 수집하고 최종 리포트 반영 여부는 작업자가 Check Box로 선택
 
 ## 기본 작업 단위
 
@@ -79,7 +89,9 @@
   - AI 보안
   - AI 규제
   - AI 투자
-- 기사 제목은 영어 원문 제목 기준으로 입력
+- AI/GPT 기사는 원문 제목과 본문을 참고하되, Sheet에는 최종 리포트용 `Korean Title`만 입력
+- 원문 제목은 기사 이해와 제목 작성 참고용으로만 사용하고, 별도 `Original Title` 컬럼으로 입력하지 않음
+- AI/GPT도 다른 카테고리와 동일하게 최종 Sheet에는 국문 제목 중심으로 정리
 - 관련 지역을 별도 확인
 - 이후 국문 요약 및 정리는 Global IT Trend Report 양식 기준 적용
 
@@ -262,25 +274,19 @@
 ## 전체 작업 순서
 
 1. 작업자가 입력한 날짜 범위 확인
-2. 날짜 범위 기준으로 모든 검색 및 기사 확인 진행
-3. 1차: `Google Query 전 우선 확인 링크`의 공식 사이트, Blog, Newsroom, GitHub, release notes, changelog 검토
-4. 2차: 공식 링크가 없거나 누락 가능성이 있는 항목만 Google Query 실행
-5. 3차: 공통 Tech / AI / Social Source 확인으로 외부 기사와 시장 반응 보완
-6. 4차: 중복 제거, 제외 대상 필터링, AI 관련성 판단
-7. 5차: 기사 리스트업 Sheet 입력
-8. Query List에서 `(Google Query)` 표시 항목은 Google Search 또는 Google News에서만 검색
-9. 우선 확인 링크와 우선 확인 소스의 주요 업데이트 먼저 기록
-10. Google News 및 Google Search로 추가 기사 검색
-11. Google Query 기사 Sheet 입력 전 과거 중복 여부 확인
-12. 중복 확인 시 날짜 필터 해제 후 기사 타이틀 또는 핵심 키워드로 재검색
-13. 동일 기사 또는 동일 이슈의 과거 주차 사용 여부 확인
-14. 동일 이벤트 기사는 하나의 Cluster로 묶기
-15. Cluster별 가장 적합한 Source 1개만 최종 유지
-16. Bloomberg, Reuters, NYTimes 등 Paywall 기사는 접근 가능한 기사로 대체
-17. Naver, LINE, LY Corporation 단독 기사 제외
-18. 기사 제목, 출처, 날짜, URL, 카테고리, 주요 내용, 포함 여부 Sheet 정리
-19. 최종 선별 기사별 Korean Title 작성
-20. Weekly AI Trend Report와 Global IT Trend Report에 활용 가능한 기사만 최종 유지
+2. 기존 Sheet 템플릿 복사 후 새 주차 탭 생성
+3. 카테고리별 Query List 확인
+4. Google Query 전 우선 확인 링크에서 Official Source, Blog, Newsroom, GitHub, Release Notes, Changelog 먼저 확인
+5. `(Google Query)` 표시 항목은 Google Search 또는 Google News에서 검색
+6. 공식 링크에서 누락 가능성이 있는 항목은 Google News / Google Search로 보완 검색
+7. 공통 Tech / AI / Social Source에서 주요 기사 추가 확인
+8. Naver / LINE / LY Corporation 단독 기사 제외
+9. Paywall 기사, 완전 중복 기사, 단순 재보도 기사 정리
+10. 관련 기사를 Query / Service별로 중요도 순 정렬
+11. 실제 Sheet 구조에 맞춰 Korean Title, Check Box, URL 입력
+12. 기사 없음이 확인된 Query / Service는 `n/a` 입력
+13. 자동화 agent는 Check Box를 미체크 상태로 둠
+14. 작업자가 최종 검토 후 리포트 후보 기사만 Check Box 직접 체크
 
 ## Google Query 전 우선 확인 소스
 
@@ -2128,7 +2134,7 @@ https://techcrunch.com/category/startups/
   - 새로운 수치
   - 새로운 지역 출시
   - 새로운 파트너십
-- 애매한 경우 비고란 표시:
+- 애매한 경우 내부 판단 기준으로만 활용:
   - `중복 가능성`
   - `후속 기사`
   - `기존 이슈 업데이트`
@@ -2586,7 +2592,7 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
   - 후속 발표
   - 추가 기능
   - 시장 반응
-- 비고란 표시 예시:
+- 내부 판단 기준으로만 활용 예시:
   - `대표 기사 유지`
   - `중복 제외`
   - `보완 기사 유지`
@@ -2717,6 +2723,108 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - URL이 여러 개인 경우 한 셀에 줄바꿈으로 입력 가능
 - 해당 Query 항목에서 기사 없음 또는 업데이트 없음은 `n/a`로 입력
 
+## Check Box 운영 기준
+
+- Check Box는 사람이 최종 리포트 반영 후보를 선택하기 위한 용도다.
+- 자동화 agent는 신규 입력 기사의 Check Box를 기본 미체크 상태로 생성한다.
+- 자동화 agent가 기사 중요도를 판단해 임의로 체크하지 않는다.
+- 작업자는 기사 중요도, 중복 여부, 리포트 활용 가능성을 검토한 뒤 직접 체크한다.
+- Google Sheets에서는 실제 클릭 가능한 체크박스 형식으로 설정한다.
+- Google Sheets 기준으로는 `Insert > Checkbox` 또는 데이터 유효성 체크박스를 사용한다.
+- Excel에서 실제 체크박스 구현이 어려운 경우 `TRUE/FALSE` 또는 빈 체크박스 기호 `☐`를 임시로 사용할 수 있다.
+- 기존 `O` 표시는 사용하지 않는다.
+
+## n/a 입력 기준
+
+- Query / Service 항목을 확인했지만 해당 기간 내 입력할 기사가 없으면 Korean Title 칸에 `n/a`를 입력한다.
+- `n/a`가 입력된 행은 Check Box와 URL을 비워둔다.
+- 검색 자체를 수행하지 않은 항목에는 `n/a`를 입력하지 않는다.
+- `n/a`는 “확인 완료 후 해당 기간 업데이트 없음”을 의미한다.
+
+## URL 입력 기준
+
+- URL은 실제 접속 가능하고 본문 확인 가능한 링크만 입력한다.
+- Official Source와 Tech Media가 모두 중요한 경우 URL 셀에 공식 링크를 첫 줄, 보완 기사 링크를 두 번째 줄에 입력할 수 있다.
+- URL이 여러 개인 경우 한 셀 안에서 줄바꿈으로 입력한다.
+- 단순 재보도 링크는 여러 개 넣지 않는다.
+- Paywall 링크는 최종 URL로 사용하지 않고, 접근 가능한 대체 링크를 입력한다.
+- 공식 발표와 외부 보완 기사가 같은 이슈를 다루지만 각각 정보 가치가 있으면 함께 입력할 수 있다.
+
+## 중복 기사 및 보조 출처 처리 방식
+
+- 중복 기사나 보조 출처는 별도 `Status`, `Note`, `Cluster ID` 컬럼으로 관리하지 않는다.
+- 같은 이슈를 다룬 기사 중 공식 발표가 있으면 공식 발표를 대표 URL로 우선 사용한다.
+- Tech Media 기사에 시장 반응, 수치, 경쟁사 맥락 등 추가 정보가 있으면 같은 URL 셀에 줄바꿈으로 함께 입력한다.
+- 단순 재보도나 정보 가치가 낮은 중복 기사는 Sheet에 별도로 입력하지 않는다.
+- 완전히 동일한 내용의 반복 보도는 대표 기사 1개만 유지한다.
+- 후속 기사로 볼 수 있는 경우에는 별도 기사로 입력할 수 있다.
+- 후속 기사 판단 기준은 신규 수치, 신규 지역 출시, 신규 기능 추가, 신규 파트너십, 신규 규제 변화가 있는지 여부다.
+- Paywall 기사는 최종 URL로 사용하지 않고, 본문 접근 가능한 대체 기사 또는 공식 발표로 대체한다.
+
+## 수집과 최종 선택의 구분
+
+- 기사 리스트업 Sheet의 목적은 처음부터 최종 리포트 기사만 남기는 것이 아니라, Query별 관련 기사를 수집한 뒤 검토자가 빠르게 판단할 수 있도록 정리하는 것이다.
+- 1차 수집 단계에서는 Global IT / AI / Big Tech / Asia Tech / Social / Market Trend와 관련된 기사를 넓게 리스트업한다.
+- 관련성이 있는 기사는 중요도가 낮아 보여도 누락하지 않고 Query 섹션 안에 입력한다.
+- 중요한 기사는 해당 Query 섹션의 위쪽에 배치한다.
+- 중요도가 낮거나 단순 PR성에 가까운 기사는 아래쪽에 배치한다.
+- 최종 리포트 반영 여부는 사람이 Check Box로 선택한다.
+- 단, 명백한 비대상 기사, Naver/LINE/LY Corporation 단독 기사, 완전 중복 기사, 본문 확인 불가 기사, AI/IT/플랫폼 관련성이 거의 없는 기사는 입력하지 않는다.
+
+## AI Agent 구역 처리 방식
+
+- `AI Agent`는 Weekly AI Trend Report에서 별도 상단 구역으로 관리할 수 있다.
+- 리포트 카테고리 기준으로는 `AI/GPT`에 포함된다.
+- Sheet에서는 AI Agent 관련 Query가 많기 때문에 `AI Agent`를 별도 대분류처럼 배치할 수 있다.
+- AI Agent 구역에는 OpenClaw, AutoGPT, AgentGPT, CrewAI, LangGraph, Claude Code, agentic workflow, enterprise AI agent, agentic commerce, AI payment, AI security 등 관련 기사를 입력한다.
+
+## 대분류별 기사 수 표기 방식
+
+대분류 행에는 필요 시 선정 기사 수와 전체 후보 기사 수를 표시한다.
+
+예시:
+
+- `AI Agent 5 14`
+- `AI/GPT 12 37`
+
+의미:
+
+- 앞 숫자: 사람이 Check Box로 선택한 주요 후보 기사 수
+- 뒤 숫자: 해당 대분류에서 수집된 전체 기사 수
+- 자동화 agent가 숫자를 정확히 계산할 수 있는 경우 자동 입력한다.
+- 자동 계산이 어렵다면 숫자 칸은 비워두고 작업자가 최종 검토 후 수동 업데이트한다.
+
+## 자동화 입력값
+
+자동화 agent가 작업을 수행할 때 필요한 입력값은 아래와 같다.
+
+- 검색 기간: `YYYY/MM/DD~YYYY/MM/DD`
+- 작업 주차명: 예: `6월 4주`
+- 작업 대상 Sheet 또는 파일
+- 적용 Query List
+- Google Query 전 우선 확인 링크 목록
+- 제외 대상: Naver / LINE / LY Corporation 단독 기사
+- 기존 주차 Sheet 또는 과거 기사 목록
+- 기존 Sheet 템플릿
+
+## 자동화 출력값
+
+자동화 agent는 아래 구조로 결과를 생성한다.
+
+- 대분류
+- Query / Service
+- Korean Title
+- Check Box
+- URL
+
+출력 기준:
+
+- Check Box는 기본 미체크 상태로 생성한다.
+- URL은 실제 접속 가능하고 본문 확인 가능한 링크만 입력한다.
+- 원문 제목은 별도 컬럼으로 출력하지 않는다.
+- Status, Note, AI Relevance, Report Relevance 등 판단용 컬럼은 출력하지 않는다.
+- 기사 없음이 확인된 Query / Service 항목은 `n/a`로 입력한다.
+
 ## 중복 기사 처리 방식
 
 - 같은 기업, 같은 기능, 같은 발표 내용은 중복 처리하되 Sheet 기록은 남김
@@ -2737,23 +2845,25 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
   - 신규 수치
   - 신규 지역 출시
   - 신규 기능 추가
-- 중복 기사 정리 전 비고란에 대표 기사와 보조 출처 또는 중복 기사 표시
+- 중복 기사 정리 시 내부 판단 기준으로 대표 기사와 보조 출처를 구분
 
 ## 최종 Title 작성 방식
 
-- 최종 선별 기사에는 Korean Title 필수 작성
+최종 선별된 기사에는 `Korean Title`을 반드시 작성한다.
 
 ### Title 기본 형식
 
-- `[Company Name] Korean Title (YYYY/M/DD) - URL`
+- `[회사명] 핵심 내용 (YYYY.M.DD)`
 
 ### Title 작성 규칙
 
-- Company Name은 English로 작성
+- 회사명은 English로 작성
 - Title 본문은 Korean으로 작성
 - 날짜는 기사 발행일 기준으로 작성
 - 날짜는 0 padding 없이 작성
-  - 예시: `2026/6/24`
+  - 예시: `2026.4.7`
+- 제목 안 날짜에는 `/`를 사용하지 않음
+- URL은 제목 뒤에 붙이지 않고 별도 URL 칸에 입력
 - Title은 항상 명사형 종결
 - 문장 끝 금지 표현:
   - `함`
@@ -2761,28 +2871,26 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
   - `없음`
   - `됨`
 - 기업명, 서비스명, 기능명은 English로 작성
-- 신규 기능명 또는 신규 서비스명은 필요한 경우 큰따옴표 사용 가능
+- 신규 공개 서비스나 기능명에만 필요한 경우 큰따옴표 사용
 - 기존 서비스명, 기존 기능명에는 불필요한 큰따옴표 사용 금지
 - 제목은 핵심 변화 중심으로 간결하게 작성
-- 쉼표는 가급적 1개 이하로 사용
+- 쉼표는 최대 1개만 사용
 
 ### `[Market]` 사용 기준
 
-- 아래 기사에는 `[Company Name]` 대신 `[Market]` 사용:
-  - 여러 기업을 함께 다루는 기사
-  - market-wide trends 기사
-  - country-level trends 기사
-  - industry changes 기사
-  - company strategy comparisons 기사
-  - 특정 기업보다 시장 구조 변화가 더 중요한 기사
-  - 특정 국가의 유저 행동, 규제, 산업 변화, 소비 트렌드 기사
+- 여러 기업을 함께 다루는 기사
+- market-wide trends 기사
+- country-level trends 기사
+- industry changes 기사
+- company strategy comparisons 기사
+- 특정 기업보다 시장 구조 변화가 더 중요한 기사
+- 특정 국가의 유저 행동, 규제, 산업 변화, 소비 트렌드 기사
 
 ### Title 예시
 
-- `[Google] Gemini 기반 Search AI Mode 확장과 광고 노출 테스트 본격화 (2026/6/24) - URL`
-- `[Meta] WhatsApp Channels 광고 도입으로 메신저 수익화 전략 확대 (2026/6/24) - URL`
-- `[Kakao] ChatGPT 기반 AI 챗봇 도입으로 KakaoTalk 내 검색·대화 경험 강화 (2026/6/24) - URL`
-- `[Market] US Gen Z의 social media 검색 증가로 기존 Search 중심 정보 탐색 구조 변화 (2026/6/24) - URL`
+- `[OpenAI] "Safety Fellowship" 공개하며 AI 안전과 정렬 연구 인재 육성 프로그램 운영 (2026.4.6)`
+- `[Google] Gemini overlay와 Gemini Live UI 통합 재설계 통해 AOS 상호작용 방식과 Multi-modal 접근성 개선 (2026.4.7)`
+- `[Market] AI data center, 투자자 요구로 Big Tech 대상 전력과 수자원 사용량 공개 압박 확대 (2026.4.8)`
 
 ## Query 전체 리스트
 
@@ -3199,3 +3307,12 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - Cluster 대표 기사는 최종 리포트 기사 후보로 활용
 - 제외 기사와 중복 기사 기록은 이후 중복 방지용으로 활용
 - 최종 Korean Title은 리포트 작성 및 Sheet 정리 시 그대로 활용 가능
+
+## 수정 요약
+
+- 자동화 agent 실행 기준에 맞춰 전체 작업 순서를 공식 링크 우선 확인, 보완 검색, Sheet 입력, 사람의 Check Box 검토 순서로 정리
+- Sheet 입력 구조를 `대분류`, `Query / Service`, `Korean Title`, `Check Box`, `URL` 중심으로 통일
+- `Original Title`, `Status`, `Note`, `AI Relevance`, `Report Relevance`, `Cluster ID`, `Duplicate Check Keyword`, `Key Update`를 Sheet 컬럼으로 만들지 않도록 정리
+- Korean Title 날짜 형식을 `[회사명] 핵심 내용 (YYYY.M.DD)`로 통일하고 URL은 별도 URL 칸에 입력하도록 수정
+- Check Box, `n/a`, URL 복수 입력, 중복 기사 및 보조 출처 처리, 자동화 입력값/출력값 기준을 추가
+- Naver / LINE / LY Corporation 단독 기사 제외 기준과 공식 링크 우선 확인 후 Google Query 실행 원칙은 유지
