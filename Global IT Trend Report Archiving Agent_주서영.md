@@ -64,7 +64,8 @@
 ## 기본 작업 단위
 
 - 작업 주기: 주 1회
-- 검색 기간: 작업자가 `YYYY/MM/DD~YYYY/MM/DD` 형식으로 직접 입력
+- 검색 기간: 작업자가 `yyyy.mm.dd~yyyy.mm.dd` 형식으로 직접 입력
+- 검색 기간 예시: `2026.6.18~2026.6.24`
 - 작업 위치: 기사 리스트업 Sheet
 - 탭 생성 방식: 주차별 새 탭 생성
 - 탭명 예시: `4월 3주`, `4월 4주`, `6월 4주`
@@ -337,7 +338,7 @@
 ## 작업 전 준비사항
 
 - [ ] 작업자가 입력한 검색 기간 확인
-- [ ] 검색 기간이 `YYYY/MM/DD~YYYY/MM/DD` 형식인지 확인
+- [ ] 검색 기간이 `yyyy.mm.dd~yyyy.mm.dd` 형식인지 확인
 - [ ] 기사 리스트업 Sheet의 기존 템플릿 확인
 - [ ] 새 주차 탭 생성
 - [ ] 기존 서식 유지
@@ -346,16 +347,18 @@
 
 ## 날짜 입력 방식
 
-- 입력 형식: `YYYY/MM/DD~YYYY/MM/DD`
-- 입력 예시: `2026/06/18~2026/06/24`
+- 입력 형식: `yyyy.mm.dd~yyyy.mm.dd`
+- 입력 예시: `2026.6.18~2026.6.24`
+- 개별 기사 발행일 형식: `yyyy.mm.dd`
 - 적용 범위:
   - Official Source 확인
   - Google News 검색
   - Google Search 검색
   - 기사 발행일 검수
 - 주의사항:
-  - Sheet 최종 Title 날짜는 0 padding 없이 작성
-  - 최종 Title 날짜 예시: `2026/6/24`
+  - Sheet 최종 Title 날짜는 0 padding 없이 `yyyy.m.d` 형식으로 작성
+  - 최종 Title 날짜 예시: `2026.6.24`
+  - 날짜에는 `/`를 사용하지 않음
 
 ## 전체 작업 순서
 
@@ -2181,7 +2184,7 @@ https://techcrunch.com/category/startups/
 ## Query List 적용 방식
 
 - Query List는 Weekly Archiving 기본 검색 대상 목록으로 사용
-- 모든 Query는 작업자 입력 날짜 범위 `YYYY/MM/DD~YYYY/MM/DD` 기준으로 검색
+- 모든 Query는 작업자 입력 날짜 범위 `yyyy.mm.dd~yyyy.mm.dd` 기준으로 검색
 - `(Google Query)` 표시 항목:
   - Official Source 확인 대상 아님
   - Google Search 또는 Google News에서만 검색
@@ -2234,7 +2237,7 @@ https://techcrunch.com/category/startups/
   - partnership
   - funding
   - regulation
-- 검색 기간은 작업자 입력 `YYYY/MM/DD~YYYY/MM/DD` 범위 적용
+- 검색 기간은 작업자 입력 `yyyy.mm.dd~yyyy.mm.dd` 범위 적용
 - 검색 결과는 최신순과 관련도 기준으로 확인
 - 동일 내용이 여러 매체에 반복되면 아래 우선순위 적용:
   1. 원출처에 가까운 기사
@@ -2974,7 +2977,7 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - 핵심 요약 컬럼은 만들지 않음
 - AI Relevance, Report Relevance, Status, Note 등 판단용 컬럼은 만들지 않음
 - 기존 `O` 표시 컬럼은 사용하지 않고 `Check Box` 컬럼 사용
-- 국문 제목은 `[회사명] 핵심 내용 (YYYY.M.DD)` 형식 적용
+- 국문 제목은 `[회사명] 핵심 내용 (yyyy.m.d)` 형식 적용
 - 산업 전반 또는 특정 기업 중심이 아닌 경우 `[Market]` 사용
 - 날짜는 `2026.4.7`처럼 0 padding 없이 작성
 - 신규 공개 서비스나 기능명에만 큰따옴표 사용
@@ -3056,7 +3059,8 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 
 자동화 agent가 작업을 수행할 때 필요한 입력값은 아래와 같다.
 
-- 검색 기간: `YYYY/MM/DD~YYYY/MM/DD`
+- 검색 기간: `yyyy.mm.dd~yyyy.mm.dd`
+- 입력 예시: `2026.6.18~2026.6.24`
 - 작업 주차명: 예: `6월 4주`
 - 작업 대상 Sheet 또는 파일
 - 적용 Query List
@@ -3150,7 +3154,7 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 
 ### Title 기본 형식
 
-- `[회사명] 핵심 내용 (YYYY.M.DD)`
+- `[회사명] 핵심 내용 (yyyy.m.d)`
 
 ### Title 작성 규칙
 
@@ -3194,7 +3198,7 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 최종 Korean Title 작성 후 아래 항목을 검수한다.
 
 - [ ] `[회사명]` 또는 `[Market]` 형식인지 확인
-- [ ] 날짜가 `(YYYY.M.DD)` 형식인지 확인
+- [ ] 날짜가 `(yyyy.m.d)` 형식인지 확인
 - [ ] 문장 끝이 `함`, `있음`, `없음`, `됨`으로 끝나지 않는지 확인
 - [ ] 제목이 명사형으로 자연스럽게 끝나는지 확인
 - [ ] 쉼표가 1개 이하인지 확인
@@ -3628,7 +3632,7 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - [ ] URL 정상 접속 확인
 - [ ] 기사 날짜와 출처 정확성 확인
 - [ ] 최종 Korean Title 작성
-- [ ] Sheet 입력용 Korean Title이 `[회사명] 핵심 내용 (YYYY.M.DD)` 형식에 부합
+- [ ] Sheet 입력용 Korean Title이 `[회사명] 핵심 내용 (yyyy.m.d)` 형식에 부합
 - [ ] 기존 `O` 표시 방식 대신 클릭 가능한 `Check Box` 컬럼을 사용했는지 확인
 - [ ] 기사 없음 또는 해당 기간 업데이트 없음이 `n/a`로 입력되었는지 확인
 - [ ] Title이 명사형 종결
@@ -3658,6 +3662,6 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - 자동화 agent 실행 기준에 맞춰 전체 작업 순서를 공식 링크 우선 확인, 보완 검색, Sheet 입력, 사람의 Check Box 검토 순서로 정리
 - Sheet 입력 구조를 `대분류`, `Query / Service`, `Korean Title`, `Check Box`, `URL` 중심으로 통일
 - `Original Title`, `Status`, `Note`, `AI Relevance`, `Report Relevance`, `Cluster ID`, `Duplicate Check Keyword`, `Key Update`를 Sheet 컬럼으로 만들지 않도록 정리
-- Korean Title 날짜 형식을 `[회사명] 핵심 내용 (YYYY.M.DD)`로 통일하고 URL은 별도 URL 칸에 입력하도록 수정
+- Korean Title 날짜 형식을 `[회사명] 핵심 내용 (yyyy.m.d)`로 통일하고 URL은 별도 URL 칸에 입력하도록 수정
 - Check Box, `n/a`, URL 복수 입력, 중복 기사 및 보조 출처 처리, 자동화 입력값/출력값 기준을 추가
 - Naver / LINE / LY Corporation 단독 기사 제외 기준과 공식 링크 우선 확인 후 Google Query 실행 원칙은 유지
