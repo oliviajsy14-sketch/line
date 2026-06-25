@@ -366,28 +366,50 @@ KR Summary는 단순 번역이나 짧은 요약이 아니라, 기사 내용을 �
 - “중소 광고주의 캠페인 제작 부담을 줄이고 Creator 기반 소재 공급을 확대해 Snapchat Ads의 광고 집행 효율 개선”
 - “기업용 워크플로우 내 반복 업무를 AI Agent가 대신 처리하는 구조로, 단순 Chatbot을 넘어 업무 자동화 플랫폼 전환 추진”
 
-## 10. 숫자 / 단위 표기 규칙
+## 10. 숫자 / 날짜 / 단위 표기 규칙
 
-숫자는 간결하게 표기한다.
+숫자, 날짜, 단위는 최종 KR Summary 출력 직전 반드시 아래 표준 형식으로 정리한다. 원문이나 초안에 다른 표현이 있더라도 최종 출력에는 표준 표현만 남긴다.
 
+숫자 / 단위 표준화 규칙은 다음과 같다.
+
+- thousand → K
 - million → M
 - billion → B
 - trillion → T
-- thousand → K
 - 10 million+ → 10M+
 - more than 10 million → 10M+
 - over 30 billion → 30B+
+- 11% 이상 → 11%+
+- 전년 대비 30% 이상 상승 → YoY +30%+
+- n배 이상 증가 → 2x+ 증가 형식으로 표기
 - year-over-year → YoY
 - quarter-over-quarter → QoQ
 - month-over-month → MoM
 - compound annual growth rate → CAGR
+- USD → $
 - 달러는 `$` 사용
+- 수백 달러 → 수백 달러 그대로 사용
 - 퍼센트는 `%` 사용
-- 분기는 `1Q26` 형식 사용
+- 분수 → `%`
+- 소수점은 둘째자리까지만 표기
+- 월별 활성 유저 / 월간 활성 유저 → MAU
+- 일간 활성 유저 → DAU
+- MAU 표기 형식 → 200M MAU
 - 전년 대비 증가는 `YoY +%` 형식 사용
 - 전분기 대비 증가는 `QoQ +%` 형식 사용
-- 월간 활성 유저는 `MAU` 사용
-- 일간 활성 유저는 `DAU` 사용
+
+날짜 / 기간 표준화 규칙은 다음과 같다.
+
+- 2026.02.03 → 2026.2.3
+- 년월일이 모두 나오는 경우 → 2026.3.16 형식
+- 년월까지만 나오는 경우 → 2026년 3월 형식
+- 상반기 → 1H
+- 하반기 → 2H
+- 2025년 상반기 → 1H25
+- 2025년 하반기 → 2H25
+- 2025년 4분기 / 4분기 → 4Q25 형식
+- 2026년 1분기 → 1Q26 형식
+- 분기는 `1Q26` 형식 사용
 
 예시는 다음과 같다.
 
@@ -396,31 +418,82 @@ KR Summary는 단순 번역이나 짧은 요약이 아니라, 기사 내용을 �
 - grew 25% year-over-year → YoY +25%
 - first quarter of 2026 → 1Q26
 
-## 11. 용어 표준화
+## 11. 용어 표준화 및 키워드 표준화
 
-아래 용어는 반드시 통일한다.
+KR Summary 작성 시 아래 표준 표현만 사용한다. 원문이나 초안에 금지 표현이 있더라도 최종 출력 직전 반드시 표준 표현으로 교체한다.
 
-- user / users → 유저
-- chatbot → Chatbot
-- AI agent → AI Agent
-- agentic → Agentic
-- AI assistant → AI Assistant
-- multimodal → Multi-modal
-- on-device → On-device
-- third-party → 3rd-party
-- end-to-end encryption → E2E Encryption
+### 11-1. 핵심 키워드 표준화
+
+- 워크플로 → 워크플로우
+- 분수 → %
+- year-over-year → YoY
+- 롤백 → roll back
+- 배민 → 배달의 민족
+- 유지율 → 리텐션
+- 유튜브 / Youtube → YouTube
+- Nvidia → NVIDIA
+- Character.AI / Character AI → character.ai
+- Stability.AI → Stability AI
+- 아마존 / AWS → Amazon
+- 슈퍼앱 → Super App
+- 유저 기반 / 유저층 → user base
+- 환각 → Hallucination
+- 숏폼 → Short-form
+- 롱폼 → Long-form
+- 애드온 → add-on
+- 온프레미스 → On-premise
+- 온디바이스 → On-device
+- 음란 → NSFW
+- 인하우스 → in-house
+- source → 소스
+- 밈 → Meme
+- 인스트림 → In-stream
+- 웹3 / web3 → Web3
+- 연평균 성장률 → CAGR
+- end to end / 종단 간 / 엔드투엔드 → E2E
+- 종단간 암호화 → E2E Encryption
+- 인앱 → in-app
+- app → 앱
+- Passkey → 패스키
+- 암호화폐 / 코인 / 디지털화폐 → 암호화폐
+- 소상공인 → SME
+- 월렛 / 디지털 월렛 / 지갑 / 디지털 지갑 / 암호 지갑 → 월렛
+- 이커머스 / e커머스 / ecommerce / e-commerce / e-Commerce → e-commerce
+- 메타버스 → 메타버스
+- 멀티모달 → Multi-modal
+- 코로나 / 코로나19 / Covid 19 / 전염병 / 팬데믹 → 코로나19
+- 탈도장화 → 탈도장화
+- 비현금 → 캐시리스
+- mini app / mini programs / 미니 프로그램 / 미니앱 → mini app
+- iOS App Store / Apple App Store → Apple App Store
+- 구글 플레이 / 구글 플레이 스토어 / Google Play → Google Play Store
+- 음성 AI / 음성 어시스턴트 → Voice AI / Voice AI Assistant
+- AI Code Agent / AI 코드 에이전트 → AI Code Agent
+- AI 비서 → AI Assistant
+- AI 에이전트 → AI Agent
+- 사용자 / 이용자 → 유저
+- 고객 → 문맥에 따라 유저 또는 고객사
+- U.S. → US
+- Feed → 피드
 - Android → AOS
-- desktop → 데스크탑
-- beta / β版 → 베타
-- social media → social media
-- generative AI → 생성 AI
-- workflow → 워크플로우
-- live commerce → 라이브 커머스
-- NSFW → NSFW
+- 제3자 → 3rd-party
+- 전자 결제 서비스 / 온라인 결제 서비스 / 모바일 결제 서비스 → 모바일 페이
+- 웹베타 → web beta
+- 라이브 스트리밍 쇼핑 / 동영상 쇼핑 → 라이브 커머스
+- creator → 크리에이터
+- 출시 → 공개 또는 릴리스
+- 이번 → 해당
+- 데스크톱 → 데스크탑
+- 실험 → 테스트
+- sns → Social Media 또는 소셜 미디어
+- Millenial → 밀레니얼
+- 챗봇 → Chatbot
+- 재설계 → 개편
+- Perplexity → Perplexity AI
 
-회사명과 서비스명은 원문 표기를 우선 유지한다.
+### 11-2. 서비스명 / 회사명 표기
 
-예시는 다음과 같다.
+회사명과 서비스명은 원문 표기를 우선하되, 아래 표준 표기가 있는 경우 반드시 표준 표기를 따른다.
 
 - OpenAI
 - Anthropic
@@ -436,38 +509,103 @@ KR Summary는 단순 번역이나 짧은 요약이 아니라, 기사 내용을 �
 - YouTube
 - Instagram
 - WhatsApp
+- NVIDIA
+- character.ai
+- Stability AI
+- Perplexity AI
 
 일반 명사는 한국어로 자연스럽게 번역한다. Hub, Directory, Native, Edge 같은 단어가 고유 기능명이 아니면 문맥에 맞게 한국어화한다.
 
-People role 표기 원칙은 다음과 같다.
+### 11-3. 직함 / 인물 표기 규칙
 
-- 주요 인물은 가능하면 소속 + 직함 + 이름으로 표기한다.
-- 예: Perplexity CEO Aravind Srinivas
-- 단, 인물 자체가 핵심이 아니면 불필요하게 이름을 반복하지 않는다.
+인물명은 가능한 한 소속 + 직함 + 이름 순서로 표기한다.
 
-## 12. 국가 / 지역 표기 규칙
+- OpenAI CEO Sam Altman
+- Perplexity AI CEO Aravind Srinivas
+- NVIDIA CEO Jensen Huang
+- Google DeepMind CEO Demis Hassabis
 
-국가명은 English로 표기한다.
+국문 직함이 필요한 경우에도 회사명과 이름은 영어로 유지한다.
 
-예시는 다음과 같다.
+- OpenAI CEO Sam Altman은 신규 Agent 전략을 설명
+- Perplexity AI CEO Aravind Srinivas는 AI 검색 서비스 확장 방향을 언급
 
+단, 인물 자체가 핵심이 아니면 불필요하게 이름을 반복하지 않는다.
+
+### 11-4. 기호 / 문장부호 표준화
+
+- 중간점 `·`은 사용하지 않는다.
+- 중간점이 있는 경우 쉼표, 접속어, 띄어쓰기 등으로 자연스럽게 변경한다.
+- 작은따옴표는 사용하지 않는다.
+- 큰따옴표는 신규 기능명 또는 신규 서비스명에만 사용한다.
+- 백틱은 사용하지 않는다.
+- 이모지는 사용하지 않는다.
+- 괄호 설명은 과도하게 사용하지 않는다.
+
+## 12. 국가 / 지역 / 기관 표기 규칙
+
+국가명은 한국어 대신 English로 표기한다. 지역 확장 기사에서는 지역명을 가능하면 포함한다.
+
+국가 / 지역 표준화 규칙은 다음과 같다.
+
+- 대한민국 → South Korea
+- 중국 → China
+- 일본 → Japan
+- 베트남 → Vietnam
+- 영국 → UK
+- 미국 → US
+- 국내 → 해당 국가명 + 내부
 - US
 - China
 - Japan
 - Korea
+- South Korea
 - Taiwan
 - Thailand
 - Singapore
 - India
+- Vietnam
+- UK
 - Europe
 - EU
 
-지역 확장 기사에서는 지역명을 가능하면 포함한다.
+기관명 표준화 규칙은 다음과 같다.
 
-예시는 다음과 같다.
+- 한국 행정안전부 → South Korea Ministry of the Interior and Safety
+- 미국 법무부 → US Department of Justice
+- 미국 국방부 → 첫 언급 시 US Department of War로 풀어쓰기
+- US 연방 법원 전체 → US Courts
+- 특정 1개 법원 또는 대법원 → US Court
+
+지역 표기 예시는 다음과 같다.
 
 - US, Japan, Europe 대상 베타 공개
 - India 유저 대상 기능 확대
+
+### 12-1. 축약어 표기 규칙
+
+축약어는 처음 등장할 때 풀네임 뒤 괄호 안에 축약어를 함께 표기한다. 그 다음 등장부터는 축약어만 사용한다.
+
+기본 형식은 다음과 같다.
+
+- Estimated Time of Arrival (ETA)
+- Compound Annual Growth Rate (CAGR)
+- Monthly Active Users (MAU)
+- Daily Active Users (DAU)
+
+예시는 다음과 같다.
+
+- 첫 언급: Estimated Time of Arrival (ETA) 예측 기능을 공개
+- 이후 언급: ETA 정확도를 개선하며 배송 추적 경험 강화
+
+타이틀에 풀네임까지 쓰면 제목이 너무 길어지는 경우에는 타이틀에는 축약어만 사용한다. 이 경우 본문 첫 언급에서 반드시 풀네임과 축약어를 함께 표기한다.
+
+예시는 다음과 같다.
+
+- 제목: **[회사명] ETA 예측 기능 고도화하며 배송 추적 경험 강화 (2026.6.24)**
+- 본문 첫 언급: 해당 기능은 Estimated Time of Arrival (ETA) 예측 정확도를 높여 유저가 배송 상태를 더 구체적으로 확인하도록 지원
+
+MAU, DAU, YoY, QoQ, CAGR, AI, API처럼 업무상 일반적으로 통용되는 약어도 본문에서 처음 등장할 때 풀네임이 필요한 경우에는 풀네임 + 괄호 약어 형식으로 작성한다. 다만 문장이 과도하게 길어지거나 리포트 가독성이 떨어지는 경우에는 통용 약어를 바로 사용할 수 있다.
 
 ## 13. 요약 내용 구성 기준
 
@@ -536,7 +674,7 @@ PASS 사유 예시는 다음과 같다.
 
 ## 16. 품질 검수 체크리스트
 
-출력 전 반드시 아래 항목을 검수한다.
+출력 전 반드시 아래 항목을 검수한다. 특히 키워드 표준화 규칙은 최종 출력 직전 반드시 적용하며, 원문에 금지 표현이 있더라도 최종 KR Summary에는 표준 표현만 남겨야 한다.
 
 구조 검수 항목은 다음과 같다.
 
@@ -569,6 +707,21 @@ PASS 사유 예시는 다음과 같다.
 - 기존 기능 확대나 루머에 큰따옴표를 쓰지 않았는가
 - 작은따옴표를 쓰지 않았는가
 - 중간점, 백틱, 이모지를 쓰지 않았는가
+- 괄호 설명을 과도하게 사용하지 않았는가
+
+키워드 검수 항목은 다음과 같다.
+
+- 금지 표현이 최종 KR Summary에 남아 있지 않은가
+- 회사명, 서비스명, 기능명 표기가 표준 표현과 일치하는가
+- 숫자, 날짜, 분기, 증감률 표기가 표준 형식과 일치하는가
+- 국가명은 English로 표기했는가
+- Android는 AOS로 교체했는가
+- 사용자 / 이용자는 유저로 교체했는가
+- AWS 또는 아마존을 Amazon으로 통일했는가
+- YouTube, NVIDIA, character.ai, Stability AI, Perplexity AI 표기가 정확한가
+- “출시”, “이번”, 중간점이 남아 있지 않은가
+- 축약어 첫 언급은 풀네임 + 괄호 약어 형식으로 작성했는가
+- 타이틀에서 축약어만 사용한 경우, 본문 첫 언급에서 풀네임 + 괄호 약어 형식을 적용했는가
 - 수치 단위가 K/M/B/T 형식으로 정리되었는가
 - Android는 AOS로 표기했는가
 - beta / β版은 베타로 표기했는가
