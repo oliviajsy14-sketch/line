@@ -41,6 +41,9 @@
 - [기본 작업 단위](#기본-작업-단위)
 - [카테고리 구분](#카테고리-구분)
 - [AI Agent 구역 처리 방식](#ai-agent-구역-처리-방식)
+- [AI Agent 세부 Query 우선 배치 기준](#ai-agent-세부-query-우선-배치-기준)
+- [AI Agent 기본 Query 배치 기준](#ai-agent-기본-query-배치-기준)
+- [AI Agent 기사 배치 예시](#ai-agent-기사-배치-예시)
 - [카테고리별 기준](#카테고리별-기준)
 - [Global IT Trend Report 기사 범위](#global-it-trend-report-기사-범위)
 - [Naver / LINE 아카이빙 제외 기준](#naver--line-아카이빙-제외-기준)
@@ -1396,6 +1399,49 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - 리포트 카테고리 기준으로는 `AI/GPT`에 포함된다.
 - Sheet에서는 AI Agent 관련 Query가 많기 때문에 `AI Agent`를 별도 대분류처럼 배치할 수 있다.
 - AI Agent 구역에는 OpenClaw, AutoGPT, AgentGPT, CrewAI, LangGraph, Claude Code, agentic workflow, enterprise AI agent, agentic commerce, AI payment, AI security 등 관련 기사를 입력한다.
+- AI Agent 관련 기사의 최종 배치 위치는 아래 우선순위를 따른다.
+  1. AI Agent 구역 내 세부 Query와 직접 매칭되는 경우 해당 세부 Query 아래에 입력하고, `AI Agent` 기본 Query로 올리지 않는다.
+  2. AI Agent 관련 기사이지만 AI Agent 구역 내 세부 Query와 직접 매칭되지 않는 경우 `AI Agent` 대분류의 기본 Query인 `AI Agent` 아래에 입력한다.
+  3. AI Agent가 단순 언급 수준인 경우 AI Agent 구역으로 이동하지 않고 원래 회사/서비스 Query에 입력한다.
+
+## AI Agent 세부 Query 우선 배치 기준
+
+- AI Agent 관련 기사라도 AI Agent 구역 안에 이미 해당 세부 Query가 있으면, `AI Agent` 기본 Query가 아니라 해당 세부 Query 아래에 입력한다.
+- 기사 발견 위치나 검색 Query보다 최종 배치 Query를 우선하되, AI Agent 구역 내부에서는 세부 Query 매칭을 최우선으로 한다.
+- 예를 들어 Claude Cowork 관련 기사는 Anthropic, Claude, Claude Code, AI/GPT 쪽에서 발견되더라도 `AI Agent > Claude Cowork`에 입력한다.
+- OpenClaw 관련 기사는 `AI Agent > OpenClaw (Moltbot, Clawdbot)`에 입력한다.
+- AutoGen 관련 기사는 `AI Agent > Microsoft AutoGen` 또는 `AI Agent > AutoGen` 중 실제 Query와 더 가까운 항목에 입력한다.
+- CrewAI 관련 기사는 `AI Agent > CrewAI`에 입력한다.
+- LangGraph 관련 기사는 `AI Agent > LangGraph`에 입력한다.
+- KIRA 관련 기사는 `AI Agent > KIRA`에 입력한다.
+- Wrtn Crack 또는 Crack 관련 기사는 해당 시트의 Query 표기에 맞춰 `Wrtn Crack` 또는 `Crack (크랙)`에 입력한다.
+- Nomi, Kindroid, Paradot, Replika, Poketomo, Hume AI 등 AI Agent 구역 내 세부 Query와 직접 관련된 기사는 각각의 세부 Query 아래에 입력한다.
+
+## AI Agent 기본 Query 배치 기준
+
+- AI Agent 관련 기사이지만 AI Agent 구역 내 세부 Query와 직접 매칭되지 않는 경우에만 `AI Agent > AI Agent` 기본 Query 아래에 입력한다.
+- 특히 Spotify, Apple, Google, Meta, Amazon, Microsoft, OpenAI, Anthropic, TikTok, Snapchat, Discord 등 일반 회사/서비스 Query에서 발견된 기사라도, 기사 핵심이 새로운 AI Agent / Agentic AI / autonomous task / tool-use / workflow automation / agentic commerce / agentic payment / coding agent / enterprise agent라면 `AI Agent > AI Agent`에 배치한다.
+- 단, 해당 기사 내용이 AI Agent 구역 내 기존 세부 Query와 직접 매칭되면 `AI Agent > AI Agent`가 아니라 해당 세부 Query에 입력한다.
+- 단순히 AI Agent가 홍보 문구로 언급되었거나 실제 autonomous task, tool-use, workflow automation 기능이 없는 기사는 AI Agent 기본 Query로 이동하지 않는다.
+
+## AI Agent 기사 배치 예시
+
+| 발견 Query | 기사 핵심 내용 | 최종 배치 |
+|---|---|---|
+| Anthropic | Claude Cowork 관련 AI Agent 업데이트 | AI Agent > Claude Cowork |
+| Claude | Claude Cowork 기반 업무 자동화 기능 확장 | AI Agent > Claude Cowork |
+| Microsoft | AutoGen 관련 multi-agent workflow 업데이트 | AI Agent > Microsoft AutoGen 또는 AutoGen |
+| OpenClaw | OpenClaw 버전 업데이트 | AI Agent > OpenClaw (Moltbot, Clawdbot) |
+| CrewAI | CrewAI 신규 기능 또는 release note | AI Agent > CrewAI |
+| LangGraph | LangGraph agent workflow 업데이트 | AI Agent > LangGraph |
+| Spotify | Spotify가 AI Agent 기반 음악 추천 또는 creator workflow 자동화 기능 공개 | AI Agent > AI Agent |
+| Apple | Apple이 Siri 기반 agentic task automation 기능 발표 | AI Agent > AI Agent |
+| Google AI | Google이 Gemini 기반 범용 task automation agent 공개 | AI Agent > AI Agent |
+| Meta AI | Meta가 광고 운영 자동화 business AI agent 공개 | AI Agent > AI Agent |
+| Amazon AI | Amazon이 agentic shopping 또는 Bedrock Agent 기반 workflow 자동화 공개 | AI Agent > AI Agent |
+| Gemini | 일반 Gemini UI 업데이트 | AI/GPT > Gemini |
+| Apple | 일반 iOS 기능 업데이트 또는 Apple Intelligence 일반 기능 개선 | AI/GPT 또는 Global Big Tech > Apple / iOS |
+| Spotify | 일반 social/audio platform 업데이트 | Theme 또는 해당 관련 Query |
 
 ## 대분류별 기사 수 표기 방식
 
@@ -1798,6 +1844,12 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - Sheet는 대분류 → Query / Service → 기사 리스트 순서로 입력한다.
 - 대분류와 Query / Service 순서는 해당 시트의 Query List 순서를 strict하게 따른다.
 - 기사 입력 시 Query / Service 순서를 바꾸지 않는다.
+- 기사 발견 Query와 최종 배치 Query는 다를 수 있다.
+- 최종 배치 Query는 검색된 위치가 아니라 기사 핵심 내용과 기존 Query List 매칭 여부를 기준으로 결정한다.
+- AI Agent 관련 기사라도 AI Agent 구역 내 세부 Query와 직접 매칭되면 해당 세부 Query에 입력한다.
+- AI Agent 관련 기사이지만 AI Agent 구역 내 세부 Query와 직접 매칭되지 않는 경우에만 `AI Agent > AI Agent` 기본 Query에 입력한다.
+- 회사명 Query와 AI Agent Query가 동시에 해당될 경우, 먼저 AI Agent 세부 Query 매칭 여부를 확인하고, 세부 Query가 없을 때만 `AI Agent > AI Agent`로 배치한다.
+- 단순히 AI Agent가 홍보 문구로 언급된 기사나 실제 autonomous task, tool-use, workflow automation 기능이 없는 기사는 AI Agent 구역으로 이동하지 않는다.
 - 특정 Query에서 기사가 여러 개 발견되면 해당 Query 아래에 여러 행으로 입력한다.
 - 특정 Query에서 해당 기간 기사가 없으면 `n/a`를 입력한다.
 - Query를 찾지 못했다고 임의로 삭제하지 않는다.
@@ -3696,6 +3748,7 @@ https://techcrunch.com/category/startups/
 
 ## 수정 요약
 
+- AI Agent 기사는 세부 Query 매칭 우선, 세부 Query가 없을 때만 AI Agent 기본 Query에 배치하는 기준 추가
 - 자동화 실행 모드(`weekly`, `global`) 추가
 - 자동화 입력값과 Output Schema 구체화
 - 중복 기사 처리 방식 통합
