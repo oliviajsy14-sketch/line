@@ -12,6 +12,7 @@
 - [날짜 입력 방식](#날짜-입력-방식)
 - [전체 작업 순서](#전체-작업-순서)
 - [Google Query 전 우선 확인 소스](#google-query-전-우선-확인-소스)
+- [Google Query 전 우선 확인 링크](#google-query-전-우선-확인-링크)
 - [Query List 적용 방식](#query-list-적용-방식)
 - [Official Source 확인 방식](#official-source-확인-방식)
 - [Google Query 및 외부 기사 검색 방식](#google-query-및-외부-기사-검색-방식)
@@ -260,20 +261,24 @@
 
 1. 작업자가 입력한 날짜 범위 확인
 2. 날짜 범위 기준으로 모든 검색 및 기사 확인 진행
-3. Google Query 전 Official Source가 존재하는 기업·서비스·제품 우선 확인
-4. Query List에서 `(Google Query)` 표시 항목은 Google Search 또는 Google News에서만 검색
-5. 우선 확인 소스의 주요 업데이트 먼저 기록
-6. Google News 및 Google Search로 추가 기사 검색
-7. Google Query 기사 Sheet 입력 전 과거 중복 여부 확인
-8. 중복 확인 시 날짜 필터 해제 후 기사 타이틀 또는 핵심 키워드로 재검색
-9. 동일 기사 또는 동일 이슈의 과거 주차 사용 여부 확인
-10. 동일 이벤트 기사는 하나의 Cluster로 묶기
-11. Cluster별 가장 적합한 Source 1개만 최종 유지
-12. Bloomberg, Reuters, NYTimes 등 Paywall 기사는 접근 가능한 기사로 대체
-13. Naver, LINE, LY Corporation 단독 기사 제외
-14. 기사 제목, 출처, 날짜, URL, 카테고리, 주요 내용, 포함 여부 Sheet 정리
-15. 최종 선별 기사별 Korean Title 작성
-16. Weekly AI Trend Report와 Global IT Trend Report에 활용 가능한 기사만 최종 유지
+3. 1차: `Google Query 전 우선 확인 링크`의 공식 사이트, Blog, Newsroom, GitHub, release notes, changelog 검토
+4. 2차: 공식 링크가 없거나 누락 가능성이 있는 항목만 Google Query 실행
+5. 3차: 공통 Tech / AI / Social Source 확인으로 외부 기사와 시장 반응 보완
+6. 4차: 중복 제거, 제외 대상 필터링, AI 관련성 판단
+7. 5차: 기사 리스트업 Sheet 입력
+8. Query List에서 `(Google Query)` 표시 항목은 Google Search 또는 Google News에서만 검색
+9. 우선 확인 링크와 우선 확인 소스의 주요 업데이트 먼저 기록
+10. Google News 및 Google Search로 추가 기사 검색
+11. Google Query 기사 Sheet 입력 전 과거 중복 여부 확인
+12. 중복 확인 시 날짜 필터 해제 후 기사 타이틀 또는 핵심 키워드로 재검색
+13. 동일 기사 또는 동일 이슈의 과거 주차 사용 여부 확인
+14. 동일 이벤트 기사는 하나의 Cluster로 묶기
+15. Cluster별 가장 적합한 Source 1개만 최종 유지
+16. Bloomberg, Reuters, NYTimes 등 Paywall 기사는 접근 가능한 기사로 대체
+17. Naver, LINE, LY Corporation 단독 기사 제외
+18. 기사 제목, 출처, 날짜, URL, 카테고리, 주요 내용, 포함 여부 Sheet 정리
+19. 최종 선별 기사별 Korean Title 작성
+20. Weekly AI Trend Report와 Global IT Trend Report에 활용 가능한 기사만 최종 유지
 
 ## Google Query 전 우선 확인 소스
 
@@ -346,6 +351,1696 @@
 - Product Guide
 - Integration Guide
 - Migration Guide
+
+## Google Query 전 우선 확인 링크
+
+Google Query를 실행하기 전에 아래 공식 링크, 블로그, 뉴스룸, GitHub, release notes, changelog를 우선 확인한다. 공식 링크에서 관련 기사를 먼저 수집한 뒤, 공식 링크가 없거나 추가 확인이 필요한 항목만 Google Query를 사용한다.
+
+### 적용 순서
+
+1. 1차: 아래 우선 확인 링크 검토
+2. 2차: 공식 링크가 없거나 누락 가능성이 있는 항목 Google Query 실행
+3. 3차: 공통 Tech / AI / Social Source 확인
+4. 4차: 중복 제거, 제외 대상 필터링, AI 관련성 판단
+5. 5차: 기사 리스트업 Sheet 입력
+
+### 공통 Tech / AI / Social Source
+
+[TechCrunch]
+
+https://techcrunch.com/category/artificial-intelligence/
+
+https://techcrunch.com/category/startups/
+
+https://techcrunch.com/tag/ai/
+
+https://techcrunch.com/tag/openai/
+
+https://techcrunch.com/tag/anthropic/
+
+https://techcrunch.com/tag/google/
+
+https://techcrunch.com/tag/apple/
+
+https://techcrunch.com/tag/meta/
+
+https://techcrunch.com/tag/microsoft/
+
+https://techcrunch.com/tag/amazon/
+
+[9to5Google]
+
+https://9to5google.com/
+
+https://9to5google.com/guides/gemini/
+
+https://9to5google.com/guides/google-search/
+
+https://9to5google.com/guides/android/
+
+https://9to5google.com/guides/youtube/
+
+https://9to5google.com/guides/chrome/
+
+[9to5Mac]
+
+https://9to5mac.com/
+
+https://9to5mac.com/guides/apple-intelligence/
+
+https://9to5mac.com/guides/ios/
+
+https://9to5mac.com/guides/siri/
+
+https://9to5mac.com/guides/app-store/
+
+[Social Media Today]
+
+https://www.socialmediatoday.com/
+
+https://www.socialmediatoday.com/topic/social-media-updates/
+
+https://www.socialmediatoday.com/topic/digital-marketing/
+
+[Reuters / CNBC / Yahoo Finance / BusinessWire / PRNewswire]
+
+https://www.reuters.com/technology/
+
+https://www.cnbc.com/technology/
+
+https://finance.yahoo.com/topic/ai/
+
+https://www.businesswire.com/newsroom
+
+https://www.prnewswire.com/news-releases/
+
+[AI Business / VentureBeat / SiliconANGLE / Techzine / MarkTechPost / The Decoder]
+
+https://aibusiness.com/
+
+https://venturebeat.com/category/ai/
+
+https://siliconangle.com/
+
+https://www.techzine.eu/
+
+https://www.marktechpost.com/
+
+https://the-decoder.com/
+
+https://www.artificialintelligence-news.com/
+
+https://letsdatascience.com/news
+
+---
+
+### AI Agent
+
+[OpenClaw]
+
+https://openclaw.ai/blog
+
+https://github.com/openclaw/openclaw
+
+https://github.com/openclaw/openclaw/releases
+
+[Moltbot]
+
+(Google Query)
+
+[Clawdbot]
+
+(Google Query)
+
+[Paperclip]
+
+https://github.com/paperclipai/paperclip
+
+https://github.com/paperclipai/paperclip/releases
+
+[BabyAGI]
+
+https://github.com/yoheinakajima/babyagi
+
+https://github.com/yoheinakajima/babyagi/releases
+
+[Microsoft AutoGen / AutoGen]
+
+https://microsoft.github.io/autogen/
+
+https://github.com/microsoft/autogen
+
+https://github.com/microsoft/autogen/releases
+
+https://devblogs.microsoft.com/
+
+[AutoGPT]
+
+https://agpt.co/
+
+https://github.com/Significant-Gravitas/AutoGPT
+
+https://github.com/Significant-Gravitas/AutoGPT/releases
+
+[AgentGPT]
+
+https://agentgpt.reworkd.ai/
+
+https://github.com/reworkd/AgentGPT
+
+https://github.com/reworkd/AgentGPT/releases
+
+[Claude Cowork]
+
+https://claude.com/blog
+
+https://www.anthropic.com/news
+
+https://www.anthropic.com/engineering
+
+https://docs.anthropic.com/
+
+[A.(에이닷)]
+
+https://news.sktelecom.com/
+
+https://www.sktelecom.com/
+
+[KIRA]
+
+https://kira.krafton-ai.com/
+
+https://github.com/krafton-ai/KIRA
+
+https://github.com/krafton-ai/KIRA/releases
+
+https://www.krafton.ai/
+
+https://www.krafton.com/news/press/
+
+[Wrtn Crack]
+
+https://crack.wrtn.ai/announcement
+
+https://wrtn.io/
+
+[Rinna]
+
+https://rinna.co.jp/news/
+
+https://rinna.co.jp/
+
+[Cotomo]
+
+https://cotomo.ai/
+
+https://cotomo.ai/posts
+
+https://cotomo.ai/app-posts
+
+[CrewAI]
+
+https://crewai.com/blog
+
+https://docs.crewai.com/
+
+https://github.com/crewAIInc/crewAI
+
+https://github.com/crewAIInc/crewAI/releases
+
+[LangGraph / LangChain]
+
+https://www.langchain.com/blog
+
+https://docs.langchain.com/
+
+https://langchain-ai.github.io/langgraph/
+
+https://github.com/langchain-ai/langgraph
+
+https://github.com/langchain-ai/langgraph/releases
+
+https://github.com/langchain-ai/langchain
+
+https://github.com/langchain-ai/langchain/releases
+
+[Chai]
+
+https://www.chai-research.com/
+
+https://www.chai-research.com/blog
+
+https://www.chai-research.com/news
+
+[Nomi]
+
+https://nomi.ai/
+
+https://nomi.ai/updates/
+
+[Kindroid]
+
+https://kindroid.ai/
+
+https://kindroid.ai/blog/
+
+https://kindroid.ai/docs/
+
+https://kindroid.ai/docs/article/update-log/
+
+[Paradot]
+
+https://www.paradot.ai/
+
+보조: Google Query
+
+[Replika]
+
+https://replika.com/
+
+https://blog.replika.com/
+
+[Poketomo]
+
+https://poketomo.com/
+
+https://poketomo.com/news/
+
+[Hume AI]
+
+https://www.hume.ai/
+
+https://www.hume.ai/blog
+
+https://www.hume.ai/news
+
+https://dev.hume.ai/docs
+
+[Mersoom]
+
+(Google Query)
+
+[Bot Madang]
+
+(Google Query)
+
+---
+
+### AI / GPT
+
+[OpenAI]
+
+https://openai.com/news/
+
+https://openai.com/index/
+
+https://openai.com/research/
+
+https://platform.openai.com/docs/changelog
+
+https://help.openai.com/en/articles/6825453-chatgpt-release-notes
+
+https://developers.openai.com/codex/changelog
+
+[ChatGPT]
+
+https://openai.com/index/
+
+https://help.openai.com/en/articles/6825453-chatgpt-release-notes
+
+[Codex]
+
+https://developers.openai.com/codex/changelog
+
+https://openai.com/index/
+
+[Sora]
+
+https://openai.com/sora/
+
+https://openai.com/index/
+
+[Meta AI]
+
+https://ai.meta.com/blog/
+
+https://about.fb.com/news/
+
+https://engineering.fb.com/
+
+https://www.facebook.com/business/news
+
+[Scale AI]
+
+https://scale.com/blog
+
+https://scale.com/press
+
+[Google AI]
+
+https://blog.google/innovation-and-ai/
+
+https://blog.google/technology/ai/
+
+https://blog.google/technology/developers-tools/
+
+https://developers.googleblog.com/
+
+https://research.google/blog/
+
+https://deepmind.google/blog/
+
+[Gemini]
+
+https://blog.google/products/gemini/
+
+https://gemini.google/release-notes/
+
+https://deepmind.google/technologies/gemini/
+
+https://ai.google.dev/gemini-api/docs/changelog
+
+[Veo]
+
+https://deepmind.google/technologies/veo/
+
+https://blog.google/technology/ai/
+
+https://blog.google/innovation-and-ai/
+
+[NotebookLM]
+
+https://blog.google/products/notebooklm/
+
+https://blog.google/technology/ai/
+
+[Google Chrome]
+
+https://blog.google/products/chrome/
+
+https://developer.chrome.com/blog/
+
+https://chromereleases.googleblog.com/
+
+[Amazon AI / AWS AI]
+
+https://www.aboutamazon.com/news/aws
+
+https://aws.amazon.com/blogs/aws/
+
+https://aws.amazon.com/blogs/machine-learning/
+
+https://aws.amazon.com/about-aws/whats-new/machine-learning/
+
+[Nova AI]
+
+https://aws.amazon.com/ai/generative-ai/nova/
+
+https://aws.amazon.com/blogs/machine-learning/
+
+https://www.aboutamazon.com/news/aws
+
+[Trainium]
+
+https://aws.amazon.com/machine-learning/trainium/
+
+https://aws.amazon.com/blogs/machine-learning/
+
+https://www.aboutamazon.com/news/aws
+
+[Anthropic]
+
+https://www.anthropic.com/news
+
+https://www.anthropic.com/research
+
+https://www.anthropic.com/engineering
+
+https://docs.anthropic.com/
+
+[Claude]
+
+https://claude.com/blog
+
+https://www.anthropic.com/news
+
+https://www.anthropic.com/research
+
+https://docs.anthropic.com/
+
+[Claude Code]
+
+https://claude.com/blog
+
+https://docs.anthropic.com/en/docs/claude-code
+
+https://www.anthropic.com/engineering
+
+[Microsoft]
+
+https://blogs.microsoft.com/
+
+https://news.microsoft.com/source/
+
+https://www.microsoft.com/en-us/microsoft-365/blog/
+
+https://devblogs.microsoft.com/
+
+https://www.microsoft.com/en-us/research/blog/
+
+[Microsoft Edge]
+
+https://blogs.windows.com/msedgedev/
+
+https://blogs.bing.com/search/
+
+[Bing]
+
+https://blogs.bing.com/search/
+
+[Copilot]
+
+https://www.microsoft.com/en-us/microsoft-copilot/blog/
+
+https://www.microsoft.com/en-us/microsoft-365/blog/
+
+https://devblogs.microsoft.com/microsoft365dev/
+
+[Apple AI / Apple Intelligence]
+
+https://www.apple.com/newsroom/
+
+https://developer.apple.com/news/
+
+https://developer.apple.com/documentation/updates/
+
+https://developer.apple.com/documentation/appleintelligence
+
+[Safari]
+
+https://www.apple.com/newsroom/
+
+https://developer.apple.com/news/
+
+https://developer.apple.com/documentation/safari-release-notes
+
+[Databricks]
+
+https://www.databricks.com/blog
+
+https://www.databricks.com/company/newsroom
+
+https://docs.databricks.com/release-notes/index.html
+
+[Thinking Machines Lab]
+
+https://thinkingmachines.ai/
+
+https://thinkingmachines.ai/news/
+
+[Perplexity AI]
+
+https://www.perplexity.ai/hub/blog
+
+https://www.perplexity.ai/hub/news
+
+[Comet]
+
+https://www.perplexity.ai/hub/blog
+
+https://www.perplexity.ai/hub/news
+
+[Stability.ai]
+
+https://stability.ai/news
+
+https://stability.ai/blog
+
+https://github.com/Stability-AI
+
+[Anysphere / Cursor]
+
+https://cursor.com/blog
+
+https://cursor.com/changelog
+
+https://docs.cursor.com/
+
+[ElevenLabs]
+
+https://elevenlabs.io/blog
+
+https://elevenlabs.io/docs
+
+https://elevenlabs.io/docs/changelog
+
+[Speak AI]
+
+https://www.speak.com/
+
+https://www.speak.com/blog
+
+[Writer AI]
+
+https://writer.com/blog/
+
+https://writer.com/newsroom/
+
+https://writer.com/docs/
+
+https://writer.com/product-updates/
+
+[Ayar Labs]
+
+https://ayarlabs.com/newsroom/
+
+https://ayarlabs.com/blog/
+
+[Physical Intelligence]
+
+https://www.physicalintelligence.company/
+
+https://www.physicalintelligence.company/blog
+
+https://www.physicalintelligence.company/news
+
+[Inflection AI]
+
+https://inflection.ai/news
+
+https://inflection.ai/blog
+
+[Inflection AI Pi]
+
+https://pi.ai/
+
+https://inflection.ai/news
+
+https://inflection.ai/blog
+
+[Moonshot AI / Kimi]
+
+https://www.moonshot.cn/
+
+https://kimi.moonshot.cn/
+
+보조: https://pandaily.com/
+
+[Canva AI]
+
+https://www.canva.com/newsroom/news/
+
+https://www.canva.com/newsroom/
+
+[Le Chat / Mistral AI]
+
+https://mistral.ai/news/
+
+https://docs.mistral.ai/
+
+https://github.com/mistralai
+
+[Leonardo AI]
+
+https://leonardo.ai/
+
+https://leonardo.ai/news
+
+https://leonardo.ai/blog
+
+[Cohere]
+
+https://cohere.com/blog
+
+https://cohere.com/newsroom
+
+https://docs.cohere.com/changelog
+
+[Skywalker.ai]
+
+(Google Query)
+
+[Kling AI]
+
+https://klingai.com/
+
+보조: https://www.kuaishou.com/en
+
+[Seedance]
+
+https://seed.bytedance.com/en/
+
+https://seed.bytedance.com/en/blog
+
+[Stable Diffusion]
+
+https://stability.ai/news
+
+https://stability.ai/blog
+
+https://github.com/Stability-AI
+
+[DALL-E]
+
+https://openai.com/index/
+
+https://help.openai.com/
+
+https://platform.openai.com/docs/changelog
+
+[Content Generator]
+
+(Google Query)
+
+[Craiyon]
+
+https://www.craiyon.com/
+
+보조: Google Query
+
+[Midjourney]
+
+https://www.midjourney.com/
+
+https://docs.midjourney.com/
+
+보조: Google Query
+
+[MyHeritage]
+
+https://blog.myheritage.com/
+
+https://www.myheritage.com/ai
+
+[Voice Synthesis]
+
+(Google Query)
+
+[Dream Fusion]
+
+(Google Query)
+
+[AI Bot]
+
+(Google Query)
+
+[AI Healthcare]
+
+(Google Query)
+
+[Image AI]
+
+(Google Query)
+
+[AI Assistant]
+
+(Google Query)
+
+[AI Plugin]
+
+(Google Query)
+
+[Sam Altman]
+
+(Google Query)
+
+[LLM]
+
+(Google Query)
+
+[Chatbot]
+
+(Google Query)
+
+[Adobe AI]
+
+https://news.adobe.com/
+
+https://blog.adobe.com/
+
+https://developer.adobe.com/
+
+[Adobe Firefly]
+
+https://firefly.adobe.com/
+
+https://blog.adobe.com/
+
+https://news.adobe.com/
+
+[character.ai]
+
+https://blog.character.ai/
+
+https://character.ai/
+
+[MDM]
+
+(Google Query)
+
+[yandex]
+
+https://yandex.com/company/press_releases/
+
+https://yandex.com/blog/
+
+https://yandex.com/dev/
+
+[Kakao Brain / Kakao AI]
+
+https://www.kakaocorp.com/page/
+
+https://www.kakaocorp.com/page/detail/
+
+https://www.kakaocorp.com/page/press
+
+[Japan AI]
+
+(Google Query)
+
+[Korea AI]
+
+(Google Query)
+
+[China AI]
+
+(Google Query)
+
+[US AI]
+
+(Google Query)
+
+[AI Character]
+
+(Google Query)
+
+[Copyright Shield]
+
+(Google Query)
+
+[Microsoft Industry Blogs]
+
+https://blogs.microsoft.com/
+
+https://news.microsoft.com/source/
+
+https://www.microsoft.com/en-us/industry/blog/
+
+[blog.google]
+
+https://blog.google/
+
+---
+
+### AI Browser / Browser
+
+[Arc Browser]
+
+https://browsercompany.com/
+
+https://browsercompany.com/blog/
+
+보조: Google Query
+
+[Dia Browser]
+
+https://www.diabrowser.com/
+
+https://www.diabrowser.com/release-notes/latest
+
+[Brave Browser]
+
+https://brave.com/
+
+https://brave.com/blog/
+
+https://brave.com/latest/
+
+https://github.com/brave/brave-browser
+
+https://github.com/brave/brave-browser/releases
+
+[Opera One]
+
+https://blogs.opera.com/news/
+
+https://blogs.opera.com/desktop/
+
+[Sigma Browser / SigmaOS]
+
+https://sigmaos.com/
+
+https://sigmaos.com/blog
+
+보조: Google Query
+
+[Zen Browser]
+
+https://zen-browser.app/
+
+https://github.com/zen-browser/desktop
+
+https://github.com/zen-browser/desktop/releases
+
+[Wavebox]
+
+https://wavebox.io/
+
+https://wavebox.io/blog/
+
+https://hub.wavebox.io/
+
+[Vivaldi Browser]
+
+https://vivaldi.com/
+
+https://vivaldi.com/blog/
+
+https://vivaldi.com/changelog/
+
+[Sidekick Browser]
+
+https://www.meetsidekick.com/
+
+https://www.meetsidekick.com/blog
+
+보조: Google Query
+
+[Shift Browser]
+
+https://shift.com/
+
+https://shift.com/blog/
+
+보조: Google Query
+
+[Orion Browser]
+
+https://browser.kagi.com/
+
+https://browser.kagi.com/updates.html
+
+[Maxthon Browser]
+
+https://www.maxthon.com/
+
+https://www.maxthon.com/blog/
+
+보조: Google Query
+
+[Firefox / Mozilla]
+
+https://blog.mozilla.org/en/
+
+https://blog.mozilla.org/en/firefox/
+
+https://blog.mozilla.org/en/privacy-security/
+
+https://www.mozilla.org/en-US/firefox/releases/
+
+https://github.com/mozilla
+
+[Samsung Internet]
+
+https://news.samsung.com/global/
+
+https://developer.samsung.com/internet
+
+보조: Google Query
+
+[UC Browser]
+
+https://www.ucweb.com/
+
+https://play.google.com/store/apps/details?id=com.UCMobile.intl
+
+https://apps.apple.com/us/app/uc-browser/id1048518592
+
+[CryptoTab Browser]
+
+https://cryptobrowser.site/
+
+https://cryptobrowser.site/en/news/
+
+https://play.google.com/store/apps/details?id=max.cryptotab.android
+
+---
+
+### Global Big Tech
+
+[Meta]
+
+https://about.fb.com/news/
+
+https://ai.meta.com/blog/
+
+https://engineering.fb.com/
+
+https://www.facebook.com/business/news
+
+https://investor.fb.com/investor-news/default.aspx
+
+[Facebook]
+
+https://about.fb.com/news/
+
+https://www.facebook.com/business/news
+
+https://engineering.fb.com/
+
+[Instagram]
+
+https://about.instagram.com/blog/announcements
+
+https://about.fb.com/news/
+
+https://www.facebook.com/business/news
+
+[WhatsApp]
+
+https://blog.whatsapp.com/
+
+https://about.fb.com/news/
+
+https://www.facebook.com/business/news
+
+[Amazon]
+
+https://www.aboutamazon.com/news
+
+https://www.aboutamazon.com/news/aws
+
+https://www.aboutamazon.com/news/devices
+
+https://www.aboutamazon.com/news/retail
+
+[Amazon Prime]
+
+https://www.aboutamazon.com/news/prime
+
+https://www.aboutamazon.com/news/entertainment
+
+https://www.aboutamazon.com/news/retail
+
+[Apple]
+
+https://www.apple.com/newsroom/
+
+https://developer.apple.com/news/
+
+https://developer.apple.com/documentation/updates/
+
+https://developer.apple.com/news/releases/
+
+[iOS]
+
+https://www.apple.com/newsroom/
+
+https://developer.apple.com/news/releases/
+
+https://developer.apple.com/documentation/ios-ipados-release-notes
+
+[Netflix]
+
+https://about.netflix.com/en/newsroom
+
+https://about.netflix.com/en/newsroom/company-assets
+
+[Google]
+
+https://blog.google/
+
+https://blog.google/products/
+
+https://blog.google/technology/ai/
+
+https://blog.google/products/search/
+
+https://blog.google/products/ads-commerce/
+
+https://developers.googleblog.com/
+
+https://cloud.google.com/blog/
+
+https://www.googlecloudpresscorner.com/
+
+[YouTube]
+
+https://blog.youtube/
+
+https://blog.youtube/news-and-events/
+
+https://blog.google/products/ads-commerce/
+
+[Android]
+
+https://blog.google/products/android/
+
+https://android-developers.googleblog.com/
+
+https://developer.android.com/about/versions
+
+[Gmail]
+
+https://blog.google/products/gmail/
+
+https://workspaceupdates.googleblog.com/
+
+[Microsoft]
+
+https://blogs.microsoft.com/
+
+https://news.microsoft.com/source/
+
+https://www.microsoft.com/en-us/microsoft-365/blog/
+
+https://devblogs.microsoft.com/
+
+https://blogs.windows.com/
+
+https://blogs.bing.com/search/
+
+[Grab]
+
+https://www.grab.com/sg/press/
+
+https://www.grab.com/sg/blog/
+
+https://www.grab.com/sg/newsroom/
+
+---
+
+### Asia Big Tech
+
+[Rakuten]
+
+https://corp.rakuten.co.jp/news/press/
+
+https://global.rakuten.com/corp/news/press/
+
+https://global.rakuten.com/corp/innovation/
+
+[Note]
+
+https://note.jp/
+
+https://note.jp/n/
+
+보조: Google Query
+
+[DeNA]
+
+https://dena.com/intl/news/
+
+https://dena.com/jp/news/
+
+[Gree]
+
+https://corp.gree.net/jp/ja/news/
+
+https://corp.gree.net/en/news/
+
+[Gunosy]
+
+https://gunosy.co.jp/news/
+
+보조: Google Query
+
+[TimeTree]
+
+https://timetreeapp.com/intl/newsroom
+
+https://timetreeapp.com/intl/blog
+
+[Mercari]
+
+https://about.mercari.com/press/news/
+
+https://about.mercari.com/en/press/news/
+
+https://jp-news.mercari.com/
+
+[Kakao]
+
+https://www.kakaocorp.com/page/
+
+https://www.kakaocorp.com/page/detail/
+
+https://www.kakaocorp.com/page/press
+
+[Coupang]
+
+https://news.coupang.com/
+
+https://ir.aboutcoupang.com/news-events/news/default.aspx
+
+[Toss]
+
+https://toss.im/news
+
+https://toss.tech/
+
+[Tencent]
+
+https://www.tencent.com/en-us/articles.html
+
+https://www.tencentcloud.com/blog
+
+https://www.tencentcloud.com/press-release
+
+[ByteDance]
+
+https://www.bytedance.com/en/news
+
+https://seed.bytedance.com/en/blog
+
+https://newsroom.tiktok.com/
+
+[Alibaba]
+
+https://www.alibabagroup.com/en-US/news-and-resource
+
+https://www.alibabacloud.com/en/press-room
+
+https://www.alibabacloud.com/blog
+
+https://www.alibabacloud.com/help/en/releasenotes/
+
+[Alibaba Cloud]
+
+https://www.alibabacloud.com/blog
+
+https://www.alibabacloud.com/en/press-room
+
+https://www.alibabacloud.com/help/en/releasenotes/
+
+[Baidu / ERNIE]
+
+https://ir.baidu.com/news-releases
+
+https://research.baidu.com/Blog
+
+https://yiyan.baidu.com/
+
+보조: Google Query
+
+[Huawei]
+
+https://www.huawei.com/en/news
+
+https://developer.huawei.com/consumer/en/doc/
+
+https://www.huaweicloud.com/intl/en-us/news/
+
+보조: Google Query
+
+[Samsung]
+
+https://news.samsung.com/global/
+
+https://news.samsung.com/kr/
+
+https://developer.samsung.com/
+
+[SK Telecom]
+
+https://news.sktelecom.com/
+
+[Naver]
+
+아카이빙 제외
+
+단, 시장 비교/산업 트렌드 기사에서 여러 기업 중 하나로 언급될 때만 [Market] 검토
+
+[LINE / LY Corporation]
+
+아카이빙 제외
+
+단, 시장 비교/산업 트렌드 기사에서 여러 기업 중 하나로 언급될 때만 [Market] 검토
+
+---
+
+### Social
+
+[TikTok]
+
+https://newsroom.tiktok.com/
+
+https://newsroom.tiktok.com/en-us/
+
+https://www.tiktok.com/business/en/blog
+
+https://developers.tiktok.com/doc/changelog
+
+[Douyin]
+
+(Google Query)
+
+[Snapchat / Snap]
+
+https://newsroom.snap.com/
+
+https://forbusiness.snapchat.com/blog
+
+https://eng.snap.com/blog
+
+[Telegram]
+
+https://telegram.org/blog
+
+https://telegram.org/apps
+
+https://core.telegram.org/api#recent-changes
+
+[Pinterest]
+
+https://newsroom.pinterest.com/en/
+
+https://business.pinterest.com/en/blog/
+
+https://pinterestcannes.com/
+
+[X / Twitter]
+
+https://blog.x.com/
+
+https://business.x.com/en/blog
+
+https://docs.x.com/x-api/changelog
+
+[XChat]
+
+(Google Query)
+
+[BlueSky]
+
+https://bsky.social/about/blog
+
+https://github.com/bluesky-social
+
+https://github.com/bluesky-social/atproto
+
+[Twitch]
+
+https://blog.twitch.tv/en/
+
+https://dev.twitch.tv/docs/change-log/
+
+https://safety.twitch.tv/s/
+
+[BeReal]
+
+(Google Query)
+
+[Discord]
+
+https://discord.com/blog
+
+https://discord.com/newsroom
+
+https://discord.com/safety
+
+https://discord.com/developers/docs/change-log
+
+https://github.com/discord
+
+[LinkedIn]
+
+https://news.linkedin.com/
+
+https://www.linkedin.com/business/marketing/blog
+
+보조: https://www.socialmediatoday.com/
+
+[Reddit]
+
+https://redditinc.com/news
+
+https://redditinc.com/blog
+
+https://www.redditinc.com/policies/transparency-report
+
+[PayPal]
+
+https://newsroom.paypal-corp.com/
+
+https://www.paypal.com/us/brc/article/
+
+[VSCO]
+
+https://vsco.co/vsco/journal
+
+보조: Google Query
+
+[Spotify]
+
+https://newsroom.spotify.com/
+
+https://engineering.atspotify.com/
+
+---
+
+### Enterprise / Agentic AI / Security / Infra
+
+[Oracle]
+
+https://blogs.oracle.com/
+
+https://blogs.oracle.com/ai-and-datascience/
+
+https://blogs.oracle.com/machinelearning/
+
+https://www.oracle.com/news/
+
+[ServiceNow]
+
+https://newsroom.servicenow.com/
+
+https://www.servicenow.com/blogs.html
+
+[Snowflake]
+
+https://www.snowflake.com/en/news/
+
+https://www.snowflake.com/en/blog/
+
+https://docs.snowflake.com/en/release-notes/overview
+
+[Okta]
+
+https://www.okta.com/newsroom/
+
+https://www.okta.com/blog/
+
+[Snyk]
+
+https://snyk.io/news/
+
+https://snyk.io/blog/
+
+https://docs.snyk.io/snyk-release-notes
+
+[Zscaler]
+
+https://www.zscaler.com/press
+
+https://www.zscaler.com/blogs
+
+[Palo Alto Networks]
+
+https://www.paloaltonetworks.com/blog/
+
+https://www.paloaltonetworks.com/company/press
+
+[Cloudflare]
+
+https://blog.cloudflare.com/
+
+https://www.cloudflare.com/press-releases/
+
+https://developers.cloudflare.com/release-notes/
+
+[Cisco]
+
+https://newsroom.cisco.com/
+
+https://blogs.cisco.com/
+
+[SAP]
+
+https://news.sap.com/
+
+https://community.sap.com/
+
+[Datadog]
+
+https://www.datadoghq.com/about/latest-news/
+
+https://www.datadoghq.com/blog/
+
+[Workday]
+
+https://newsroom.workday.com/
+
+https://blog.workday.com/
+
+[Cognizant]
+
+https://news.cognizant.com/
+
+https://www.cognizant.com/us/en/insights
+
+[HPE]
+
+https://www.hpe.com/us/en/newsroom.html
+
+https://www.hpe.com/us/en/newsroom/blog-post.html
+
+[Red Hat]
+
+https://www.redhat.com/en/blog
+
+https://www.redhat.com/en/about/press-releases
+
+[GitHub / GitHub Copilot]
+
+https://github.blog/changelog/
+
+https://github.blog/ai-and-ml/
+
+https://docs.github.com/en/copilot
+
+https://github.com/features/copilot
+
+[Replit]
+
+https://blog.replit.com/
+
+https://docs.replit.com/updates
+
+[JetBrains]
+
+https://blog.jetbrains.com/
+
+https://www.jetbrains.com/ai/
+
+https://www.jetbrains.com/help/
+
+[Getty Images]
+
+https://newsroom.gettyimages.com/
+
+보조: Google Query
+
+[RightCapital]
+
+https://www.rightcapital.com/
+
+https://www.rightcapital.com/news
+
+보조: Google Query
+
+[Maxima]
+
+(Google Query)
+
+[MoEngage]
+
+https://www.moengage.com/newsroom/
+
+https://www.moengage.com/blog/
+
+[Fika Jobs]
+
+(Google Query)
+
+[DaVinci Commerce]
+
+https://davincicommerce.ai/
+
+보조: Google Query
+
+[Moneris]
+
+https://www.moneris.com/en/about-moneris/news
+
+보조: Google Query
+
+[Verint]
+
+https://www.verint.com/press-room/
+
+https://www.verint.com/blog/
+
+[Five9]
+
+https://www.five9.com/newsroom
+
+https://www.five9.com/blog
+
+[Zuora]
+
+https://www.zuora.com/press-room/
+
+https://www.zuora.com/resource/
+
+[Sakana AI]
+
+https://sakana.ai/
+
+https://sakana.ai/news/
+
+https://sakana.ai/blog/
+
+https://github.com/SakanaAI
+
+[Nokia]
+
+https://www.nokia.com/newsroom/
+
+https://www.nokia.com/blog/
+
+[Linux Foundation]
+
+https://www.linuxfoundation.org/press
+
+https://www.linuxfoundation.org/blog
+
+[Coinbase]
+
+https://www.coinbase.com/blog
+
+https://www.coinbase.com/newsroom
+
+https://docs.cdp.coinbase.com/
+
+[Visa]
+
+https://usa.visa.com/about-visa/newsroom.html
+
+https://developer.visa.com/pages/release-notes
+
+[Mastercard]
+
+https://www.mastercard.com/news/
+
+https://developer.mastercard.com/release-notes/
+
+[Robinhood]
+
+https://newsroom.aboutrobinhood.com/
+
+https://robinhood.com/us/en/newsroom/
+
+[Asana]
+
+https://asana.com/press
+
+https://asana.com/inside-asana
+
+https://developers.asana.com/docs/changelog
+
+---
+
+### Theme / Market Query
+
+[AI Startup]
+
+(Google Query)
+
+[TechCrunch AI Startup]
+
+https://techcrunch.com/category/artificial-intelligence/
+
+https://techcrunch.com/category/startups/
+
+[Generative AI]
+
+(Google Query)
+
+[AI Agent / Agentic AI]
+
+(Google Query)
+
+[AI Infrastructure]
+
+(Google Query)
+
+[AI Security]
+
+(Google Query)
+
+[AI Regulation]
+
+(Google Query)
+
+[AI Layoffs]
+
+(Google Query)
+
+[AI Bubble / AI Investment]
+
+(Google Query)
+
+[AI IPO]
+
+(Google Query)
+
+[AI Copyright]
+
+(Google Query)
+
+[AI Safety]
+
+(Google Query)
+
+[Open Source AI]
+
+(Google Query)
+
+[AI Search]
+
+(Google Query)
+
+[AI Advertising]
+
+(Google Query)
+
+[AI Commerce / Agentic Commerce]
+
+(Google Query)
+
+[AI Payments]
+
+(Google Query)
+
+[AI Healthcare]
+
+(Google Query)
+
+[AI Education]
+
+(Google Query)
+
+[AI Browser]
+
+(Google Query)
+
+[Social Media Search]
+
+(Google Query)
+
+[Creator Economy]
+
+(Google Query)
+
+[Gen Z / MZ Trend]
+
+(Google Query)
+
+[Virtual Consumption / 가상 소비]
+
+(Google Query)
 
 ## Query List 적용 방식
 
@@ -1079,6 +2774,7 @@
 
 ## 최종 검수 체크리스트
 
+- [ ] Google Query 전 우선 확인 링크의 공식 사이트, Blog, Newsroom, GitHub, release notes, changelog 확인
 - [ ] 입력한 날짜 범위에 맞는 기사만 포함
 - [ ] Google Query 전 우선 확인 소스 먼저 확인
 - [ ] `(Google Query)` 표기 항목은 Official Source 확인 없이 Google Query로만 검색
