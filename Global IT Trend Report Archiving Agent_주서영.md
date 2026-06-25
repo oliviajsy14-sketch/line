@@ -46,7 +46,10 @@
 - [후속 기사와 중복 기사 구분 기준](#후속-기사와-중복-기사-구분-기준)
 - [최종 Title 작성 방식](#최종-title-작성-방식)
 - [Korean Title 품질 체크](#korean-title-품질-체크)
+- [Weekly IT Trend Sheet와 Global IT Trend Sheet 구분](#weekly-it-trend-sheet와-global-it-trend-sheet-구분)
 - [Query 전체 리스트](#query-전체-리스트)
+- [Query와 우선 확인 링크 연결 방식](#query와-우선-확인-링크-연결-방식)
+- [Query별 Sheet 입력 방식](#query별-sheet-입력-방식)
 - [Query별 검색 결과 정리 방식](#query별-검색-결과-정리-방식)
 - [최종 검수 체크리스트](#최종-검수-체크리스트)
 - [최종 산출물](#최종-산출물)
@@ -2212,28 +2215,15 @@ https://techcrunch.com/category/startups/
 
 ## Query List 적용 방식
 
-- Query List는 Weekly Archiving 기본 검색 대상 목록으로 사용
-- 모든 Query는 작업자 입력 날짜 범위 `yyyy.mm.dd~yyyy.mm.dd` 기준으로 검색
-- `(Google Query)` 표시 항목:
-  - Official Source 확인 대상 아님
-  - Google Search 또는 Google News에서만 검색
-- `(Google Query)` 표시가 없는 기업명, 서비스명, 기능명:
-  - Official Sources 우선 확인
-  - GitHub, Changelog, Release Notes, Docs, Blogs 우선 확인
-  - 이후 Google Query로 보완 검색
-- Official Source가 없거나 확인이 어려운 일반 키워드성 Query:
-  - Google Query만 진행
-- Query별 검색 결과 판단 기준:
-  - 기사 선별 기준
-  - 국가 중요도
-  - 중복 여부
-  - Paywall 여부
-  - URL 언어 기준
-- Query List 포함 항목도 중요도가 낮거나 단순 PR성이면 제외
-- Query List 외 항목도 주요 IT/AI/플랫폼 트렌드면 추가 검토 가능
-- 동일 Query가 여러 카테고리에 반복되면 공통 Query로 관리
-- AI Agent 및 AI Query는 Weekly AI Trend Report와 Global IT Trend Report 공통 참고 가능
-- Global IT Trend Report는 AI 외 Big Tech, Asia Big Tech, Social, Theme 관련 IT 트렌드 기사 포함 가능
+- 자동화 agent는 작업 대상 시트에 맞는 Query List만 사용한다.
+- Weekly IT Trend Sheet 작업 시 `Weekly Sheet Query`만 사용한다.
+- Global IT Trend Sheet 작업 시 `Global IT Trend Sheet Query`만 사용한다.
+- 두 Query List를 임의로 병합하지 않는다.
+- Query 순서는 아래에 정의된 순서를 strict하게 따른다.
+- Query 이름은 임의로 수정하지 않는다.
+- Query별 공식 링크가 있으면 Google Query 전 우선 확인 링크를 먼저 확인한다.
+- Query에 `Google Query`가 표시되어 있으면 Google Search 또는 Google News 중심으로 검색한다.
+- Query별 기사 입력 시 Sheet에는 `Korean Title`, `Check Box`, `URL` 중심으로 입력한다.
 
 ## Official Source 확인 방식
 
@@ -3260,15 +3250,38 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - 특정 기업 하나의 업데이트가 아닌 시장 변화 기사라면 `[Market]` 사용
 - AI 기능 기사에서는 AI가 바꾸는 작업 방식, 검색 방식, 콘텐츠 제작 방식, 광고 방식 등을 제목에 반영
 
+## Weekly IT Trend Sheet와 Global IT Trend Sheet 구분
+
+Weekly IT Trend Sheet와 Global IT Trend Sheet는 서로 다른 시트이며, 사용하는 Query List도 다르다.
+
+- Weekly IT Trend Sheet:
+  - AI Agent, AI, Browser 중심 Query를 사용한다.
+  - Weekly AI Trend Report 및 AI 중심 아카이빙에 활용한다.
+  - AI Agent / AI / Browser 관련 항목을 넓게 확인한다.
+
+- Global IT Trend Sheet:
+  - AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme Query를 사용한다.
+  - Global IT Trend Report 작성에 활용한다.
+  - AI뿐 아니라 Big Tech, Asia Big Tech, Social, Theme 관련 IT/플랫폼/시장 트렌드까지 포함한다.
+
+두 시트의 Query List는 서로 섞지 않는다.
+자동화 agent는 작업 대상 시트가 Weekly IT Trend Sheet인지 Global IT Trend Sheet인지 먼저 확인한 뒤, 해당 시트의 Query List만 사용한다.
+
 ## Query 전체 리스트
 
-### Weekly IT Trend Report
+Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`로 분리한다.
+자동화 agent는 작업 대상 시트에 해당하는 Query List만 사용하고, 두 Query List를 임의로 병합하지 않는다.
 
-#### AI Agent - Google Query
+### Weekly Sheet Query
 
-- OpenClaw
-- Moltbot
-- Clawdbot
+아래 Query List는 `Weekly IT Trend Sheet`에 사용하는 Query이다.
+아래 순서와 표기를 strict하게 유지한다.
+
+#### AI Agent
+
+[AI Agent]
+- AI Agent
+- OpenClaw (Moltbot, Clawdbot)
 - Paperclip
 - BabyAGI
 - Microsoft AutoGen
@@ -3293,8 +3306,9 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - Mersoom
 - Bot Madang
 
-#### AI - Google Query
+#### AI
 
+[AI]
 - Lovable
 - Generative AI
 - OpenAI
@@ -3325,8 +3339,7 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - Perplexity AI
 - Comet
 - Stability.ai
-- Anysphere
-- Cursor
+- Anysphere (Cursor)
 - ElevenLabs
 - Speak AI
 - Writer AI
@@ -3341,12 +3354,15 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - Skywalker.ai
 - Kling AI
 - Seedance
+
+#### Browser
+
+[Browser]
 - Arc Browser
 - Dia Browser
 - Brave Browser
 - Opera One
-- Sigma Browser
-- SigmaOS
+- Sigma Browser (SigmaOS)
 - Zen Browser
 - Wavebox
 - Vivaldi Browser
@@ -3359,25 +3375,23 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - UC Browser
 - CryptoTab Browser
 - AI Startup
-- TechCrunch AI Startup
 - Stable Diffusion
 - DALL-E
 - Content Generator
 - Craiyon
 - Midjourney
 - MyHeritage
-- Voice Synthesis(Google Query)
+- Voice Synthesis
 - Dream Fusion
-- AI Bot(Google Query)
-- AI Healthcare(Google Query)
-- Image AI(Google Query)
-- AI Assistant(Google Query)
-- AI Plugin(Google Query)
-- Sam Altman(Google Query)
-- LLM(Google Query)
-- Inflection AI
-- Inflection AI Pi
-- Chatbot(Google Query)
+- AI Bot
+- AI Healthcare
+- Image AI
+- AI Assistant
+- AI Plugin
+- Sam Altman
+- LLM
+- Inflection AI (Pi)
+- Chatbot
 - Adobe AI
 - Adobe Firefly
 - character.ai
@@ -3385,22 +3399,25 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - yandex
 - Kakao Brain
 - Kakao AI
-- Japan AI(Google Query)
-- Korea AI(Google Query)
-- China AI(Google Query)
-- US AI(Google Query)
-- AI Character(Google Query)
-- Copyright Shield(Google Query)
+- Japan AI
+- Korea AI
+- China AI
+- US AI
+- AI Character
+- Copyright Shield
 - Microsoft Industry Blogs
 - blog.google
 
-### Global IT Trend Report
+### Global IT Trend Sheet Query
 
-#### AI Agent - Google Query
+아래 Query List는 `Global IT Trend Sheet`에 사용하는 Query이다.
+아래 순서와 표기를 strict하게 유지한다.
 
-- OpenClaw
-- Moltbot
-- Clawdbot
+#### AI Agent
+
+[AI Agent]
+- AI Agent - Google Query
+- OpenClaw (Moltbot, Clawdbot)
 - Paperclip
 - BabyAGI
 - Microsoft AutoGen
@@ -3409,7 +3426,7 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - Claude Cowork
 - A.(에이닷)
 - KIRA
-- Wrtn Crack
+- Crack (크랙)
 - Rinna
 - Cotomo
 - CrewAI
@@ -3425,63 +3442,56 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - Mersoom
 - Bot Madang
 
-#### AI - Google Query
+#### AI/GPT
 
-- Lovable
-- Generative AI
+[AI/GPT]
+- AI - Google Query
 - OpenAI
 - ChatGPT
-- Codex
 - Sora
+- Codex
 - Meta AI
-- Scale AI
 - Google AI
-- Gemini
-- Veo
-- NotebookLM
-- Google Chrome
+- GeminI
 - Amazon AI
 - Nova AI
-- Trainium
 - Anthropic
 - Claude
 - Claude Code
-- Microsoft
-- Microsoft Edge
-- Bing
-- Copilot
-- Apple AI
-- Safari
+- Kakao AI
+- Microsoft AI
 - Databricks
-- Thinking Machines Lab
 - Perplexity AI
-- Comet
-- Stability.ai
-- Anysphere
-- Cursor
+- Cohere
 - ElevenLabs
-- Speak AI
-- Writer AI
-- Ayar Labs
-- Physical Intelligence
+- Lovable
+- Stability AI
 - Inflection AI
-- Moonshot AI
+- Ayar Labs
 - Canva AI
+- Speak AI
+- Anysphere (Cursor)
+- Physical Intelligence
+- Thinking Machines Lab
+- Moonshot AI
 - Le Chat
 - Leonardo AI
-- Cohere
-- Skywalker.ai
+- Writer AI
+- Zeta
 - Kling AI
 - Seedance
 - Arc Browser
 - Dia Browser
 - Brave Browser
+- Microsoft Edge
+- Google Chrome
+- Comet Browser
 - Opera One
-- Sigma Browser
-- SigmaOS
+- Sigma Browser (SigmaOS)
 - Zen Browser
 - Wavebox
 - Vivaldi Browser
+- Safari
 - Sidekick Browser
 - Shift Browser
 - Orion Browser
@@ -3490,142 +3500,130 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - Samsung Internet
 - UC Browser
 - CryptoTab Browser
-- AI Startup
-- TechCrunch AI Startup
-- Stable Diffusion
-- DALL-E
-- Content Generator
-- Craiyon
-- Midjourney
-- MyHeritage
-- Voice Synthesis(Google Query)
-- Dream Fusion
-- AI Bot(Google Query)
-- AI Healthcare(Google Query)
-- Image AI(Google Query)
-- AI Assistant(Google Query)
-- AI Plugin(Google Query)
-- Sam Altman(Google Query)
-- LLM(Google Query)
-- Inflection AI
-- Inflection AI Pi
-- Chatbot(Google Query)
-- Adobe AI
-- Adobe Firefly
-- character.ai
-- MDM
-- yandex
-- Kakao Brain
-- Kakao AI
-- Japan AI(Google Query)
-- Korea AI(Google Query)
-- China AI(Google Query)
-- US AI(Google Query)
-- AI Character(Google Query)
-- Copyright Shield(Google Query)
-- Microsoft Industry Blogs
-- blog.google
 
 #### Global Big Tech
 
-- [Meta] Meta
-- [Meta] Facebook
-- [Meta] Instagram
-- [Meta] WhatsApp
-- [Amazon] Amazon
-- [Amazon] Amazon Prime
-- [Apple] Apple
-- [Apple] iOS
-- [Netflix] Netflix
-- [Google] Google
-- [Google] YouTube
-- [Google] Android
-- [Google] Gmail
-- [Microsoft] Microsoft
-- [Grab] Grab
+[Global Big Tech]
+- Meta
+- Facebook
+- Instagram
+- WhatsApp
+- Amazon
+- Amazon Prime
+- Apple
+- iOS
+- Netflix
+- Google
+- YouTube
+- Android
+- Gmail
+- Microsoft
+- Grab
 
 #### Asia Big Tech
 
-- [Rakuten] Rakuten
-- [Rakuten] 楽天市場
-- [Note] note
-- [Note] ノート
-- [DeNA] DeNA
-- [Gree] Gree
-- [Gree] グリー
-- [Gunosy] Gunosy
-- [Gunosy] グノシー
-- [Time Tree] Time Tree
-- [Time Tree] タイムツリ
-- [Mercari] Mercari
-- [Mercari] メルカリ
-- The Bridge(Query)
-- Ascii Startup(Query)
-- CNET(Query)
-- Diamond(Query)
-- [Kakao] Kakao
-- [Kakao] 카카오
-- [Kakao] 카카오톡
-- [Coupang] Coupang
-- [Coupang] 쿠팡
-- [Toss] Toss
-- [Toss] 토스
-- [Tencent] Tencent
-- [Tencent] WeChat
-- [Tencent] 微信
-- [ByteDance] ByteDance
-- [Alibaba] Alibaba
-
-#### Asia Big Tech 제외 대상
-
-- [Naver] Naver 단독 기사 제외
-- [Naver] 네이버 단독 기사 제외
-- [LINE] LINE 단독 기사 제외
-- [LY Corporation] LY Corporation 단독 기사 제외
-- 시장 전체 트렌드나 여러 기업 비교 기사에서 일부로 언급되는 경우 `[Market]` 기준으로만 검토
+[Asia Big Tech]
+- Rakuten (楽天市場)
+- note（ノート)
+- DeNA
+- Gree (グリー)
+- Gunosy (グノシー)
+- Time Tree (タイムツリ)
+- Mercari(メルカリ)
+- The Bridge
+- Ascii Startup
+- CNET
+- Diamond
+- Kakao
+- 카카오
+- 카카오톡
+- Coupang
+- 쿠팡
+- Toss
+- 토스
+- Tencent
+- WeChat (微信)
+- ByteDance
+- Alibaba
 
 #### Social
 
-- [TikTok] TikTok
-- [TikTok] Douyin
-- [Snap] Snapchat
-- [Telegram] Telegram
-- [Pinterest] Pinterest
-- [x] X
-- [x] XChat
-- [BlueSky] BlueSky
-- [Twitch] Twitch
-- [BeReal] BeReal
-- [Discord] Discord
+[Social]
+- TikTok
+- Douyin
+- Snapchat
+- Telegram
+- Pinterest
+- X
+- XChat
+- BlueSky
+- Twitch
+- BeReal
+- Discord
 
 #### Theme
 
-- Super App
-- Reddit
-- Spotify
-- VSCO
-- LinkedIn
-- MZ Gen
-- Gen Z
-- 1020 trend
-- Social app
-- TechCrunch Startup
+[Theme]
+- Super App (LinkedIn, Reddit, Spotify, VSCO, Paypal)
+- MZ Gen - Google Query
+- Gen Z - Google Query
+- 1020 trend - Google Query
+- Social app - Google Query
+- Tech Crunch Startup
+
+## Query와 우선 확인 링크 연결 방식
+
+- Query List의 각 항목은 먼저 `Google Query 전 우선 확인 링크`에 동일하거나 유사한 항목이 있는지 확인한다.
+- 동일한 이름의 공식 링크가 있으면 해당 링크를 1차 확인한다.
+- 이름이 약간 다른 경우에도 같은 서비스로 판단 가능한 경우 연결한다.
+  - 예: `Stability AI` ↔ `Stability.ai`
+  - 예: `Comet Browser` ↔ `Comet`
+  - 예: `Microsoft AI` ↔ `Microsoft`
+  - 예: `Kakao AI` ↔ `Kakao Brain / Kakao AI`
+  - 예: `Crack (크랙)` ↔ `Wrtn Crack`
+- 단, Sheet Query 표기는 변경하지 않는다.
+- 공식 링크가 없는 Query는 Google Query로 검색한다.
+- Query List에 없는 링크 항목은 링크 목록에는 유지할 수 있지만, 해당 시트의 Query 배열에는 임의로 추가하지 않는다.
+
+## Query별 Sheet 입력 방식
+
+- Sheet는 대분류 → Query / Service → 기사 리스트 순서로 입력한다.
+- 대분류와 Query / Service 순서는 해당 시트의 Query List 순서를 strict하게 따른다.
+- 기사 입력 시 Query / Service 순서를 바꾸지 않는다.
+- 특정 Query에서 기사가 여러 개 발견되면 해당 Query 아래에 여러 행으로 입력한다.
+- 특정 Query에서 해당 기간 기사가 없으면 `n/a`를 입력한다.
+- Query를 찾지 못했다고 임의로 삭제하지 않는다.
+- Query List에 없는 기사를 발견한 경우:
+  - Weekly IT Trend Sheet에서는 관련 Query 아래에 배치 가능한 경우에만 입력한다.
+  - Global IT Trend Sheet에서는 해당 카테고리와 가장 가까운 Query 아래에 배치한다.
+  - 어디에도 배치하기 어려우면 작업자 검토 대상으로 별도 보류하지 말고 입력하지 않는다.
 
 ## Query별 검색 결과 정리 방식
 
-1. 날짜 범위 적합 여부 확인
-2. 기사 원문 접근 가능 여부 확인
-3. Paywall 여부 확인
-4. 영어 URL 존재 여부 확인
-5. 과거 동일 기사 또는 동일 이슈 사용 여부 확인
-6. 동일 이벤트 기사 Cluster 처리
-7. 가장 적합한 Source 1개 최종 유지
-8. Naver, LINE, LY Corporation 단독 기사 여부 확인
-9. Sheet 입력
-10. 최종 Korean Title 작성
+Query에서 발견한 기사는 반드시 아래 순서로 확인한다.
+
+1. 작업 대상 시트가 Weekly IT Trend Sheet인지 Global IT Trend Sheet인지 확인
+2. 해당 시트의 Query List 순서와 표기 확인
+3. 날짜 범위 적합 여부 확인
+4. 기사 원문 접근 가능 여부 확인
+5. Paywall 여부 확인
+6. 영어 URL 또는 공식 링크 존재 여부 확인
+7. 과거 동일 기사 또는 동일 이슈 사용 여부 확인
+8. 동일 이벤트 기사 Cluster 처리
+9. 대표 URL과 보조 출처 URL 판단
+10. Naver, LINE, LY Corporation 단독 기사 여부 확인
+11. Sheet 구조에 맞춰 `대분류`, `Query / Service`, `Korean Title`, `Check Box`, `URL` 입력
+12. 기사 없음이 확인된 Query / Service는 `n/a` 입력
 
 ## 최종 검수 체크리스트
 
+- [ ] Weekly IT Trend Sheet Query와 Global IT Trend Sheet Query가 분리되어 있는지 확인
+- [ ] Weekly Query 순서가 제공된 순서와 일치하는지 확인
+- [ ] Global IT Trend Query 순서가 제공된 순서와 일치하는지 확인
+- [ ] Query 표기가 임의로 변경되지 않았는지 확인
+- [ ] `Wrtn Crack`과 `Crack (크랙)`의 시트별 표기가 구분되어 있는지 확인
+- [ ] Weekly Sheet Query와 Global IT Trend Sheet Query가 합쳐져 있지 않은지 확인
+- [ ] Query List에 없는 항목이 임의로 Query로 추가되지 않았는지 확인
 - [ ] Global IT / AI / Big Tech / Asia Tech / Social / Market Trend 관련 기사를 중요도와 관계없이 모두 리스트업했는지 확인
 - [ ] 각 Query 섹션 안에서 `시장 영향이 큰 기사 → 기업/서비스 변화 기사 → 일반 관련 기사 → 중복/보조 출처` 순서로 정렬했는지 확인
 - [ ] 공식 Newsroom, Blog, Release Notes, Changelog, GitHub Release 중 제품·서비스·기능·시장 변화가 있는 항목을 누락하지 않았는지 확인
@@ -3688,6 +3686,10 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 
 ## 수정 요약
 
+- Weekly IT Trend Sheet와 Global IT Trend Sheet Query를 분리
+- Query List를 실제 사용하는 Sheet Query 순서와 표기 기준으로 재정렬
+- 기존 Google Query 전 우선 확인 링크와 Official Source Map은 유지
+- Sheet 입력 구조와 날짜 형식 기준은 유지
 - 자동화 agent 실행 기준에 맞춰 전체 작업 순서를 공식 링크 우선 확인, 보완 검색, Sheet 입력, 사람의 Check Box 검토 순서로 정리
 - Sheet 입력 구조를 `대분류`, `Query / Service`, `Korean Title`, `Check Box`, `URL` 중심으로 통일
 - `Original Title`, `Status`, `Note`, `AI Relevance`, `Report Relevance`, `Cluster ID`, `Duplicate Check Keyword`, `Key Update`를 Sheet 컬럼으로 만들지 않도록 정리
