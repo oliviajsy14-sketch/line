@@ -18,6 +18,7 @@
 - [Google Query 및 외부 기사 검색 방식](#google-query-및-외부-기사-검색-방식)
 - [Google Query 기사 중복 확인 방식](#google-query-기사-중복-확인-방식)
 - [기사 선별 기준](#기사-선별-기준)
+- [기사 중요도 및 정렬 기준](#기사-중요도-및-정렬-기준)
 - [기사 제외 기준](#기사-제외-기준)
 - [국가 중요도 우선순위](#국가-중요도-우선순위)
 - [국가 우선순위 적용 방식](#국가-우선순위-적용-방식)
@@ -2119,7 +2120,7 @@ https://techcrunch.com/category/startups/
   - 과거 기사 재사용
   - 재배포
   - 업데이트 없는 반복 보도
-- 과거 동일 기사 또는 동일 이슈가 있으면 `중복` 표시 후 제외
+- 과거 동일 기사 또는 동일 이슈가 있으면 `중복` 또는 `보조 출처`로 표시하고 대표 기사 아래 기록
 - 신규 기사로 유지 가능한 경우:
   - 후속 발표
   - 신규 기능 추가
@@ -2162,6 +2163,303 @@ https://techcrunch.com/category/startups/
   - 크리에이터 생태계 변화
   - 국가별 정책, 법안, 보안, 개인정보 이슈
   - 시장 전반에 영향을 줄 수 있는 기사
+
+## 기사 중요도 및 정렬 기준
+
+기사 리스트업의 목적은 중요한 기사만 선별하는 것이 아니라, AI 관련 기사를 빠짐없이 수집한 뒤 중요도에 따라 시트 내 배치 순서를 정리하는 것이다.
+
+- 중요도는 기사 포함/제외 기준이 아님
+- 중요도는 해당 Query 섹션 안에서 어떤 기사를 위에 배치할지 판단하기 위한 정렬 기준으로만 사용
+- 중요도가 낮아 보이는 기사라도 AI 관련성이 있으면 누락하지 않고 반드시 리스트업
+
+### 기본 원칙
+
+- AI 관련성이 있는 기사는 중요도와 관계없이 모두 리스트업
+- 중요한 기사는 해당 Query 섹션의 위쪽에 배치
+- 중요도가 낮거나 단순 PR성 기사라도 AI 관련성이 있으면 아래쪽에 배치
+- 자동으로 중요하지 않다고 판단해 기사 제외 금지
+- 최종적으로 각 Query 안에서는 `중요한 기사 → 일반 AI 관련 기사 → 중복/보조 출처` 순서로 정렬
+- 중복 기사도 완전히 삭제하지 않고 대표 기사와 함께 보조 출처 또는 중복으로 기록
+- GitHub Release, Changelog, Release Notes, Docs Update도 AI Agent 또는 AI 기능 변화가 있으면 일반 기사처럼 리스트업
+
+### 상단 배치해야 하는 중요 기사 기준
+
+#### 1. 핵심 AI 기업 및 서비스의 주요 변화
+
+아래 기업/서비스 관련 주요 제품 변화, 기능 확장, 모델 공개, 수익화, 사용자 지표, enterprise 확장 기사는 상단에 배치한다.
+
+- OpenAI
+- ChatGPT
+- Codex
+- Google
+- Gemini
+- DeepMind
+- Anthropic
+- Claude
+- Claude Code
+- Claude Cowork
+- Meta AI
+- Facebook
+- Instagram
+- WhatsApp
+- Microsoft Copilot
+- Agent 365
+- xAI
+- Grok
+- AWS
+- NVIDIA
+- Salesforce
+- Databricks
+- Snowflake
+- Cloudflare
+
+특히 ChatGPT, Gemini, Claude, Meta AI, Copilot, Grok, Codex처럼 AI 서비스 자체가 중심인 기사는 우선적으로 상단에 배치한다.
+
+#### 2. AI가 플랫폼 또는 핵심 인터페이스로 확장되는 기사
+
+아래처럼 AI가 단순 보조 기능을 넘어 서비스의 핵심 사용 흐름을 바꾸는 기사는 상단에 배치한다.
+
+- ChatGPT가 Super App, personal agent, workspace agent, finance, commerce, ads, app platform으로 확장되는 기사
+- Gemini가 Search, Chrome, Workspace, Android, Gmail, Maps 등 Google 핵심 제품에 통합되는 기사
+- Claude가 기업 업무 실행, 코딩, 데이터 분석, sales, customer workflow로 확장되는 기사
+- Meta AI가 WhatsApp, Instagram, Facebook, Ads, Business tools, smart glasses에 적용되는 기사
+- Copilot 또는 Agent 365가 Microsoft 365, Windows, Power Platform, enterprise workflow에 적용되는 기사
+- Grok이 X, coding agent, app builder, plugin marketplace와 연결되는 기사
+
+#### 3. AI Agent가 실제 action을 수행하는 기사
+
+AI가 단순 답변이나 추천을 넘어 실제 행동을 수행하는 기사는 상단에 배치한다.
+
+- 결제
+- 거래
+- 구매
+- 예약
+- 주문
+- 주식/crypto trading
+- 코드 작성 및 수정
+- 브라우저 조작
+- 업무 자동화
+- 고객 응대
+- 문서 작성
+- 데이터 분석
+- 보안 대응
+- workflow orchestration
+
+특히 Visa, Mastercard, Stripe, Coinbase, Robinhood, PayPal, Amazon Rufus, Pinterest Ask처럼 AI Agent가 commerce, payment, trading, shopping을 실행하는 기사는 중요하게 배치한다.
+
+#### 4. Agentic Coding 및 개발자 workflow 변화
+
+아래 내용은 일반 기사뿐 아니라 GitHub Release, Changelog, Release Notes 형태여도 상단에 배치할 수 있다.
+
+- OpenClaw release
+- Codex update
+- Claude Code update
+- Cursor changelog
+- Paperclip release
+- AutoGPT release
+- CrewAI release
+- LangGraph / LangChain update
+- MCP 관련 업데이트
+- agent runtime
+- agent memory
+- gateway
+- provider integration
+- security boundary
+- channel integration
+- skill / plugin / marketplace
+- sandbox
+- coding agent benchmark
+- developer workflow 자동화
+
+작은 release라도 AI Agent의 runtime, memory, security, workflow, channel, provider, coding 기능 변화와 관련되면 반드시 리스트업한다.
+
+#### 5. AI Agent 보안, 권한, 거버넌스 기사
+
+AI Agent가 실제 시스템에 접근하면서 발생하는 보안·통제 관련 기사는 상단에 배치한다.
+
+- Agent Control
+- Agent Governance
+- Zero Trust for AI Agents
+- agent identity
+- access control
+- permission
+- audit
+- compliance
+- policy enforcement
+- RCE
+- MCP vulnerability
+- agent takeover
+- prompt injection
+- browser agent security
+- extension takeover
+- data leak
+- kill switch
+- observability
+- monitoring
+
+특히 Microsoft, Anthropic, Google, Cloudflare, Okta, Zscaler, Palo Alto Networks, Cisco, AWS, Snowflake, Databricks 관련 보안/거버넌스 기사는 중요하게 본다.
+
+#### 6. 수치가 있는 시장 변화 기사
+
+아래처럼 정량 지표가 포함된 기사는 상단에 배치한다.
+
+- 사용자 수
+- MAU / WAU
+- paid users
+- revenue
+- ARR
+- enterprise revenue
+- adoption rate
+- valuation
+- funding 규모
+- usage growth
+- market share
+- 비용 절감 수치
+- 업무 시간 단축 수치
+- 성능 개선 수치
+
+예를 들어 ChatGPT 1B users, Codex 4M weekly users, Salesforce Agentforce ARR, AI Agent adoption rate, OpenAI enterprise revenue처럼 시장 확산을 보여주는 수치가 있으면 중요하게 배치한다.
+
+#### 7. 기존 대형 앱에 AI 기능이 들어가는 기사
+
+아래 서비스처럼 기존 유저 기반이 큰 앱에 AI assistant 또는 AI Agent가 들어가는 기사는 상단에 배치한다.
+
+- Adobe
+- Canva
+- Figma
+- Notion
+- Roblox
+- Atlassian
+- Zoom
+- Kakao
+- A.
+- Pinterest
+- Amazon
+- Instagram
+- WhatsApp
+- Facebook
+- YouTube
+- Chrome
+- Gmail
+- Android
+- iOS
+
+AI 기능이 단순 실험이 아니라 기존 앱의 핵심 사용 흐름, 제작 흐름, 검색 흐름, 업무 흐름, 커머스 흐름을 바꾸면 중요하게 본다.
+
+#### 8. AI Character / Companion AI 관련 기사
+
+아래 서비스 관련 기사도 AI 관련성이 있으면 누락하지 않는다.
+
+- character.ai
+- Replika
+- Nomi
+- Kindroid
+- Cotomo
+- Paradot
+- Poketomo
+- Chai
+- Rinna
+- Wrtn Crack
+- KIRA
+- A.
+
+아래 내용이 포함되면 상단에 배치한다.
+
+- 신규 기능
+- memory
+- personality
+- voice
+- avatar
+- roleplay
+- social interaction
+- safety
+- moderation
+- teen safety
+- privacy
+- subscription
+- MAU / revenue
+- lawsuit / regulation
+
+공식 newsroom이 약한 경우 Google Query로 확인하고, 관련 기사가 있으면 반드시 리스트업한다.
+
+### 하단 배치하되 누락하면 안 되는 기사
+
+아래 유형은 상대적으로 중요도가 낮을 수 있지만, AI 관련성이 있으면 반드시 리스트업하고 해당 Query 섹션의 아래쪽에 배치한다.
+
+- 중소 SaaS 기업의 AI Agent 출시
+- 특정 산업용 AI Agent 발표
+- PRNewswire, BusinessWire, GlobeNewswire 기반의 제품 출시 기사
+- funding 기사
+- AI assistant 기능 추가
+- AI workflow 자동화 사례
+- AI adoption 관련 survey/report
+- 기업 내부 AI 도입 사례
+- thought leadership 성격의 AI Agent 분석 글
+- 특정 vertical use case 기사
+- AI Healthcare, AI Education, AI Advertising, AI Shopping, AI Browser, AI Security 관련 기사
+- 공식 블로그의 작은 product update
+- release note / changelog의 작은 기능 변화
+
+주의:
+
+- 하단 배치 대상이라는 이유로 기사를 제외하지 않음
+- 중요도가 낮아 보여도 AI 관련성이 있으면 반드시 기사 리스트에 포함
+
+### 중복 기사 처리 기준
+
+같은 내용을 여러 출처가 보도한 경우에도 완전히 삭제하지 않는다.
+
+- 공식 발표가 있으면 공식 출처를 대표 URL로 둠
+- TechCrunch, Reuters, CNBC, Bloomberg 등 해설 가치가 있는 기사는 보조 URL로 함께 둠
+- 같은 내용을 반복한 기사라면 `중복` 또는 `보조 출처`로 표시
+- 중복 기사라도 나중에 검토자가 판단할 수 있도록 기록은 남김
+- 완전히 동일하고 정보 가치가 없는 경우에만 대표 URL 아래에 묶음
+
+### 절대 누락하면 안 되는 키워드
+
+아래 키워드가 포함된 기사는 중요도와 관계없이 반드시 확인하고, AI 관련성이 있으면 리스트업한다.
+
+- AI Agent
+- Agentic AI
+- ChatGPT
+- OpenAI
+- Codex
+- Claude
+- Claude Code
+- Claude Cowork
+- Gemini
+- Google AI Mode
+- DeepMind
+- Meta AI
+- Copilot
+- Agent 365
+- Grok
+- OpenClaw
+- MCP
+- AI coding agent
+- AI browser
+- AI search
+- AI payment
+- Agentic commerce
+- AI security
+- AI governance
+- AI model release
+- AI assistant
+- AI release notes
+- GitHub release
+- Changelog
+- AI companion
+- AI character
+- AI healthcare
+- AI education
+- AI advertising
+- AI shopping
+- enterprise AI adoption
+
+### 한 줄 원칙
+
+AI 관련 기사는 중요도가 낮아 보여도 절대 누락하지 않는다.
+중요도는 제외 기준이 아니라, 해당 Query 섹션 안에서 어떤 기사를 위에 배치할지 판단하는 정렬 기준이다.
 
 ## 기사 제외 기준
 
@@ -2343,9 +2641,9 @@ https://techcrunch.com/category/startups/
 
 ## 중복 기사 처리 방식
 
-- 같은 기업, 같은 기능, 같은 발표 내용은 중복 처리
+- 같은 기업, 같은 기능, 같은 발표 내용은 중복 처리하되 Sheet 기록은 남김
 - 동일 이벤트 기사는 Cluster 단위로 관리
-- 각 Cluster에서 가장 적합한 Source 1개만 최종 유지
+- 각 Cluster에서 가장 적합한 Source 1개를 대표 기사로 유지하고 나머지는 `중복` 또는 `보조 출처`로 기록
 - Official Source와 외부 기사 중복 시 Official Source 우선
 - Paywall 기사는 최종 URL로 사용하지 않고 접근 가능한 기사로 대체
 - 외부 기사 우선순위 예시:
@@ -2355,13 +2653,13 @@ https://techcrunch.com/category/startups/
   - 9to5Google
   - Social Media Today
 - Google Query 기사는 날짜 필터 해제 후 타이틀 또는 핵심 키워드로 과거 사용 여부 확인
-- 과거 사용 기사 또는 동일 이슈 단순 재사용 기사는 제외
+- 과거 사용 기사 또는 동일 이슈 단순 재사용 기사는 신규 정보가 없으면 대표 기사 아래 중복 기록
 - 실질적 업데이트가 있으면 신규 기사로 유지:
   - 후속 발표
   - 신규 수치
   - 신규 지역 출시
   - 신규 기능 추가
-- 중복 기사 삭제 전 비고란에 남길 기사와 제외 기사 표시
+- 중복 기사 정리 전 비고란에 대표 기사와 보조 출처 또는 중복 기사 표시
 
 ## 최종 Title 작성 방식
 
@@ -2774,6 +3072,11 @@ https://techcrunch.com/category/startups/
 
 ## 최종 검수 체크리스트
 
+- [ ] AI 관련 기사를 중요도와 관계없이 모두 리스트업했는지 확인
+- [ ] 각 Query 섹션 안에서 `중요한 기사 → 일반 AI 관련 기사 → 중복/보조 출처` 순서로 정렬했는지 확인
+- [ ] GitHub Release, Changelog, Release Notes, Docs Update 중 AI Agent 또는 AI 기능 변화가 있는 항목을 누락하지 않았는지 확인
+- [ ] 중복 기사도 완전히 삭제하지 않고 대표 기사 아래 보조 출처 또는 중복으로 기록했는지 확인
+- [ ] 절대 누락하면 안 되는 AI 키워드 포함 기사를 확인했는지 점검
 - [ ] Google Query 전 우선 확인 링크의 공식 사이트, Blog, Newsroom, GitHub, release notes, changelog 확인
 - [ ] 입력한 날짜 범위에 맞는 기사만 포함
 - [ ] Google Query 전 우선 확인 소스 먼저 확인
