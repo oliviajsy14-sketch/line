@@ -1,5 +1,55 @@
 # Weekly Archiving Process
 
+## 목차
+
+- [자동화 실행 개요](#자동화-실행-개요)
+- [자동화 실행 모드](#자동화-실행-모드)
+- [업무 목적](#업무-목적)
+- [자동화 입력값](#자동화-입력값)
+- [자동화 출력값](#자동화-출력값)
+- [Output Schema](#output-schema)
+- [Sheet 입력 방식](#sheet-입력-방식)
+- [기본 작업 단위](#기본-작업-단위)
+- [날짜 입력 방식](#날짜-입력-방식)
+- [Weekly IT Trend Sheet와 Global IT Trend Sheet 구분](#weekly-it-trend-sheet와-global-it-trend-sheet-구분)
+- [Query List 적용 방식](#query-list-적용-방식)
+- [Query 전체 리스트](#query-전체-리스트)
+- [AI Agent 구역 처리 방식](#ai-agent-구역-처리-방식)
+- [AI Agent 세부 Query 우선 배치 기준](#ai-agent-세부-query-우선-배치-기준)
+- [AI Agent 기본 Query 배치 기준](#ai-agent-기본-query-배치-기준)
+- [Claude Code / Claude Cowork 배치 기준](#claude-code--claude-cowork-배치-기준)
+- [AI Agent 기사 배치 예시](#ai-agent-기사-배치-예시)
+- [Query별 Sheet 입력 방식](#query별-sheet-입력-방식)
+- [Check Box 운영 기준](#check-box-운영-기준)
+- [n/a 입력 기준](#na-입력-기준)
+- [검색 실패 및 예외 처리](#검색-실패-및-예외-처리)
+- [자동화 실행 로그](#자동화-실행-로그)
+- [기사 수집 기준](#기사-수집-기준)
+- [카테고리별 기준](#카테고리별-기준)
+- [카테고리별 우선 포함 기준](#카테고리별-우선-포함-기준)
+- [AI 중심성 판단 기준](#ai-중심성-판단-기준)
+- [Global IT Trend Report 기사 범위](#global-it-trend-report-기사-범위)
+- [기사 중요도 및 정렬 기준](#기사-중요도-및-정렬-기준)
+- [수집과 최종 선택의 구분](#수집과-최종-선택의-구분)
+- [포함과 제외의 기본 원칙](#포함과-제외의-기본-원칙)
+- [중복 기사 처리 방식](#중복-기사-처리-방식)
+- [후속 기사와 중복 기사 구분 기준](#후속-기사와-중복-기사-구분-기준)
+- [Paywall 기사 처리 방식](#paywall-기사-처리-방식)
+- [URL 입력 및 검증 기준](#url-입력-및-검증-기준)
+- [URL 언어 기준](#url-언어-기준)
+- [Naver / LINE 아카이빙 제외 기준](#naver--line-아카이빙-제외-기준)
+- [Korean Title 작성 방식](#korean-title-작성-방식)
+- [Korean Title 품질 체크](#korean-title-품질-체크)
+- [Korean Title 자동 검증 기준](#korean-title-자동-검증-기준)
+- [신기능명 큰따옴표 적용 기준](#신기능명-큰따옴표-적용-기준)
+- [최종 검수 체크리스트](#최종-검수-체크리스트)
+- [최종 산출물](#최종-산출물)
+- [산출물 활용 방식](#산출물-활용-방식)
+- [Appendix A. Google Query 전 우선 확인 링크](#appendix-a-google-query-전-우선-확인-링크)
+- [Appendix B. Official Source Map](#appendix-b-official-source-map)
+- [Appendix C. Source 우선순위 세부 기준](#appendix-c-source-우선순위-세부-기준)
+- [수정 요약](#수정-요약)
+
 
 ## 자동화 실행 개요
 
@@ -35,57 +85,6 @@
 - 선택된 run_mode와 다른 Query List는 사용하지 않는다.
 - 작업자가 run_mode를 명시하지 않은 경우 자동화 agent는 작업을 시작하지 않고 run_mode 확인이 필요하다고 표시한다.
 
-## 목차
-
-- [업무 목적](#업무-목적)
-- [기본 작업 단위](#기본-작업-단위)
-- [카테고리 구분](#카테고리-구분)
-- [AI Agent 구역 처리 방식](#ai-agent-구역-처리-방식)
-- [AI Agent 세부 Query 우선 배치 기준](#ai-agent-세부-query-우선-배치-기준)
-- [AI Agent 기본 Query 배치 기준](#ai-agent-기본-query-배치-기준)
-- [AI Agent 기사 배치 예시](#ai-agent-기사-배치-예시)
-- [카테고리별 기준](#카테고리별-기준)
-- [Global IT Trend Report 기사 범위](#global-it-trend-report-기사-범위)
-- [Naver / LINE 아카이빙 제외 기준](#naver--line-아카이빙-제외-기준)
-- [작업 전 준비사항](#작업-전-준비사항)
-- [날짜 입력 방식](#날짜-입력-방식)
-- [전체 작업 순서](#전체-작업-순서)
-- [Google Query 전 우선 확인 소스](#google-query-전-우선-확인-소스)
-- [Google Query 전 우선 확인 링크](#google-query-전-우선-확인-링크)
-- [Query List 적용 방식](#query-list-적용-방식)
-- [Official Source 확인 방식](#official-source-확인-방식)
-- [Google Query 및 외부 기사 검색 방식](#google-query-및-외부-기사-검색-방식)
-- [Google Query 기사 중복 확인 방식](#google-query-기사-중복-확인-방식)
-- [기사 선별 기준](#기사-선별-기준)
-- [Global IT Trend Report 기사 중요도 및 정렬 기준](#global-it-trend-report-기사-중요도-및-정렬-기준)
-- [수집과 최종 선택의 구분](#수집과-최종-선택의-구분)
-- [기사 제외 기준](#기사-제외-기준)
-- [국가 중요도 우선순위](#국가-중요도-우선순위)
-- [국가 우선순위 적용 방식](#국가-우선순위-적용-방식)
-- [Cluster 처리 방식](#cluster-처리-방식)
-- [Paywall 기사 처리 방식](#paywall-기사-처리-방식)
-- [URL 언어 기준](#url-언어-기준)
-- [Sheet 정리 방식](#sheet-정리-방식)
-- [Sheet 입력 권장 컬럼](#sheet-입력-권장-컬럼)
-- [Check Box 운영 기준](#check-box-운영-기준)
-- [n/a 입력 기준](#na-입력-기준)
-- [URL 입력 기준](#url-입력-기준)
-- [중복 기사 및 보조 출처 처리 방식](#중복-기사-및-보조-출처-처리-방식)
-- [대분류별 기사 수 표기 방식](#대분류별-기사-수-표기-방식)
-- [자동화 입력값](#자동화-입력값)
-- [자동화 출력값](#자동화-출력값)
-- [중복 기사 처리 방식](#중복-기사-처리-방식)
-- [최종 Title 작성 방식](#최종-title-작성-방식)
-- [Weekly IT Trend Sheet와 Global IT Trend Sheet 구분](#weekly-it-trend-sheet와-global-it-trend-sheet-구분)
-- [Query 전체 리스트](#query-전체-리스트)
-- [Query와 우선 확인 링크 연결 방식](#query와-우선-확인-링크-연결-방식)
-- [Query별 Sheet 입력 방식](#query별-sheet-입력-방식)
-- [Query별 검색 결과 정리 방식](#query별-검색-결과-정리-방식)
-- [최종 검수 체크리스트](#최종-검수-체크리스트)
-- [최종 산출물](#최종-산출물)
-- [산출물 활용 방식](#산출물-활용-방식)
-- [수정 요약](#수정-요약)
-
 ## 업무 목적
 
 - 주간 단위로 주요 IT 및 AI 관련 뉴스 수집
@@ -114,7 +113,7 @@
 - 검색 기간은 `yyyy.m.d~yyyy.m.d` 형식으로 입력한다.
 - 날짜에는 `/`를 사용하지 않는다.
 - 월/일에는 0 padding을 사용하지 않는다.
-- 예: `2026.06.08~2026.06.14`가 아니라 `2026.6.8~2026.6.14`
+- 예: 월/일 두 자리 0 padding 입력이 아니라 `2026.6.8~2026.6.14`처럼 입력한다.
 
 ## 자동화 출력값
 
@@ -179,7 +178,7 @@ Sheet 입력 구조는 아래 형식을 따른다.
 ## 기본 작업 단위
 
 - 작업 주기: 주 1회
-- 검색 기간: 작업자가 `yyyy.mm.dd~yyyy.mm.dd` 형식으로 직접 입력
+- 검색 기간: 작업자가 `yyyy.m.d~yyyy.m.d` 형식으로 직접 입력
 - 검색 기간 예시: `2026.6.18~2026.6.24`
 - 작업 위치: 기사 리스트업 Sheet
 - 탭 생성 방식: 주차별 새 탭 생성
@@ -396,7 +395,7 @@ Sheet 입력 구조는 아래 형식을 따른다.
 ## 작업 전 준비사항
 
 - [ ] 작업자가 입력한 검색 기간 확인
-- [ ] 검색 기간이 `yyyy.mm.dd~yyyy.mm.dd` 형식인지 확인
+- [ ] 검색 기간이 `yyyy.m.d~yyyy.m.d` 형식인지 확인
 - [ ] 기사 리스트업 Sheet의 기존 템플릿 확인
 - [ ] 새 주차 탭 생성
 - [ ] 기존 서식 유지
@@ -405,9 +404,9 @@ Sheet 입력 구조는 아래 형식을 따른다.
 
 ## 날짜 입력 방식
 
-- 입력 형식: `yyyy.mm.dd~yyyy.mm.dd`
+- 입력 형식: `yyyy.m.d~yyyy.m.d`
 - 입력 예시: `2026.6.18~2026.6.24`
-- 개별 기사 발행일 형식: `yyyy.mm.dd`
+- 개별 기사 발행일 형식: `yyyy.m.d`
 - 적용 범위:
   - Official Source 확인
   - Google News 검색
@@ -436,6 +435,10 @@ Sheet 입력 구조는 아래 형식을 따른다.
 14. 작업자가 최종 검토 후 리포트 후보 기사만 Check Box 직접 체크
 
 ## Google Query 전 우선 확인 소스
+
+자세한 공식 링크 목록은 `Appendix A. Google Query 전 우선 확인 링크`를 참고한다.
+공식 소스 매핑은 `Appendix B. Official Source Map`을 참고한다.
+Source 우선순위 세부 기준은 `Appendix C. Source 우선순위 세부 기준`을 참고한다.
 
 - Google Query 전 Official Source가 존재하는 기업·서비스·제품은 우선 확인
 - `(Google Query)` 표시 항목은 예외로 Google Search 또는 Google News에서만 검색
@@ -550,7 +553,7 @@ Sheet 입력 구조는 아래 형식을 따른다.
   - partnership
   - funding
   - regulation
-- 검색 기간은 작업자 입력 `yyyy.mm.dd~yyyy.mm.dd` 범위 적용
+- 검색 기간은 작업자 입력 `yyyy.m.d~yyyy.m.d` 범위 적용
 - 검색 결과는 최신순과 관련도 기준으로 확인
 - 동일 내용이 여러 매체에 반복되면 아래 우선순위 적용:
   1. 원출처에 가까운 기사
@@ -558,30 +561,6 @@ Sheet 입력 구조는 아래 형식을 따른다.
   3. 신뢰도 높은 Tech Media
   4. 본문 접근 가능한 영어 기사
 - Google Query 신규 발견 기사는 과거 중복 여부 확인 후 Sheet 입력
-
-## Google Query 기사 중복 확인 방식
-
-- Sheet 입력 전 반드시 과거 중복 여부 확인
-- 확인 방식:
-  1. 기존 검색 날짜 필터 해제
-  2. 기사 타이틀로 재검색
-  3. 핵심 키워드로 재검색
-  4. 동일 기사 또는 동일 이슈의 과거 주차 사용 여부 확인
-- 최신 발행 기사라도 아래 경우 제외:
-  - 과거 기사 재사용
-  - 재배포
-  - 업데이트 없는 반복 보도
-- 과거 동일 기사 또는 동일 이슈가 있으면 `실행 로그 또는 URL 셀 줄바꿈으로 처리하고 대표 기사 아래 기록
-- 신규 기사로 유지 가능한 경우:
-  - 후속 발표
-  - 신규 기능 추가
-  - 새로운 수치
-  - 새로운 지역 출시
-  - 새로운 파트너십
-- 애매한 경우 내부 판단 기준으로만 활용:
-  - `중복 가능성`
-  - `후속 기사`
-  - `기존 이슈 업데이트`
 
 ## 기사 선별 기준
 
@@ -615,7 +594,7 @@ Sheet 입력 구조는 아래 형식을 따른다.
   - 국가별 정책, 법안, 보안, 개인정보 이슈
   - 시장 전반에 영향을 줄 수 있는 기사
 
-## Global IT Trend Report 기사 중요도 및 정렬 기준
+## 기사 중요도 및 정렬 기준
 
 Global IT Trend Report의 기사 리스트업 목적은 중요한 기사만 선별하는 것이 아니라, Global IT / AI / Big Tech / Social / Asia Tech / Market Trend와 관련된 기사를 빠짐없이 수집한 뒤, 검토자가 보기 쉽도록 중요도에 따라 시트 내 배치 순서를 정리하는 것이다.
 
@@ -846,9 +825,9 @@ Global IT Trend Report에서도 Release Notes, Changelog, GitHub Release는 누�
 
 - 공식 발표가 있으면 공식 출처를 대표 URL로 둠
 - TechCrunch, Reuters, CNBC, Bloomberg, 9to5Google, 9to5Mac, Social Media Today 등 해설 가치가 있는 기사는 보조 URL로 함께 둠
-- 같은 내용을 반복한 기사라면 `실행 로그 또는 URL 셀 줄바꿈으로 처리
-- 중복 기사라도 나중에 검토자가 판단할 수 있도록 기록은 남김
-- 완전히 동일하고 정보 가치가 없는 경우에만 대표 URL 아래에 묶음
+- 같은 내용을 반복한 기사라면 Sheet에 별도 행으로 반복 입력하지 않는다.
+- 보완 가치가 있는 URL은 대표 기사 URL 셀에 줄바꿈으로 함께 입력한다.
+- 정보 가치가 낮은 중복 기사는 Sheet에 입력하지 않고 실행 로그에 기록할 수 있다.
 
 ### 절대 누락하면 안 되는 주제
 
@@ -1012,60 +991,68 @@ Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하�
   - 단순 PR
   - 영향도 낮은 기사
 
-## Cluster 처리 방식
-
-- 동일 이벤트 기사는 하나의 Cluster로 묶어 관리
-- Cluster 판단 기준:
-  - 같은 기업
-  - 같은 기능
-  - 같은 발표
-  - 같은 파트너십
-  - 같은 투자
-  - 같은 규제 이슈
-- Cluster 내 최종 유지 원칙:
-  1. Official Source 우선
-  2. 접근 가능한 영어 원문 기사
-  3. 신뢰도 높은 Tech Media
-- 제외:
-  - 단순 재보도
-  - 내용 반복
-  - 출처 불명확 기사
-- 보완 기사 유지 가능 조건:
-  - 새로운 수치
-  - 신규 지역 출시
-  - 후속 발표
-  - 추가 기능
-  - 시장 반응
-- 내부 판단 기준으로만 활용 예시:
-  - `대표 기사 유지`
-  - `중복 제외`
-  - `보완 기사 유지`
-
 ## 중복 기사 처리 방식
 
-중복 판단은 자동화 내부 로직으로만 사용한다.  
-Sheet에는 `Cluster ID`, `Status`, `Note` 컬럼을 만들지 않는다.
+중복 판단은 자동화 내부 로직으로만 사용한다.
+Sheet에는 `Cluster ID`, `Status`, `Note`, `Duplicate Check Keyword` 컬럼을 만들지 않는다.
 
-처리 기준:
+Cluster는 Sheet 컬럼이 아니라 자동화 내부 중복 판단 기준이다. 자동화 agent는 동일 이슈를 내부적으로 Cluster처럼 판단할 수 있지만, Sheet에는 Cluster ID를 출력하지 않는다. Cluster 판단 결과는 필요 시 실행 로그에만 남긴다.
 
-- 동일 이슈에서 대표 기사 1개만 입력한다.
+### 중복 판단 기준
+
+아래 조건이 같으면 동일 이슈 또는 중복 기사로 판단한다.
+
+- 같은 기업 또는 서비스
+- 같은 기능 또는 제품 업데이트
+- 같은 발표
+- 같은 파트너십
+- 같은 투자
+- 같은 규제 이슈
+- 같은 수치 또는 같은 보고서 기반 보도
+- 같은 원출처를 재가공한 기사
+
+### Sheet 처리 기준
+
+- 동일 이슈에서는 대표 기사 1개만 Sheet에 입력한다.
 - 공식 발표가 있으면 공식 발표를 대표 URL로 우선 사용한다.
-- Tech Media 기사에 시장 반응, 수치, 경쟁사 맥락 등 추가 정보가 있으면 같은 URL 셀에 줄바꿈으로 함께 입력한다.
-- 정보 가치가 낮은 단순 재보도는 입력하지 않는다.
+- Tech Media 기사에 시장 반응, 신규 수치, 경쟁사 맥락, 추가 설명이 있으면 같은 URL 셀에 줄바꿈으로 함께 입력한다.
+- 정보 가치가 낮은 단순 재보도는 Sheet에 입력하지 않는다.
 - 완전히 동일한 내용의 반복 보도는 대표 기사 1개만 유지한다.
-- 후속 기사로 볼 수 있는 경우에는 별도 기사로 입력할 수 있다.
-- 후속 기사 판단 기준은 신규 수치, 신규 지역 출시, 신규 기능 추가, 신규 파트너십, 신규 규제 변화가 있는지 여부다.
+- 과거 동일 기사 또는 동일 이슈가 있으면 Sheet에 별도 행으로 반복 입력하지 않는다.
+- 보완 가치가 있는 URL은 대표 기사 URL 셀에 줄바꿈으로 함께 입력한다.
+- 정보 가치가 낮은 중복 기사는 Sheet에 입력하지 않고 실행 로그에 기록할 수 있다.
 - 중복으로 제외한 기사 URL은 Sheet 본문이 아니라 실행 로그에 기록할 수 있다.
 
-Sheet 입력 방식:
+### 보조 URL 입력 기준
 
-| 상황 | Sheet 처리 | 로그 처리 |
+- 공식 발표와 외부 보완 기사가 모두 정보 가치가 있으면 URL 셀에 줄바꿈으로 함께 입력한다.
+- URL 셀에서는 공식 발표를 첫 줄에 입력한다.
+- Tech Media 보완 링크는 두 번째 줄부터 입력한다.
+- 단순 재보도 링크는 URL 셀에 추가하지 않는다.
+
+### 후속 기사로 별도 입력 가능한 경우
+
+아래 중 하나라도 해당하면 중복이 아니라 후속 기사로 별도 입력할 수 있다.
+
+- 신규 기능 추가
+- 신규 지역 출시
+- 신규 수치 공개
+- 신규 파트너십 발표
+- 신규 규제 변화
+- 후속 제품 출시
+- 기존 이슈 이후 기업 공식 입장 변화
+- 기존 발표 이후 실제 유저 영향 또는 시장 반응이 새롭게 확인된 경우
+
+### Sheet와 실행 로그 구분
+
+| 상황 | Sheet 처리 | 실행 로그 |
 |---|---|---|
-| 공식 발표 + 보완 기사 | 대표 Korean Title 1개, URL 셀에 2개 링크 줄바꿈 | 선택 |
+| 공식 발표 + 보완 기사 | 대표 Korean Title 1개, URL 셀에 링크 줄바꿈 | 선택 |
 | 단순 재보도 | 입력하지 않음 | 선택 |
 | 완전 동일 기사 | 대표 기사만 입력 | 선택 |
 | 후속 업데이트 | 별도 기사로 입력 가능 | 선택 |
-| 중복 여부 불확실 | 입력하되 대표 URL 중심으로 정리 | 실행 로그에 기록 |
+| 중복 여부 불확실 | 대표 URL 중심으로 입력 가능 | 실행 로그에 기록 |
+| Paywall 원출처만 존재 | 대체 링크 찾은 경우만 Sheet 입력 | 필수 |
 
 ## Paywall 기사 처리 방식
 
@@ -1117,11 +1104,15 @@ Korean Title은 아래 조건을 모두 만족해야 한다.
 - URL을 제목 안에 포함하지 않음
 - 원문 제목을 그대로 번역하지 않음
 - 쉼표는 최대 1개만 사용
-- 신규 공개 서비스나 기능명에만 큰따옴표 사용
+- 정식 릴리스, 정식 출시, public beta, 공식 출시 예정인 신규 기능명·서비스명에는 큰따옴표 사용
 - 기존 서비스명이나 기존 기능명에는 불필요한 큰따옴표를 사용하지 않음
 - 기업명은 기사 주체 기준으로 작성
 - 산업 전반 또는 특정 기업 중심이 아닌 경우 `[Market]` 사용
 - 문장 끝은 명사형 중심으로 정리
+- 정식 릴리스, 정식 출시, public beta, 공식 출시 예정인 신규 기능명·서비스명에는 큰따옴표를 사용한다.
+- 내부 테스트, 비공개 테스트, 루머, 기존 기능 업데이트·확대, 기능명이 정확하지 않은 경우, 버튼명에는 큰따옴표를 사용하지 않는다.
+- beta라고 표현되어도 public beta인지 명확하지 않으면 큰따옴표를 사용하지 않는다.
+- 기존 기능명에는 불필요한 큰따옴표를 사용하지 않는다.
 
 ### 올바른 예시
 
@@ -1131,9 +1122,77 @@ Korean Title은 아래 조건을 모두 만족해야 한다.
 
 ### 잘못된 예시
 
-- [Google] Gemini 업데이트 (2026/04/07)
+- [Google] Gemini 업데이트 (2026.4.7)
 - Google announces Gemini updates
-- [OpenAI] Safety Fellowship 공개 (2026.04.06) - https://example.com
+- [OpenAI] Safety Fellowship 공개 (2026.4.6) - https://example.com
+
+
+## 신기능명 큰따옴표 적용 기준
+
+Korean Title 작성 시 신규 기능명 또는 신규 서비스명에는 큰따옴표를 붙인다.
+단, 기능명처럼 보인다고 모두 큰따옴표를 붙이지 않고, 아래 기준에 따라 제한적으로 적용한다.
+
+### 큰따옴표를 붙이는 경우
+
+아래에 해당하면 기능명 또는 서비스명에 큰따옴표를 붙인다.
+
+- 정식 릴리스된 신규 기능명
+- 정식 출시된 신규 서비스명
+- public beta로 공개된 신규 기능명
+- public beta로 공개된 신규 서비스명
+- 공식 발표 기준 출시 예정인 신규 기능명
+- 공식 발표 기준 출시 예정인 신규 서비스명
+- 새롭게 공개된 제품명, 기능명, 프로그램명, 모델명
+
+### 큰따옴표를 붙이지 않는 경우
+
+아래에 해당하면 기능명처럼 보이더라도 큰따옴표를 붙이지 않는다.
+
+- 내부 테스트 중인 기능
+- 비공개 테스트 중인 기능
+- 루머 단계의 기능
+- 출시 여부가 공식 확인되지 않은 기능
+- 이미 출시된 기존 기능의 업데이트
+- 기존 기능의 적용 범위 확대
+- 기존 기능의 지역 확대
+- 기존 기능의 UI 개선
+- 기능명이 정확하지 않거나 기사에서 임시 명칭처럼 언급된 경우
+- 단순 버튼명
+- 메뉴명
+- 일반 UX 요소명
+- 기능 카테고리명
+- 기사 작성자가 임의로 표현한 설명형 명칭
+
+## public beta / 내부 테스트 큰따옴표 구분
+
+- public beta는 외부 유저, 개발자, 일부 공개 대상에게 공식적으로 공개된 베타 테스트를 의미한다.
+- public beta로 공개된 신규 기능명 또는 서비스명은 큰따옴표를 붙인다.
+- 내부 테스트는 회사 내부 직원, 제한된 비공개 그룹, 초대 기반 비공개 테스트, 루머성 테스트를 의미한다.
+- 내부 테스트 또는 비공개 테스트 단계의 기능명에는 큰따옴표를 붙이지 않는다.
+- 기사에서 beta라고 표현되어도 public beta인지 명확하지 않으면 큰따옴표를 붙이지 않는다.
+- 공식 Blog, 공식 Release Notes, 공식 Newsroom에서 public beta라고 명시된 경우에만 큰따옴표를 붙인다.
+
+## 출시 예정 기능 큰따옴표 기준
+
+- 공식 발표에서 특정 기능명 또는 서비스명이 출시 예정이라고 명확히 공개된 경우 큰따옴표를 붙인다.
+- 출시 예정이지만 기능명이 정확하지 않거나 설명형 표현에 가까운 경우 큰따옴표를 붙이지 않는다.
+- 루머, 유출, 비공식 보도 기반 출시 예정 기능에는 큰따옴표를 붙이지 않는다.
+
+## 큰따옴표 적용 예시
+
+| 상황 | 큰따옴표 | 예시 |
+|---|---|---|
+| 신규 기능 정식 릴리스 | O | [Snap] "Snap Smart Assistant" 공개하며 AI 광고 제작 기능 확대 (2026.6.18) |
+| 신규 서비스 정식 출시 | O | [OpenAI] "Safety Fellowship" 공개하며 AI 안전 연구 인재 육성 프로그램 운영 (2026.4.6) |
+| public beta 공개 | O | [Google] "AI Edge Eloquent" public beta 공개하며 오프라인 Dictation 기능 테스트 확대 (2026.4.6) |
+| 공식 출시 예정 기능 | O | [Apple] "Personalized Siri" 출시 예정 발표하며 Apple Intelligence 기반 개인화 기능 강화 (2026.6.18) |
+| 내부 테스트 | X | [Apple] Siri 기반 앱 간 작업 수행 기능 내부 테스트 진행 (2026.6.18) |
+| 비공개 테스트 | X | [Meta] Threads 알고리즘 조정 기능 비공개 테스트 진행 (2026.6.18) |
+| 루머 | X | [Google] Gemini 기반 검색 Agent 출시 가능성 부상 (2026.6.18) |
+| 기존 기능 업데이트 | X | [Google] Gemini overlay와 Gemini Live UI 통합 재설계 (2026.4.7) |
+| 기존 기능 확대 | X | [Meta] WhatsApp AI 요약 기능 적용 범위 확대 (2026.6.18) |
+| 기능명이 정확하지 않음 | X | [Amazon] AI 쇼핑 보조 기능 개선하며 구매 전환 UX 강화 (2026.6.18) |
+| 버튼명 | X | [TikTok] Shop Now 버튼 테스트 확대하며 광고 전환 UX 개선 (2026.6.18) |
 
 ## Query Source Mapping 예시
 
@@ -1293,7 +1352,7 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - 국문 제목은 `[회사명] 핵심 내용 (yyyy.m.d)` 형식 적용
 - 산업 전반 또는 특정 기업 중심이 아닌 경우 `[Market]` 사용
 - 날짜는 `2026.4.7`처럼 0 padding 없이 작성
-- 신규 공개 서비스나 기능명에만 큰따옴표 사용
+- 정식 릴리스, 정식 출시, public beta, 공식 출시 예정인 신규 기능명·서비스명에는 큰따옴표 사용
 - URL이 여러 개인 경우 한 셀에 줄바꿈으로 입력 가능
 - 해당 Query 항목에서 기사 없음 또는 업데이트 없음은 `n/a`로 입력
 
@@ -1393,6 +1452,14 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - 최종 리포트 반영 여부는 사람이 Check Box로 선택한다.
 - 단, 명백한 비대상 기사, Naver/LINE/LY Corporation 단독 기사, 완전 중복 기사, 본문 확인 불가 기사, AI/IT/플랫폼 관련성이 거의 없는 기사는 입력하지 않는다.
 
+
+## 포함과 제외의 기본 원칙
+
+- 관련성이 있는 기사는 중요도가 낮아도 리스트업한다.
+- 중요도는 제외 기준이 아니라 Query 섹션 안에서의 정렬 기준으로 사용한다.
+- 단, IT/AI/플랫폼/시장 변화와 직접 관련이 없거나, 단순 PR/이벤트/본문 확인 불가/완전 중복이면 제외한다.
+- Naver / LINE / LY Corporation 단독 기사는 기존 제외 기준에 따라 Sheet에 입력하지 않는다.
+- 기사 수 조정이 필요한 경우에도 관련성이 낮은 기사부터 하단 배치 또는 제외 검토하되, 단순히 중요도가 낮다는 이유만으로 자동 제외하지 않는다.
 ## AI Agent 구역 처리 방식
 
 - `AI Agent`는 Weekly AI Trend Report에서 별도 상단 구역으로 관리할 수 있다.
@@ -1416,6 +1483,10 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - KIRA 관련 기사는 `AI Agent > KIRA`에 입력한다.
 - Wrtn Crack 또는 Crack 관련 기사는 해당 시트의 Query 표기에 맞춰 `Wrtn Crack` 또는 `Crack (크랙)`에 입력한다.
 - Nomi, Kindroid, Paradot, Replika, Poketomo, Hume AI 등 AI Agent 구역 내 세부 Query와 직접 관련된 기사는 각각의 세부 Query 아래에 입력한다.
+- AI Agent 구역 안에 동일하거나 더 구체적인 세부 Query가 존재하면 `AI Agent > AI Agent` 기본 Query에 넣지 않는다.
+- AI Agent 기본 Query는 세부 Query와 직접 매칭되지 않는 AI Agent 기사만 입력하는 fallback Query다.
+- 예: Spotify, Apple, Google, Meta, Amazon 등 일반 회사 Query에서 AI Agent 관련 기능이 발견되었지만 AI Agent 세부 Query와 직접 매칭되지 않는 경우 `AI Agent > AI Agent`에 입력한다.
+- 예: CrewAI, LangGraph, OpenClaw처럼 세부 Query가 이미 존재하면 해당 세부 Query 아래에 입력한다.
 
 ## AI Agent 기본 Query 배치 기준
 
@@ -1423,6 +1494,15 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - 특히 Spotify, Apple, Google, Meta, Amazon, Microsoft, OpenAI, Anthropic, TikTok, Snapchat, Discord 등 일반 회사/서비스 Query에서 발견된 기사라도, 기사 핵심이 새로운 AI Agent / Agentic AI / autonomous task / tool-use / workflow automation / agentic commerce / agentic payment / coding agent / enterprise agent라면 `AI Agent > AI Agent`에 배치한다.
 - 단, 해당 기사 내용이 AI Agent 구역 내 기존 세부 Query와 직접 매칭되면 `AI Agent > AI Agent`가 아니라 해당 세부 Query에 입력한다.
 - 단순히 AI Agent가 홍보 문구로 언급되었거나 실제 autonomous task, tool-use, workflow automation 기능이 없는 기사는 AI Agent 기본 Query로 이동하지 않는다.
+
+
+## Claude Code / Claude Cowork 배치 기준
+
+- Claude Cowork 관련 기사는 `AI Agent > Claude Cowork`에 입력한다.
+- Claude Code 관련 기사 중 coding agent, tool-use, autonomous coding workflow, MCP 기반 agent workflow가 핵심이면 AI Agent 관련 기사로 판단한다.
+- 단, Claude Code는 AI Agent 구역의 세부 Query에 직접 존재하지 않는 경우가 있으므로, AI Agent 세부 Query와 직접 매칭되지 않으면 `AI Agent > AI Agent` 기본 Query에 입력한다.
+- 일반 Claude Code 업데이트, 일반 개발자 도구 업데이트, 단순 docs 업데이트는 `AI/GPT > Claude Code`에 입력한다.
+- Claude Code와 Claude Cowork를 자동으로 같은 Query로 병합하지 않는다.
 
 ## AI Agent 기사 배치 예시
 
@@ -1459,7 +1539,7 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - 자동화 agent가 숫자를 정확히 계산할 수 있는 경우 자동 입력한다.
 - 자동 계산이 어렵다면 숫자 칸은 비워두고 작업자가 최종 검토 후 수동 업데이트한다.
 
-## 최종 Title 작성 방식
+## Korean Title 작성 방식
 
 최종 선별된 기사에는 `Korean Title`을 반드시 작성한다.
 
@@ -1483,7 +1563,7 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
   - `없음`
   - `됨`
 - 기업명, 서비스명, 기능명은 English로 작성
-- 신규 공개 서비스나 기능명에만 필요한 경우 큰따옴표 사용
+- 정식 릴리스, 정식 출시, public beta, 공식 출시 예정인 신규 기능명·서비스명에만 큰따옴표 사용
 - 기존 서비스명, 기존 기능명에는 불필요한 큰따옴표 사용 금지
 - 제목은 핵심 변화 중심으로 간결하게 작성
 - 쉼표는 최대 1개만 사용
@@ -1904,7 +1984,7 @@ Query에서 발견한 기사는 반드시 아래 순서로 확인한다.
 - [ ] Global IT / AI / Big Tech / Asia Tech / Social / Market Trend 관련 기사를 중요도와 관계없이 모두 리스트업했는지 확인
 - [ ] 각 Query 섹션 안에서 `시장 영향이 큰 기사 → 기업/서비스 변화 기사 → 일반 관련 기사 → 중복/보조 출처` 순서로 정렬했는지 확인
 - [ ] 공식 Newsroom, Blog, Release Notes, Changelog, GitHub Release 중 제품·서비스·기능·시장 변화가 있는 항목을 누락하지 않았는지 확인
-- [ ] 중복 기사도 완전히 삭제하지 않고 대표 기사 아래 보조 출처 또는 중복으로 기록했는지 확인
+- [ ] 보완 가치가 있는 중복 URL은 URL 셀 줄바꿈으로 정리하고, 정보 가치가 낮은 중복은 실행 로그 기준으로 처리했는지 확인
 - [ ] 절대 누락하면 안 되는 Global IT / AI / Big Tech / Social / Market Trend 주제를 확인했는지 점검
 - [ ] Google Query 전 우선 확인 링크의 공식 사이트, Blog, Newsroom, GitHub, release notes, changelog 확인
 - [ ] 입력한 날짜 범위에 맞는 기사만 포함
@@ -1917,8 +1997,8 @@ Query에서 발견한 기사는 반드시 아래 순서로 확인한다.
 - [ ] AI/GPT 기사가 별도 시트에 반영
 - [ ] Naver, LINE, LY Corporation 단독 기사 제외
 - [ ] Google Query 기사 날짜 필터 해제 후 과거 중복 여부 확인
-- [ ] 동일 이벤트 기사 Cluster 단위 정리
-- [ ] 각 Cluster에서 대표 Source를 구분하고 보조 출처 또는 중복 기사 기록
+- [ ] 동일 이벤트는 내부 중복 판단 기준으로 정리했는지 확인
+- [ ] 대표 URL과 보완 URL이 URL 셀 줄바꿈 기준으로 정리되었는지 확인
 - [ ] Paywall 기사를 접근 가능한 기사로 대체
 - [ ] URL이 영어 원문 또는 영어 공식 링크 기준으로 정리
 - [ ] 한국어/일본어 링크가 예외 기업 또는 현지어 공식 링크 기준에 부합
@@ -1932,23 +2012,58 @@ Query에서 발견한 기사는 반드시 아래 순서로 확인한다.
 - [ ] Title이 명사형 종결
 - [ ] `[Market]` 사용 기준 정확히 적용
 - [ ] Weekly AI Trend Report와 Global IT Trend Report에 활용 가능한 기사만 유지
+- [ ] 날짜 형식이 문서 전체에서 `yyyy.m.d` 기준으로 통일되었는지 확인
+- [ ] 이전 날짜 형식이나 0 padding 날짜 표현이 남아 있지 않은지 확인
+- [ ] Cluster가 Sheet 컬럼이 아니라 내부 중복 판단 기준으로만 설명되어 있는지 확인
+- [ ] 중복 기사 처리 섹션이 하나로 통합되었는지 확인
+- [ ] 깨진 백틱이나 중간에 끊긴 문장이 없는지 확인
+- [ ] 긴 링크 목록이 Appendix A로 이동되었는지 확인
+- [ ] Official Source Map이 Appendix B로 이동되었는지 확인
+- [ ] Source 우선순위 세부 기준이 Appendix C로 이동되었는지 확인
+- [ ] Claude Code와 Claude Cowork 배치 기준이 혼동되지 않게 정리되었는지 확인
+- [ ] AI Agent 기본 Query가 fallback Query로 설명되어 있는지 확인
+- [ ] 최종 산출물에 Status/Note/Cluster ID 등 금지 컬럼이 포함되지 않았는지 확인
+- [ ] Korean Title 내 신기능명 큰따옴표 적용 기준이 반영되었는지 확인
+- [ ] public beta에만 큰따옴표를 붙이고 내부 테스트·비공개 테스트에는 붙이지 않는 기준이 반영되었는지 확인
+- [ ] 기존 기능 업데이트·확대, 루머, 버튼명에는 큰따옴표를 붙이지 않는 기준이 반영되었는지 확인
 
 ## 최종 산출물
 
-- 기사 리스트업 Sheet의 주차별 탭
-- Weekly AI Trend Report 작성용 AI/GPT 기사 리스트
-- Global IT Trend Report 작성용 카테고리별 기사 리스트
-- Cluster 처리된 대표 기사 리스트
-- 제외 기사 및 중복 기사 확인 기록
-- Paywall 대체 기사 기록
+최종 산출물은 아래와 같다.
+
+- 주차별 기사 리스트업 Sheet 탭
+- Weekly IT Trend Sheet 결과
+- Global IT Trend Sheet 결과
 - 최종 Korean Title 리스트
+- URL이 포함된 기사 후보 리스트
+- 자동화 실행 로그
+
+Sheet 본문에는 아래 컬럼만 포함한다.
+
+- 대분류
+- Query / Service
+- Korean Title
+- Check Box
+- URL
+
+Sheet 본문에는 아래 항목을 포함하지 않는다.
+
+- Original Title
+- Status
+- Note
+- Cluster ID
+- AI Relevance
+- Report Relevance
+- Duplicate Check Keyword
+
+중복 제외 기사, Paywall 대체 과정, 검색 실패 Query, 제외 기사 기록은 Sheet 본문이 아니라 자동화 실행 로그에 남긴다.
 
 ## 산출물 활용 방식
 
 - AI/GPT 기사는 Weekly AI Trend Report 작성에 활용
 - Global Big Tech, Asia Big Tech, Social, Theme 기사는 Global IT Trend Report 작성에 활용
-- Cluster 대표 기사는 최종 리포트 기사 후보로 활용
-- 제외 기사와 중복 기사 기록은 이후 중복 방지용으로 활용
+- 대표 Korean Title과 URL은 최종 리포트 기사 후보로 활용
+- 제외 기사와 중복 기사 기록은 Sheet 본문이 아니라 자동화 실행 로그에서 이후 중복 방지용으로 활용
 - 최종 Korean Title은 리포트 작성 및 Sheet 정리 시 그대로 활용 가능
 
 ## Appendix A. Google Query 전 우선 확인 링크
@@ -3759,3 +3874,16 @@ https://techcrunch.com/category/startups/
 - Query Source Mapping 예시 추가
 - 긴 공식 링크 목록을 Appendix로 이동
 - Sheet 금지 컬럼 기준 재정리
+- 날짜 형식을 `yyyy.m.d` 기준으로 전체 통일
+- 중복 / Cluster 관련 섹션을 중복 기사 처리 방식으로 통합
+- Cluster를 Sheet 컬럼이 아닌 내부 중복 판단 기준으로 재정의
+- 깨진 문장과 백틱 오류 수정
+- 긴 링크 목록을 Appendix A로 이동
+- Official Source Map을 Appendix B로 이동
+- Source 우선순위 세부 기준을 Appendix C로 이동
+- Claude Code / Claude Cowork 배치 기준 명확화
+- AI Agent 기본 Query를 세부 Query 미매칭 시 사용하는 fallback Query로 명확화
+- Korean Title 내 신기능명 큰따옴표 적용 기준 구체화
+- 정식 릴리스, public beta, 공식 출시 예정 기능에는 큰따옴표 적용
+- 내부 테스트, 비공개 테스트, 루머, 기존 기능 업데이트·확대, 버튼명에는 큰따옴표 미적용 기준 추가
+- 최종 산출물 기준에서 금지 컬럼 재정리
