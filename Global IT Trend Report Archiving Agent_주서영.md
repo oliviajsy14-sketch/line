@@ -23,7 +23,7 @@
 - [Google Query 기사 중복 확인 방식](#google-query-기사-중복-확인-방식)
 - [기사 선별 기준](#기사-선별-기준)
 - [기사 포함 여부 판단 점수표](#기사-포함-여부-판단-점수표)
-- [기사 중요도 및 정렬 기준](#기사-중요도-및-정렬-기준)
+- [Global IT Trend Report 기사 중요도 및 정렬 기준](#global-it-trend-report-기사-중요도-및-정렬-기준)
 - [기사 제외 기준](#기사-제외-기준)
 - [기사 수 조정 기준](#기사-수-조정-기준)
 - [국가 중요도 우선순위](#국가-중요도-우선순위)
@@ -2389,144 +2389,169 @@ https://techcrunch.com/category/startups/
 - `보류 후 재검토`
 - `리포트 활용성 낮음`
 
-## 기사 중요도 및 정렬 기준
+## Global IT Trend Report 기사 중요도 및 정렬 기준
 
-기사 리스트업의 목적은 중요한 기사만 선별하는 것이 아니라, AI 관련 기사를 빠짐없이 수집한 뒤 중요도에 따라 시트 내 배치 순서를 정리하는 것이다.
+Global IT Trend Report의 기사 리스트업 목적은 중요한 기사만 선별하는 것이 아니라, Global IT / AI / Big Tech / Social / Asia Tech / Market Trend와 관련된 기사를 빠짐없이 수집한 뒤, 검토자가 보기 쉽도록 중요도에 따라 시트 내 배치 순서를 정리하는 것이다.
 
 - 중요도는 기사 포함/제외 기준이 아님
 - 중요도는 해당 Query 섹션 안에서 어떤 기사를 위에 배치할지 판단하기 위한 정렬 기준으로만 사용
-- 중요도가 낮아 보이는 기사라도 AI 관련성이 있으면 누락하지 않고 반드시 리스트업
+- 중요도가 낮아 보이는 기사라도 Global IT Trend Report의 카테고리와 관련성이 있으면 절대 누락하지 않고 반드시 리스트업
 
 ### 기본 원칙
 
-- AI 관련성이 있는 기사는 중요도와 관계없이 모두 리스트업
+- Global IT / AI / Big Tech / Asia Tech / Social / Market Trend 관련 기사는 중요도와 관계없이 모두 리스트업
 - 중요한 기사는 해당 Query 섹션의 위쪽에 배치
-- 중요도가 낮거나 단순 PR성 기사라도 AI 관련성이 있으면 아래쪽에 배치
+- 중요도가 낮거나 단순 PR성 기사라도 관련성이 있으면 아래쪽에 배치
 - 자동으로 중요하지 않다고 판단해 기사 제외 금지
-- 최종적으로 각 Query 안에서는 `중요한 기사 → 일반 AI 관련 기사 → 중복/보조 출처` 순서로 정렬
-- 중복 기사도 완전히 삭제하지 않고 대표 기사와 함께 보조 출처 또는 중복으로 기록
-- GitHub Release, Changelog, Release Notes, Docs Update도 AI Agent 또는 AI 기능 변화가 있으면 일반 기사처럼 리스트업
+- 최종적으로 각 Query 안에서는 `시장 영향이 큰 기사 → 기업/서비스 변화 기사 → 일반 관련 기사 → 중복/보조 출처` 순서로 정렬
+- 같은 내용의 중복 기사도 완전히 삭제하지 않고 대표 기사와 함께 보조 출처 또는 중복으로 기록
+- 공식 Newsroom, Blog, Release Notes, Changelog, GitHub Release도 제품·서비스·기능·시장 변화가 있으면 일반 기사처럼 리스트업
+- Weekly AI Trend Report보다 더 넓게 보되, Global IT Trend Report에서는 기술 자체보다 서비스화, 사업화, 시장 변화, 유저 접점 변화, 글로벌 경쟁 구도를 우선적으로 상단 배치
 
 ### 상단 배치해야 하는 중요 기사 기준
 
-#### 1. 핵심 AI 기업 및 서비스의 주요 변화
+아래 내용에 해당하는 기사는 해당 Query 섹션의 위쪽에 배치한다.
 
-아래 기업/서비스 관련 주요 제품 변화, 기능 확장, 모델 공개, 수익화, 사용자 지표, enterprise 확장 기사는 상단에 배치한다.
+#### 1. 글로벌 Big Tech의 주요 제품·서비스 변화
 
-- OpenAI
-- ChatGPT
-- Codex
+아래 기업의 주요 제품 출시, 기능 확장, 정책 변화, 수익화, 글로벌 확장, 파트너십, 규제 이슈는 상단에 배치한다.
+
 - Google
-- Gemini
-- DeepMind
-- Anthropic
-- Claude
-- Claude Code
-- Claude Cowork
-- Meta AI
-- Facebook
+- Apple
+- Meta
+- Amazon
+- Microsoft
+- Netflix
+- YouTube
 - Instagram
+- Facebook
 - WhatsApp
-- Microsoft Copilot
-- Agent 365
-- xAI
-- Grok
+- Android
+- iOS
+- Gmail
+- Chrome
 - AWS
+- OpenAI
+- Anthropic
 - NVIDIA
 - Salesforce
+- Adobe
 - Databricks
-- Snowflake
 - Cloudflare
 
-특히 ChatGPT, Gemini, Claude, Meta AI, Copilot, Grok, Codex처럼 AI 서비스 자체가 중심인 기사는 우선적으로 상단에 배치한다.
+특히 기존 대규모 유저 기반 서비스에 AI, Agent, Search, Ads, Commerce, Creator, Payment, Productivity 기능이 들어가는 기사는 상단에 배치한다.
 
-#### 2. AI가 플랫폼 또는 핵심 인터페이스로 확장되는 기사
+#### 2. AI가 실제 서비스와 유저 접점으로 확장되는 기사
 
-아래처럼 AI가 단순 보조 기능을 넘어 서비스의 핵심 사용 흐름을 바꾸는 기사는 상단에 배치한다.
+AI 기술 자체보다 실제 앱, 서비스, 플랫폼, 업무 흐름에 적용되는 기사를 중요하게 본다.
 
-- ChatGPT가 Super App, personal agent, workspace agent, finance, commerce, ads, app platform으로 확장되는 기사
-- Gemini가 Search, Chrome, Workspace, Android, Gmail, Maps 등 Google 핵심 제품에 통합되는 기사
-- Claude가 기업 업무 실행, 코딩, 데이터 분석, sales, customer workflow로 확장되는 기사
+아래 내용은 상단에 배치한다.
+
+- ChatGPT, Gemini, Claude, Meta AI, Copilot, Grok 등 AI 서비스가 기존 앱이나 업무 도구에 통합되는 기사
+- Google Search, Chrome, Android, Gmail, Workspace, YouTube에 AI 기능이 들어가는 기사
 - Meta AI가 WhatsApp, Instagram, Facebook, Ads, Business tools, smart glasses에 적용되는 기사
-- Copilot 또는 Agent 365가 Microsoft 365, Windows, Power Platform, enterprise workflow에 적용되는 기사
-- Grok이 X, coding agent, app builder, plugin marketplace와 연결되는 기사
+- Amazon Alexa, Rufus, Bedrock, AWS 기반 AI 서비스 확장 기사
+- Microsoft Copilot, Agent 365, Windows, Microsoft 365, Power Platform에 AI 기능이 들어가는 기사
+- Apple Intelligence, Siri, iOS, App Store, Safari, Messages 등 Apple 생태계 내 AI 변화 기사
+- Adobe, Canva, Figma, Notion, Roblox, Atlassian, Zoom 등 기존 대형 앱의 AI workflow 변화 기사
+- Kakao, SK Telecom, Samsung, Alibaba, Tencent, ByteDance, Huawei 등 Asia Big Tech의 AI 서비스 적용 기사
 
-#### 3. AI Agent가 실제 action을 수행하는 기사
+#### 3. AI Agent / Agentic AI의 산업 적용 기사
 
-AI가 단순 답변이나 추천을 넘어 실제 행동을 수행하는 기사는 상단에 배치한다.
+AI Agent 관련 기사는 Global IT Trend Report에서도 매우 중요하게 다룬다.
+다만 기술 자체보다 실제 산업과 기업 업무에 적용되는 의미가 큰 기사를 위에 배치한다.
 
-- 결제
-- 거래
-- 구매
-- 예약
-- 주문
-- 주식/crypto trading
-- 코드 작성 및 수정
-- 브라우저 조작
-- 업무 자동화
-- 고객 응대
-- 문서 작성
-- 데이터 분석
-- 보안 대응
-- workflow orchestration
+아래 내용은 상단에 배치한다.
 
-특히 Visa, Mastercard, Stripe, Coinbase, Robinhood, PayPal, Amazon Rufus, Pinterest Ask처럼 AI Agent가 commerce, payment, trading, shopping을 실행하는 기사는 중요하게 배치한다.
+- AI Agent가 기업 업무, 고객 응대, 마케팅, 금융, 제조, 통신, 의료, 교육, 커머스, 리테일, 보안에 적용되는 기사
+- AI Agent가 결제, 거래, 구매, 예약, 주문, 데이터 분석, 코드 작성, 고객 상담, workflow 자동화를 수행하는 기사
+- AI Agent 플랫폼, agentic commerce, AI payment, AI shopping, AI trading 관련 기사
+- 기업이 AI Agent를 도입해 비용 절감, 매출 증가, 업무 시간 단축, 자동화 확대 효과를 공개한 기사
+- 대기업이 AI Agent를 전사 도입하거나 주요 산업 파트너십으로 확장하는 기사
+- AI Agent가 assistant에서 coworker, autonomous worker, digital employee, operating platform으로 진화하는 기사
 
-#### 4. Agentic Coding 및 개발자 workflow 변화
+중소 기업 기사라도 AI Agent가 실제 산업 use case를 명확히 보여주면 반드시 리스트업하고, 산업 변화 의미가 크면 상단에 배치한다.
 
-아래 내용은 일반 기사뿐 아니라 GitHub Release, Changelog, Release Notes 형태여도 상단에 배치할 수 있다.
+#### 4. 시장 구조와 경쟁 구도를 보여주는 기사
 
-- OpenClaw release
-- Codex update
-- Claude Code update
-- Cursor changelog
-- Paperclip release
-- AutoGPT release
-- CrewAI release
-- LangGraph / LangChain update
-- MCP 관련 업데이트
-- agent runtime
-- agent memory
-- gateway
-- provider integration
-- security boundary
-- channel integration
-- skill / plugin / marketplace
-- sandbox
-- coding agent benchmark
-- developer workflow 자동화
+단순 제품 소식보다 시장 방향성을 설명할 수 있는 기사는 상단에 배치한다.
 
-작은 release라도 AI Agent의 runtime, memory, security, workflow, channel, provider, coding 기능 변화와 관련되면 반드시 리스트업한다.
+아래 내용은 중요하게 본다.
 
-#### 5. AI Agent 보안, 권한, 거버넌스 기사
+- AI Agent Loop, Agentic Web, AI Agent Identity, Agentic Commerce처럼 새로운 시장 개념이 등장하는 기사
+- OpenClaw, Codex, Claude Code, Cursor, Gemini, Grok 등 agentic coding 경쟁 구도 기사
+- Google, Apple, Meta, Microsoft, Amazon, OpenAI, Anthropic, xAI 간 AI 플랫폼 경쟁 기사
+- Big Tech의 AI 인프라 투자, 데이터센터, 반도체, GPU, AI PC, on-device AI 경쟁 기사
+- AI search, AI browser, AI shopping, AI ads, AI content creation처럼 기존 인터넷 사용 방식이 바뀌는 기사
+- AI 규제, 데이터 보호, 저작권, 청소년 안전, privacy, security 이슈가 시장 구조에 영향을 주는 기사
+- AI adoption, enterprise adoption, user growth, revenue, ARR, valuation 등 정량 지표가 포함된 기사
 
-AI Agent가 실제 시스템에 접근하면서 발생하는 보안·통제 관련 기사는 상단에 배치한다.
+#### 5. Asia Big Tech / 지역별 AI 확산 기사
 
-- Agent Control
-- Agent Governance
-- Zero Trust for AI Agents
-- agent identity
-- access control
-- permission
-- audit
-- compliance
-- policy enforcement
-- RCE
-- MCP vulnerability
-- agent takeover
-- prompt injection
-- browser agent security
-- extension takeover
-- data leak
-- kill switch
-- observability
-- monitoring
+Global IT Trend Report에서는 Asia Big Tech와 지역별 서비스 확산도 중요하다.
 
-특히 Microsoft, Anthropic, Google, Cloudflare, Okta, Zscaler, Palo Alto Networks, Cisco, AWS, Snowflake, Databricks 관련 보안/거버넌스 기사는 중요하게 본다.
+아래 내용은 상단에 배치한다.
 
-#### 6. 수치가 있는 시장 변화 기사
+- Alibaba, Qwen, Alibaba Cloud, Tencent, ByteDance, Huawei, Baidu, Samsung, Kakao, SK Telecom, Rakuten, Mercari 등 주요 Asia Tech 기업의 AI·서비스 변화
+- China, Japan, Korea, India, Southeast Asia 지역에서 AI 서비스가 출시되거나 확장되는 기사
+- AI 모델, AI assistant, AI Agent, AI cloud, AI commerce, AI payment, AI device 관련 지역별 경쟁 기사
+- India, Japan, Korea, China, Southeast Asia 등 특정 시장 현지화 전략
+- Alexa+ Hindi 지원, Kakao AI 서비스, Alibaba Qwen, Tencent AI Agent, Huawei Cloud, SK Telecom AI Agent 등 지역 기반 서비스 변화
+- Asia 기업이 글로벌 AI 생태계나 Big Tech 경쟁에 영향을 주는 기사
 
-아래처럼 정량 지표가 포함된 기사는 상단에 배치한다.
+단순 로컬 PR이라도 AI, Big Tech, platform, commerce, social, cloud, device, regulation과 연결되면 리스트업한다.
+
+#### 6. Social / Creator / Ads / Commerce 변화 기사
+
+Social 및 creator platform 관련 기사는 유저 행동, 광고, 커머스, 콘텐츠 제작 방식 변화가 있으면 상단에 배치한다.
+
+아래 내용은 중요하게 본다.
+
+- Instagram, Facebook, WhatsApp, TikTok, Snapchat, Pinterest, Reddit, LinkedIn, X, Discord, Twitch 등의 AI 기능 추가
+- Creator tool, AI video editing, AI ad tool, AI sponsored content, AI recommendation, AI search, AI shopping 관련 기사
+- social media 내 광고 상품, measurement, creator monetization, shopping, brand safety 변화
+- AI가 콘텐츠 제작, 유통, 추천, 광고 집행, 쇼핑 전환에 적용되는 기사
+- 플랫폼 정책 변화, teen safety, privacy, moderation, misinformation, bot, synthetic content 관련 기사
+- user engagement, MAU, creator economy, Gen Z/MZ trend와 연결되는 기사
+
+단순 캠페인이나 이벤트성 기사라도 social platform의 광고, creator, commerce, AI 기능 변화와 연결되면 리스트업한다.
+
+#### 7. AI 인프라, 반도체, 클라우드, 디바이스 기사
+
+AI 서비스 변화와 연결되는 인프라 기사는 상단에 배치한다.
+
+아래 내용은 중요하게 본다.
+
+- NVIDIA, AMD, Intel, Qualcomm, Apple Silicon, Google TPU, AWS Trainium 등 AI chip 관련 기사
+- AI PC, AI smartphone, smart glasses, wearable AI, edge AI, on-device AI 관련 기사
+- AWS, Google Cloud, Microsoft Azure, Alibaba Cloud, Oracle Cloud, Cloudflare 등 AI cloud infrastructure 기사
+- 데이터센터, GPU cluster, AI factory, sovereign AI, energy, water, cooling, compute shortage 관련 기사
+- AI Agent 실행을 위한 local runtime, edge deployment, secure runtime, sandbox, memory, gateway 관련 기사
+- AI infrastructure가 비용, 성능, 기업 도입, 생태계 경쟁에 영향을 주는 기사
+
+단순 하드웨어 기사라도 AI 서비스 확장, AI Agent, on-device AI, cloud AI, model deployment와 연결되면 리스트업한다.
+
+#### 8. 보안, 개인정보, 규제, 저작권 기사
+
+Global IT Trend Report에서는 AI와 플랫폼 확산에 따른 리스크 기사도 중요하게 다룬다.
+
+아래 내용은 상단에 배치한다.
+
+- AI Agent 보안, agent identity, access control, governance, compliance
+- prompt injection, RCE, MCP vulnerability, browser agent takeover, extension takeover
+- AI 모델의 개인정보, 학습 데이터, 저작권, content provenance, synthetic media 이슈
+- App Store, Android, social platform, browser, cloud, AI service 관련 규제
+- EU, US, China, Korea, Japan 등 주요 지역의 AI regulation 또는 platform regulation
+- 청소년 보호, AI companion safety, chatbot lawsuit, moderation, privacy 관련 기사
+- 데이터 유출, 보안 사고, 취약점, 계정 탈취, 인증, payment fraud 관련 기사
+
+보안·규제 기사는 제품 출시가 아니더라도 시장 영향이나 플랫폼 운영 방식 변화와 연결되면 상단에 배치한다.
+
+#### 9. 수치가 있는 기사
+
+정량 지표가 포함된 기사는 중요하게 배치한다.
+
+아래 지표가 있으면 상단 배치 우선순위를 높인다.
 
 - 사용자 수
 - MAU / WAU
@@ -2540,110 +2565,71 @@ AI Agent가 실제 시스템에 접근하면서 발생하는 보안·통제 관�
 - usage growth
 - market share
 - 비용 절감 수치
+- 생산성 향상 수치
 - 업무 시간 단축 수치
 - 성능 개선 수치
+- 처리량, 속도, latency, throughput
+- 파트너 수, 고객사 수, 국가 수, rollout 범위
 
-예를 들어 ChatGPT 1B users, Codex 4M weekly users, Salesforce Agentforce ARR, AI Agent adoption rate, OpenAI enterprise revenue처럼 시장 확산을 보여주는 수치가 있으면 중요하게 배치한다.
+단순 funding 기사라도 기업이 AI 시장 구조에 영향을 줄 가능성이 있거나, Big Tech/AI platform/Agentic AI와 연결되면 리스트업한다.
 
-#### 7. 기존 대형 앱에 AI 기능이 들어가는 기사
+#### 10. Release Notes / Changelog / GitHub Release
 
-아래 서비스처럼 기존 유저 기반이 큰 앱에 AI assistant 또는 AI Agent가 들어가는 기사는 상단에 배치한다.
+Global IT Trend Report에서도 Release Notes, Changelog, GitHub Release는 누락하면 안 된다.
 
-- Adobe
-- Canva
-- Figma
-- Notion
-- Roblox
-- Atlassian
-- Zoom
-- Kakao
-- A.
-- Pinterest
-- Amazon
-- Instagram
-- WhatsApp
-- Facebook
-- YouTube
-- Chrome
-- Gmail
-- Android
-- iOS
+아래 내용이 있으면 리스트업한다.
 
-AI 기능이 단순 실험이 아니라 기존 앱의 핵심 사용 흐름, 제작 흐름, 검색 흐름, 업무 흐름, 커머스 흐름을 바꾸면 중요하게 본다.
+- AI 기능 추가
+- AI Agent 기능 추가
+- 모델 업데이트
+- 검색, 브라우저, 광고, 커머스, 크리에이터 도구 기능 변화
+- developer workflow 변화
+- API, SDK, MCP, plugin, connector, integration 변화
+- security, identity, permission, compliance 관련 변화
+- 성능 개선, 비용 절감, 배포 안정성 개선
+- provider integration, channel integration, memory, runtime, gateway 개선
 
-#### 8. AI Character / Companion AI 관련 기사
-
-아래 서비스 관련 기사도 AI 관련성이 있으면 누락하지 않는다.
-
-- character.ai
-- Replika
-- Nomi
-- Kindroid
-- Cotomo
-- Paradot
-- Poketomo
-- Chai
-- Rinna
-- Wrtn Crack
-- KIRA
-- A.
-
-아래 내용이 포함되면 상단에 배치한다.
-
-- 신규 기능
-- memory
-- personality
-- voice
-- avatar
-- roleplay
-- social interaction
-- safety
-- moderation
-- teen safety
-- privacy
-- subscription
-- MAU / revenue
-- lawsuit / regulation
-
-공식 newsroom이 약한 경우 Google Query로 확인하고, 관련 기사가 있으면 반드시 리스트업한다.
+작은 업데이트라도 Global IT Trend Report 카테고리와 관련성이 있으면 하단에 배치하되 누락하지 않는다.
+시장 영향이 크거나 핵심 기업/서비스와 연결되면 상단에 배치한다.
 
 ### 하단 배치하되 누락하면 안 되는 기사
 
-아래 유형은 상대적으로 중요도가 낮을 수 있지만, AI 관련성이 있으면 반드시 리스트업하고 해당 Query 섹션의 아래쪽에 배치한다.
+아래 유형은 상대적으로 중요도가 낮을 수 있지만, 관련성이 있으면 반드시 리스트업하고 해당 Query 섹션의 아래쪽에 배치한다.
 
-- 중소 SaaS 기업의 AI Agent 출시
-- 특정 산업용 AI Agent 발표
-- PRNewswire, BusinessWire, GlobeNewswire 기반의 제품 출시 기사
-- funding 기사
-- AI assistant 기능 추가
-- AI workflow 자동화 사례
-- AI adoption 관련 survey/report
+- 중소 SaaS 기업의 AI 기능 출시
+- 특정 산업용 AI Agent 또는 AI workflow 발표
+- PRNewswire, BusinessWire, GlobeNewswire 기반 제품 출시 기사
+- 단순 funding 기사
 - 기업 내부 AI 도입 사례
-- thought leadership 성격의 AI Agent 분석 글
+- survey / report / thought leadership 기사
 - 특정 vertical use case 기사
 - AI Healthcare, AI Education, AI Advertising, AI Shopping, AI Browser, AI Security 관련 기사
+- Asia 지역 로컬 기업의 AI 서비스 출시
+- social platform의 작은 기능 변화
 - 공식 블로그의 작은 product update
 - release note / changelog의 작은 기능 변화
 
 주의:
 
 - 하단 배치 대상이라는 이유로 기사를 제외하지 않음
-- 중요도가 낮아 보여도 AI 관련성이 있으면 반드시 기사 리스트에 포함
+- 중요도가 낮아 보여도 Global IT Trend Report 카테고리와 관련성이 있으면 반드시 기사 리스트에 포함
 
 ### 중복 기사 처리 기준
 
 같은 내용을 여러 출처가 보도한 경우에도 완전히 삭제하지 않는다.
 
 - 공식 발표가 있으면 공식 출처를 대표 URL로 둠
-- TechCrunch, Reuters, CNBC, Bloomberg 등 해설 가치가 있는 기사는 보조 URL로 함께 둠
+- TechCrunch, Reuters, CNBC, Bloomberg, 9to5Google, 9to5Mac, Social Media Today 등 해설 가치가 있는 기사는 보조 URL로 함께 둠
 - 같은 내용을 반복한 기사라면 `중복` 또는 `보조 출처`로 표시
 - 중복 기사라도 나중에 검토자가 판단할 수 있도록 기록은 남김
 - 완전히 동일하고 정보 가치가 없는 경우에만 대표 URL 아래에 묶음
 
-### 절대 누락하면 안 되는 키워드
+### 절대 누락하면 안 되는 주제
 
-아래 키워드가 포함된 기사는 중요도와 관계없이 반드시 확인하고, AI 관련성이 있으면 리스트업한다.
+아래 주제와 직접 관련된 기사는 중요도와 관계없이 반드시 확인하고, 관련성이 있으면 리스트업한다.
 
+- AI
+- Generative AI
 - AI Agent
 - Agentic AI
 - ChatGPT
@@ -2651,39 +2637,65 @@ AI 기능이 단순 실험이 아니라 기존 앱의 핵심 사용 흐름, 제�
 - Codex
 - Claude
 - Claude Code
-- Claude Cowork
 - Gemini
 - Google AI Mode
 - DeepMind
 - Meta AI
 - Copilot
-- Agent 365
 - Grok
 - OpenClaw
 - MCP
-- AI coding agent
+- AI coding
 - AI browser
 - AI search
+- AI commerce
 - AI payment
-- Agentic commerce
+- AI shopping
+- AI advertising
 - AI security
 - AI governance
 - AI model release
 - AI assistant
-- AI release notes
-- GitHub release
-- Changelog
 - AI companion
 - AI character
 - AI healthcare
 - AI education
-- AI advertising
-- AI shopping
 - enterprise AI adoption
+- Big Tech AI partnership
+- AI cloud
+- AI chip
+- AI PC
+- on-device AI
+- social platform AI
+- creator AI tools
+- AI regulation
+- AI privacy
+- AI copyright
+- platform policy change
+- app ecosystem change
+- release notes
+- changelog
+- GitHub release
+
+### 제외 기준
+
+아래에 해당하는 경우에만 제외한다.
+
+- IT/AI/Big Tech/Social/Market Trend와 직접 관련이 없는 기사
+- AI 관련성이 전혀 없는 일반 기업 홍보 기사
+- 단순 인사, 채용, 행사, 프로모션 기사
+- 제품·시장·기술 변화가 없는 단순 이벤트 안내
+- Naver/LINE 단독 기사
+- 동일 내용이 이미 대표 기사로 정리되어 있고, 보조 출처로도 가치가 없는 완전 중복 기사
+
+주의:
+
+- `중요도가 낮아 보인다`는 제외 사유가 아님
+- 관련성이 있으면 반드시 리스트업하고, 중요도에 따라 아래쪽에 배치
 
 ### 한 줄 원칙
 
-AI 관련 기사는 중요도가 낮아 보여도 절대 누락하지 않는다.
+Global IT Trend Report 아카이빙에서는 관련 기사를 절대 누락하지 않는다.
 중요도는 제외 기준이 아니라, 해당 Query 섹션 안에서 어떤 기사를 위에 배치할지 판단하는 정렬 기준이다.
 
 ## 기사 제외 기준
@@ -3457,11 +3469,11 @@ AI 관련 기사는 중요도가 낮아 보여도 절대 누락하지 않는다.
 
 ## 최종 검수 체크리스트
 
-- [ ] AI 관련 기사를 중요도와 관계없이 모두 리스트업했는지 확인
-- [ ] 각 Query 섹션 안에서 `중요한 기사 → 일반 AI 관련 기사 → 중복/보조 출처` 순서로 정렬했는지 확인
-- [ ] GitHub Release, Changelog, Release Notes, Docs Update 중 AI Agent 또는 AI 기능 변화가 있는 항목을 누락하지 않았는지 확인
+- [ ] Global IT / AI / Big Tech / Asia Tech / Social / Market Trend 관련 기사를 중요도와 관계없이 모두 리스트업했는지 확인
+- [ ] 각 Query 섹션 안에서 `시장 영향이 큰 기사 → 기업/서비스 변화 기사 → 일반 관련 기사 → 중복/보조 출처` 순서로 정렬했는지 확인
+- [ ] 공식 Newsroom, Blog, Release Notes, Changelog, GitHub Release 중 제품·서비스·기능·시장 변화가 있는 항목을 누락하지 않았는지 확인
 - [ ] 중복 기사도 완전히 삭제하지 않고 대표 기사 아래 보조 출처 또는 중복으로 기록했는지 확인
-- [ ] 절대 누락하면 안 되는 AI 키워드 포함 기사를 확인했는지 점검
+- [ ] 절대 누락하면 안 되는 Global IT / AI / Big Tech / Social / Market Trend 주제를 확인했는지 점검
 - [ ] Google Query 전 우선 확인 링크의 공식 사이트, Blog, Newsroom, GitHub, release notes, changelog 확인
 - [ ] AI/GPT 기사의 AI 중심성 확인
 - [ ] 기사 포함 여부 판단 점수표 기준으로 Include / PASS / 보류 판단
