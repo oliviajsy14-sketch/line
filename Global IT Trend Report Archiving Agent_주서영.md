@@ -2425,6 +2425,8 @@ Google Query를 실행하기 전에 아래 공식 링크, 블로그, 뉴스룸, 
 
 [TechCrunch]
 
+https://techcrunch.com/latest/
+
 https://techcrunch.com/category/artificial-intelligence/
 
 https://techcrunch.com/category/startups/
