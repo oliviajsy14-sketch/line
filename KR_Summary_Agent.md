@@ -191,7 +191,15 @@ KR Summary는 기본형과 상세형을 구분한다.
 
 ## 5. 제목 작성 규칙
 
-제목은 반드시 아래 형식으로 작성한다.
+제목은 반드시 아래 형식 중 하나로 작성한다.
+
+회사명과 서비스명 또는 브랜드명이 다른 경우에는 아래 형식을 우선 적용한다.
+
+```md
+**[회사명] 서비스명, 핵심 내용 (YYYY.M.DD)**
+```
+
+회사명과 서비스명이 동일하거나 별도 서비스명이 핵심이 아닌 경우에는 기존 제목 형식을 적용한다.
 
 ```md
 **[회사명] 핵심 내용 (YYYY.M.DD)**
@@ -200,12 +208,23 @@ KR Summary는 기본형과 상세형을 구분한다.
 예시는 다음과 같다.
 
 ```md
-**[OpenAI] ChatGPT에 신규 Agent 기능 공개하며 업무 자동화 지원 확대 (2026.6.24)**
+**[Meta] WhatsApp, AI 기반 메시지 요약 기능 테스트 (2026.6.24)**
+```
+
+```md
+**[Google] YouTube, Shorts 광고 자동화 기능 확대 (2026.6.24)**
+```
+
+```md
+**[OpenAI] ChatGPT, 신규 Agent 기능 공개하며 업무 자동화 지원 확대 (2026.6.24)**
 ```
 
 제목 규칙은 다음과 같다.
 
 - 회사명은 대괄호 안에 작성한다.
+- `[]` 안에는 항상 회사명만 입력한다.
+- 서비스명, 앱명, 기능명, 브랜드명은 `[]` 밖에 작성한다.
+- 모회사와 서비스명이 구분되는 경우 반드시 모회사를 `[]` 안에 넣고 서비스명은 뒤에 붙인다.
 - 산업 전반 이슈는 `[Market]`을 사용한다.
 - 날짜는 `(2026.6.24)` 형식으로 작성한다.
 - 월/일 앞에 0을 붙이지 않는다.
@@ -370,7 +389,7 @@ KR Summary는 단순 번역이나 짧은 요약이 아니라, 기사 내용을 �
 좋은 작성 방식은 다음과 같다.
 
 - “광고주가 자연어로 캠페인 목표와 소재 방향을 입력하면 AI가 광고 제작과 최적화 방향을 제안하는 신규 기능 공개”
-- “중소 광고주의 캠페인 제작 부담을 줄이고 Creator 기반 소재 공급을 확대해 Snapchat Ads의 광고 집행 효율 개선”
+- “중소 광고주의 캠페인 제작 부담을 줄이고 Creator 기반 소재 공급을 확대해 [Snap] Snapchat Ads의 광고 집행 효율 개선”
 - “기업용 워크플로우 내 반복 업무를 AI Agent가 대신 처리하는 구조로, 단순 Chatbot을 넘어 업무 자동화 플랫폼 전환 추진”
 
 ## 10. 숫자 / 날짜 / 단위 표기 규칙
@@ -498,7 +517,54 @@ KR Summary 작성 시 아래 표준 표현만 사용한다. 원문이나 초안�
 - 재설계 → 개편
 - Perplexity → Perplexity AI
 
-### 11-2. 서비스명 / 회사명 표기
+### 11-2. 회사명 / 서비스명 표기 규칙
+
+기사 제목과 요약 본문 작성 시 서비스명, 앱명, 기능명, 브랜드명 앞에는 항상 대괄호 `[]`로 회사명을 표기한다.
+
+기본 원칙은 다음과 같다.
+
+- `[]` 안에는 항상 회사명만 입력한다.
+- 서비스명, 앱명, 기능명, 브랜드명은 `[]` 밖에 작성한다.
+- 모회사와 서비스명이 구분되는 경우 반드시 모회사를 `[]` 안에 넣고 서비스명은 뒤에 붙인다.
+- 동일한 규칙은 제목뿐 아니라 요약 본문에서도 일관되게 적용한다.
+- 회사명과 서비스명이 동일한 경우에는 기존 제목 규칙에 맞춰 `[회사명] 핵심 내용` 형식으로 작성한다.
+
+표기 예시는 다음과 같다.
+
+- WhatsApp → `[Meta] WhatsApp`
+- Instagram → `[Meta] Instagram`
+- Facebook → `[Meta] Facebook`
+- YouTube → `[Google] YouTube`
+- Crack → `[Wrtn] Crack`
+- Toss Pay → `[Toss] Pay`
+
+Kakao 계열 표기 규칙은 다음과 같다.
+
+- Kakao 계열 서비스는 항상 `[]` 안에 `Kakao`만 입력한다.
+- KakaoBank → `[Kakao] Bank`
+- Kakao Mobility → `[Kakao] Mobility`
+- Kakao Pay → `[Kakao] Pay`
+- 요약 본문에서도 Kakao 계열 서비스명은 `Kakao Bank`, `Kakao Mobility`, `Kakao Pay`처럼 회사명과 서비스명을 띄어 쓴다.
+- `KakaoTalk`은 예외로 요약 본문에서 붙여 쓴다.
+- `KakaoTalk` O
+- `Kakao Talk` X
+
+금지 표기는 다음과 같다.
+
+- `[Meta WhatsApp]` X
+- `[Google YouTube]` X
+- `[KakaoBank]` X
+- `[Kakao Mobility]` X
+- `[Kakao Pay]` X
+- `KakaoPay` X
+- `KakaoBank` X
+
+제목 적용 예시는 다음과 같다.
+
+- `[Meta] WhatsApp, AI 기반 메시지 요약 기능 테스트 (2026.6.24)`
+- `[Google] YouTube, Shorts 광고 자동화 기능 확대 (2026.6.24)`
+- `[Kakao] Bank, AI 기반 금융 상담 기능 고도화 (2026.6.24)`
+- `[Wrtn] Crack, AI 캐릭터 대화 기능 업데이트 (2026.6.24)`
 
 회사명과 서비스명은 원문 표기를 우선하되, 아래 표준 표기가 있는 경우 반드시 표준 표기를 따른다.
 
@@ -516,6 +582,10 @@ KR Summary 작성 시 아래 표준 표현만 사용한다. 원문이나 초안�
 - YouTube
 - Instagram
 - WhatsApp
+- Facebook
+- Kakao
+- Toss
+- Wrtn
 - NVIDIA
 - character.ai
 - Stability AI
@@ -699,7 +769,7 @@ MAU, DAU, YoY, QoQ, CAGR, AI, API처럼 업무상 일반적으로 통용되는 �
 
 - 기본형은 상위 불렛 2개 + 하위 3-2 구조인가
 - 상세형은 상위 불렛 3개 + 하위 3-3-2 구조인가
-- 제목이 `**[회사명] 핵심 내용 (YYYY.M.DD)**` 형식인가
+- 제목이 `**[회사명] 서비스명, 핵심 내용 (YYYY.M.DD)**` 또는 `**[회사명] 핵심 내용 (YYYY.M.DD)**` 형식인가
 - 날짜에 0 padding이 없는가
 - 기사 간 빈 줄 2줄이 있는가
 - 마지막 링크가 1개만 있는가
@@ -731,13 +801,18 @@ MAU, DAU, YoY, QoQ, CAGR, AI, API처럼 업무상 일반적으로 통용되는 �
 키워드 검수 항목은 다음과 같다.
 
 - 금지 표현이 최종 KR Summary에 남아 있지 않은가
-- 회사명, 서비스명, 기능명 표기가 표준 표현과 일치하는가
+- 회사명, 서비스명, 기능명 표기가 표준 표현과 일치하며 서비스명 앞에 `[회사명]`이 적용되었는가
 - 숫자, 날짜, 분기, 증감률 표기가 표준 형식과 일치하는가
 - 국가명은 English로 표기했는가
 - Android는 AOS로 교체했는가
 - 사용자 / 이용자는 유저로 교체했는가
 - AWS 또는 아마존을 Amazon으로 통일했는가
 - YouTube, NVIDIA, character.ai, Stability AI, Perplexity AI 표기가 정확한가
+
+- `[]` 안에 회사명만 있고 서비스명, 앱명, 기능명, 브랜드명이 들어가지 않았는가
+- 모회사와 서비스명이 구분되는 경우 `[회사명] 서비스명` 형식으로 작성했는가
+- Kakao 계열은 `[Kakao] Bank`, `[Kakao] Mobility`, `[Kakao] Pay`처럼 표기하고 본문에서 Kakao Bank / Kakao Mobility / Kakao Pay로 띄어 썼는가
+- KakaoTalk은 예외적으로 붙여 썼는가
 - “출시”, “이번”, 중간점이 남아 있지 않은가
 - 축약어 첫 언급은 풀네임 + 괄호 약어 형식으로 작성했는가
 - 타이틀에서 축약어만 사용한 경우, 본문 첫 언급에서 풀네임 + 괄호 약어 형식을 적용했는가
@@ -758,30 +833,30 @@ MAU, DAU, YoY, QoQ, CAGR, AI, API처럼 업무상 일반적으로 통용되는 �
 ## 17. 기본형 출력 예시
 
 ```md
-**[Snap] Snapchat Ads에 "Snap Smart Assistant" 공개하며 AI 광고 제작 지원 확대 (2026.6.18)**
+**[Snap] Snapchat Ads, "Snap Smart Assistant" 공개하며 AI 광고 제작 지원 확대 (2026.6.18)**
 • Snap은 광고주가 자연어로 캠페인 목표와 소재 방향을 입력하면 AI가 광고 제작과 최적화 방향을 제안하는 신규 기능을 공개
   • "Snap Smart Assistant"는 광고주의 입력을 바탕으로 캠페인 설정, 크리에이티브 제작, 최적화 방향을 제안하는 구조
   • "Snap Creator Network"는 브랜드와 Creator 연결을 지원해 숏폼 광고 소재 제작 및 집행 효율 개선
-  • 해당 기능은 Snapchat Ads의 자동화 범위를 넓히며 중소 광고주의 캠페인 진입 장벽 완화
+  • 해당 기능은 [Snap] Snapchat Ads의 자동화 범위를 넓히며 중소 광고주의 캠페인 진입 장벽 완화
 • Snap은 AI 기반 광고 제작과 Creator 네트워크를 결합해 광고주 확보와 플랫폼 내 광고 수익 확대를 추진
   • Meta, TikTok, Google 등 주요 광고 플랫폼의 AI 광고 자동화 경쟁에 대응하는 기능 확장
-  • 광고 제작 부담을 낮추고 Creator 기반 소재 공급을 강화해 Snapchat Ads의 차별화 가능성 확대
+  • 광고 제작 부담을 낮추고 Creator 기반 소재 공급을 강화해 [Snap] Snapchat Ads의 차별화 가능성 확대
 • [기사 제목](기사 링크)
 ```
 
 ## 18. 상세형 출력 예시
 
 ```md
-**[OpenAI] ChatGPT에 신규 Agent 기능 공개하며 업무 자동화 지원 확대 (2026.6.24)**
-• OpenAI는 ChatGPT가 유저 요청을 바탕으로 외부 서비스 탐색, 정보 정리, 반복 업무 실행까지 지원하는 신규 Agent 기능을 공개
+**[OpenAI] ChatGPT, 신규 Agent 기능 공개하며 업무 자동화 지원 확대 (2026.6.24)**
+• OpenAI는 [OpenAI] ChatGPT가 유저 요청을 바탕으로 외부 서비스 탐색, 정보 정리, 반복 업무 실행까지 지원하는 신규 Agent 기능을 공개
   • 해당 기능은 단순 질의응답을 넘어 예약, 문서 정리, 일정 탐색, 웹 기반 작업 수행 등 실무형 워크플로우 자동화를 지원
-  • ChatGPT 내에서 유저가 목표를 입력하면 Agent가 단계별 작업을 계획하고 필요한 정보를 수집해 실행 결과를 제시하는 구조
+  • [OpenAI] ChatGPT 내에서 유저가 목표를 입력하면 Agent가 단계별 작업을 계획하고 필요한 정보를 수집해 실행 결과를 제시하는 구조
   • OpenAI는 해당 기능을 일부 유료 플랜부터 제공하며, 향후 기업용 업무 환경과 3rd-party 서비스 연동 확대를 추진
-• 신규 Agent 기능은 ChatGPT를 범용 Chatbot에서 업무 실행형 AI Assistant로 전환하는 핵심 업데이트로 평가
-  • 기업 유저는 반복 리서치, 문서 작성, 일정 조율 등 비정형 업무를 ChatGPT 안에서 처리할 수 있어 생산성 개선 기대
-  • 3rd-party 서비스 연동이 확대될 경우 ChatGPT가 업무 앱을 연결하는 Agentic 플랫폼 허브로 자리잡을 가능성 확대
+• 신규 Agent 기능은 [OpenAI] ChatGPT를 범용 Chatbot에서 업무 실행형 AI Assistant로 전환하는 핵심 업데이트로 평가
+  • 기업 유저는 반복 리서치, 문서 작성, 일정 조율 등 비정형 업무를 [OpenAI] ChatGPT 안에서 처리할 수 있어 생산성 개선 기대
+  • 3rd-party 서비스 연동이 확대될 경우 [OpenAI] ChatGPT가 업무 앱을 연결하는 Agentic 플랫폼 허브로 자리잡을 가능성 확대
   • 유저가 AI와 대화하는 단계를 넘어 AI가 직접 작업을 수행하는 구조로 전환되며 서비스 체류 시간과 락인 강화
-• OpenAI는 Anthropic, Google, Microsoft의 Agentic 기능 경쟁에 대응하며 ChatGPT 중심의 AI 업무 생태계 확장을 추진
+• OpenAI는 Anthropic, Google, Microsoft의 Agentic 기능 경쟁에 대응하며 [OpenAI] ChatGPT 중심의 AI 업무 생태계 확장을 추진
   • Claude, Gemini, Microsoft Copilot 등 경쟁 서비스가 개발자·기업용 Agent 기능을 강화하는 흐름에 맞춘 제품 고도화
   • 실행형 Agent의 정확성, 보안, 권한 관리가 향후 기업 도입의 핵심 변수로 작용하며 신뢰성 확보 중요성 확대
 • [기사 제목](기사 링크)
