@@ -28,6 +28,9 @@ AI Agent,Hume AI,n/a,FALSE,
 AI Agent,Mersoom,n/a,FALSE,
 AI Agent,Bot Madang,n/a,FALSE,
 AI/GPT,AI - Google Query,AI 프로젝트와 칩 코드명이 식품명 브랜딩으로 확산 (2026.6.26),FALSE,https://www.businessinsider.com/ai-project-names-fruit-veggies-grocery-list-2026-6
+AI/GPT,AI - Google Query,"GitHub Changelog, MAI-Code-1-Flash Copilot cloud agent 추가 업데이트 확인 (2026.6.24 업데이트)",FALSE,https://github.blog/changelog/2026-06-18-mai-code-1-flash-available-on-more-copilot-surfaces/
+AI/GPT,AI - Google Query,"TechCrunch, AI가 엔지니어 일자리를 대체한다는 전망과 달리 엔지니어 채용 탄력성 데이터 보도 (2026.6.24)",FALSE,https://techcrunch.com/2026/06/24/ai-was-supposed-to-kill-engineering-jobs-but-new-data-suggests-theyre-the-most-resilient/
+AI/GPT,AI - Google Query,"TechCrunch, 기업들이 소규모 AI 작업 비용 급증으로 token rationing에 나섰다고 보도 (2026.6.24)",FALSE,https://techcrunch.com/2026/06/24/companies-are-scrambling-to-stop-employees-from-maxing-out-ai-budgets-with-small-tasks/
 AI/GPT,AI - Google Query,"Axios, AI shopping interface 확산 속 브랜드 신뢰·first-party data 중요성 논의 (2026.6.24)",FALSE,https://www.axios.com/2026/06/24/axios-house-ai-cant-replace-brands-bonds-with-customers-marketers-say
 AI/GPT,AI - Google Query,"AI CROSS, RCS/SMS 배신 플랫폼용 MCP 서버 제공으로 AI agent 조작 지원 (2026.6.24)",FALSE,https://ascii.jp/elem/000/004/413/4413322/
 AI/GPT,AI - Google Query,AI 업계의 뉴욕 RAISE Act·규제 선거 개입 논쟁 지속 (2026.6.26),FALSE,https://www.vox.com/politics/493132/alex-bores-ny-primaries-micah-lasher-ai-regulation
@@ -40,17 +43,19 @@ AI/GPT,Codex,"OpenAI, GPT-5.5 기준 Codex credit rate card 공개·업데이트
 AI/GPT,Meta AI,"미 백악관, Meta에 첨단 AI 모델 정부 사전 평가 참여 요청 (2026.6.25)",FALSE,https://www.techradar.com/pro/we-hope-to-sign-the-agreement-soon-white-house-calls-on-meta-to-submit-ai-models-for-review-citing-abilities-and-vulnerabilities-evaluation
 AI/GPT,Meta AI,"Meta, AI agent 보안 강화를 위해 Virtue AI 공동창업자 영입 (2026.6.25)",FALSE,https://www.axios.com/2026/06/25/meta-hires-virtue-ai-founders-security
 AI/GPT,Google AI,"Google Research, LLM 추론이 파라메트릭 지식 회상을 개선한다는 연구 공개 (2026.6.24)",FALSE,https://research.google/blog/
+AI/GPT,Google AI,"TechCrunch, Gemini 핵심 연구자들의 Anthropic 이직으로 Google AI 인재 유출 심화 보도 (2026.6.24)",FALSE,https://techcrunch.com/2026/06/24/ai-researchers-continue-to-leave-google-for-its-rivals/
 AI/GPT,Google AI,"Google, Gemini Embedding 2 문서 공개로 omnimodal embedding 지원 명시 (2026.6.24)",FALSE,https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/embedding-2
 AI/GPT,GeminI,"Google, Gemini 3.5 Flash에 Computer Use 도구 public preview 출시 (2026.6.24)",FALSE,https://ai.google.dev/gemini-api/docs/changelog
+AI/GPT,GeminI,"9to5Google, Gemini in Chrome의 ""Select from screen"" 및 Gemini 3.5 Flash computer use 업데이트 보도 (2026.6.24)",FALSE,https://9to5google.com/guides/gemini/
 AI/GPT,GeminI,"Google, Gemini 3.5 Flash의 Computer Use 등 Gemini 3 계열 기능 계승 안내 (2026.6.24)",FALSE,https://ai.google.dev/gemini-api/docs/whats-new-gemini-3.5
-AI/GPT,Amazon AI,n/a,FALSE,
+AI/GPT,Amazon AI,"TechCrunch, Amazon의 인도 AI·클라우드 인프라 130억 달러 추가 투자 보도 (2026.6.25)",FALSE,https://techcrunch.com/2026/06/25/amazon-ups-india-bet-with-fresh-13b-ai-infrastructure-investment/
 AI/GPT,Nova AI,n/a,FALSE,
 AI/GPT,Anthropic,Anthropic 모델 접근 제한으로 AI 법률 스타트업 Legion이 미국 정부 제소 (2026.6.24),FALSE,https://techstrong.ai/articles/ai-startup-sues-u-s-government-after-order-forces-anthropic-to-block-foreign-engineers/
 AI/GPT,Claude,"Anthropic, Alibaba의 Claude 대규모 distillation 공격 의혹 제기 (2026.6.26)",FALSE,https://www.businessinsider.com/anthropic-china-alibaba-exploiting-ai-models-distillation-attack-2026-6
 AI/GPT,Claude Code,n/a,FALSE,
 AI/GPT,Kakao AI,n/a,FALSE,
-AI/GPT,Microsoft AI,n/a,FALSE,
-AI/GPT,Databricks,n/a,FALSE,
+AI/GPT,Microsoft AI,"GitHub Changelog, Copilot Free·Student 플랜의 auto model selection 기본화 공개 (2026.6.24)",FALSE,https://github.blog/changelog/2026-06-24-changes-to-model-selection-for-free-and-student-plans
+AI/GPT,Databricks,"TechCrunch, Databricks 전 AI 책임자의 저전력 AI 스타트업 Un-0 모델 공개 보도 (2026.6.25)",FALSE,https://techcrunch.com/2026/06/25/databricks-former-ai-chief-thinks-he-can-cut-ais-power-bill-by-1000x/
 AI/GPT,Perplexity AI,n/a,FALSE,
 AI/GPT,Cohere,n/a,FALSE,
 AI/GPT,ElevenLabs,n/a,FALSE,
@@ -74,7 +79,8 @@ AI/GPT,Arc Browser,n/a,FALSE,
 AI/GPT,Dia Browser,n/a,FALSE,
 AI/GPT,Brave Browser,n/a,FALSE,
 AI/GPT,Microsoft Edge,n/a,FALSE,
-AI/GPT,Google Chrome,n/a,FALSE,
+AI/GPT,Google Chrome,"Chrome Releases, Chrome 150 iOS·Android·Desktop early stable/beta 업데이트 공개 (2026.6.24)",FALSE,https://chromereleases.googleblog.com/2026/06/
+AI/GPT,Google Chrome,"Chrome Releases, desktop early stable 150.0.7871.46/.47 업데이트 공개 (2026.6.24)",FALSE,https://chromereleases.googleblog.com/2026/06/early-stable-update-for-desktop_01696591429.html
 AI/GPT,Comet Browser,n/a,FALSE,
 AI/GPT,Opera One,n/a,FALSE,
 AI/GPT,Sigma Browser (SigmaOS),n/a,FALSE,
@@ -82,6 +88,7 @@ AI/GPT,Zen Browser,n/a,FALSE,
 AI/GPT,Wavebox,n/a,FALSE,
 AI/GPT,Vivaldi Browser,n/a,FALSE,
 AI/GPT,Safari,"Google Meet, iPhone Safari에서 앱·계정 없이 회의 참여 지원 (2026.6.24)",FALSE,https://apple.gadgethacks.com/news/google-meet-on-safari-iphone-no-app-or-account-needed/
+AI/GPT,Safari,"9to5Mac, Safari의 Apple Intelligence 요약과 Siri AI URL 요약 제한 동작 보도 (2026.6.24)",FALSE,https://9to5mac.com/2026/06/24/ios-27-beta-2-apple-tells-siri-ai-to-clearly-refuse-requests-to-summarize-urls/
 AI/GPT,Sidekick Browser,n/a,FALSE,
 AI/GPT,Shift Browser,n/a,FALSE,
 AI/GPT,Orion Browser,n/a,FALSE,
@@ -92,18 +99,25 @@ AI/GPT,UC Browser,n/a,FALSE,
 AI/GPT,CryptoTab Browser,n/a,FALSE,
 Global Big Tech,Meta,"Meta, 직원 활동 추적 기반 AI 학습 프로그램을 개인정보 우려로 중단 (2026.6.24)",FALSE,https://www.theguardian.com/technology/2026/jun/24/meta-pauses-employee-tracker-for-ai-training-amid-privacy-concerns
 Global Big Tech,Facebook,"Facebook, 크리에이터용 AI companion 앱 출시 (2026.6.24)",FALSE,https://techcrunch.com/2026/06/24/facebook-rolls-out-an-ai-companion-app-for-creators/
-Global Big Tech,Instagram,n/a,FALSE,
+Global Big Tech,Facebook,"Social Media Today, Meta의 AI 생성 multimedia ads 베스트 프랙티스와 자동 변형 생성 도구 보도 (2026.6.24)",FALSE,https://www.socialmediatoday.com/news/meta-outlines-best-practices-for-ai-generated-multimedia-ads/823720/
+Global Big Tech,Instagram,"Social Media Today, Meta의 Facebook·Instagram 광고용 AI creative workflow 업데이트 보도 (2026.6.24)",FALSE,https://www.socialmediatoday.com/news/meta-outlines-best-practices-for-ai-generated-multimedia-ads/823720/
 Global Big Tech,WhatsApp,n/a,FALSE,
 Global Big Tech,Amazon,"Amazon Prime Day, 6월 23~26일 4일간 진행 및 AI 쇼핑 활동 주목 (2026.6.24)",FALSE,https://www.aboutamazon.com/news/retail/amazon-prime-day-2026-date
 Global Big Tech,Amazon Prime,n/a,FALSE,
-Global Big Tech,Apple,n/a,FALSE,
-Global Big Tech,iOS,n/a,FALSE,
+Global Big Tech,Apple,"9to5Mac, Apple이 Siri AI URL 요약 요청 거절 동작을 명확화한 iOS 27 beta 2 변경 보도 (2026.6.24)",FALSE,https://9to5mac.com/2026/06/24/ios-27-beta-2-apple-tells-siri-ai-to-clearly-refuse-requests-to-summarize-urls/
+Global Big Tech,Apple,"Apple Developer, App Store Connect Update 및 Xcode 26.6 릴리스 공개 (2026.6.25)",FALSE,https://developer.apple.com/news/releases/
+Global Big Tech,iOS,"9to5Mac, iOS 27 Calendar에 Siri AI·Visual Intelligence 기반 일정 생성 기능 추가 보도 (2026.6.24)",FALSE,https://9to5mac.com/2026/06/24/heres-everything-new-for-apple-calendar-in-ios-27/
+Global Big Tech,iOS,"Apple Developer, 27 platform release notes 업데이트 및 iOS/iPadOS/macOS 등 June 2026 변경사항 공개 (2026.6)",FALSE,https://developer.apple.com/documentation/Updates?changes=la_4__5
 Global Big Tech,Netflix,n/a,FALSE,
 Global Big Tech,Google,"Google Meet, iPhone Safari 무설치 회의 참여 지원으로 접근성 확대 (2026.6.24)",FALSE,https://apple.gadgethacks.com/news/google-meet-on-safari-iphone-no-app-or-account-needed/
-Global Big Tech,YouTube,n/a,FALSE,
-Global Big Tech,Android,n/a,FALSE,
+Global Big Tech,Google,"9to5Google, Gemini 모델 기반 Google Finance Android 앱 정식 제공 보도 (2026.6.25)",FALSE,https://9to5google.com/2026/06/25/google-finance-android-app/
+Global Big Tech,Google,"TechCrunch, AI 기반 Google Finance 전용 Android 앱 출시 보도 (2026.6.25)",FALSE,https://techcrunch.com/2026/06/25/google-finance-gets-a-dedicated-app-for-android/
+Global Big Tech,YouTube,"TechCrunch, YouTube Shorts 2배속 재생 업데이트 보도 (2026.6.25)",FALSE,https://techcrunch.com/2026/06/25/youtube-shorts-are-getting-even-shorter-with-an-update-that-lets-you-double-the-playback-speed/
+Global Big Tech,Android,"Chrome Releases, Chrome 150 Android 업데이트 공개 (2026.6.24)",FALSE,https://chromereleases.googleblog.com/2026/06/chrome-for-android-update_01850164664.html
+Global Big Tech,Android,"9to5Google, Samsung Galaxy A27의 Android 16·6년 OS 업데이트 정책 보도 (2026.6.25)",FALSE,https://9to5google.com/2026/06/25/samsung-galaxy-a27-launches-in-july-for-349-with-six-years-of-android-os-updates/
 Global Big Tech,Gmail,n/a,FALSE,
 Global Big Tech,Microsoft,"Microsoft Partner Center, Copilot 기회 데이터와 보안 신호를 결합한 대시보드 업데이트 (2026.6.26)",FALSE,https://learn.microsoft.com/en-us/partner-center/announcements/2026-june
+Global Big Tech,Microsoft,"GitHub Changelog, Copilot code review 분석 깊이·효율 업데이트 및 Copilot for Jira GA 공개 (2026.6.25)",FALSE,https://github.blog/changelog/month/06-2026/
 Global Big Tech,Grab,n/a,FALSE,
 Asia Big Tech,Rakuten (楽天市場),n/a,FALSE,
 Asia Big Tech,note（ノート),n/a,FALSE,
@@ -128,7 +142,6 @@ Asia Big Tech,Tencent,n/a,FALSE,
 Asia Big Tech,WeChat (微信),n/a,FALSE,
 Asia Big Tech,ByteDance,n/a,FALSE,
 Asia Big Tech,Alibaba,"Anthropic, Alibaba Cloud Qwen 관련 Claude distillation 의혹 제기 (2026.6.26)",FALSE,https://www.businessinsider.com/anthropic-china-alibaba-exploiting-ai-models-distillation-attack-2026-6
-Social,TikTok,n/a,FALSE,
 Social,Douyin,n/a,FALSE,
 Social,Snapchat,n/a,FALSE,
 Social,Telegram,n/a,FALSE,
@@ -145,4 +158,6 @@ Theme,Gen Z - Google Query,"Attest, Gen Z 미디어 소비에서 AI 생성 콘�
 Theme,1020 trend - Google Query,"Vogue, 미성년자 소셜 미디어 제한 시대에 Gen Alpha가 Discord·Roblox 등으로 이동하는 흐름 분석 (2026.6.24)",FALSE,https://www.vogue.com/article/in-the-social-ban-era-where-will-gen-alpha-spend-time-online
 Theme,Social app - Google Query,"Business Insider, K-pop 영향으로 Setlog 등 비편집 일상 공유 앱이 Gen Z·Gen Alpha에서 확산 (2026.6)",FALSE,https://www.businessinsider.com/setlog-kpop-popular-app-vlog-friends-glimpse-real-life-2026-6
 Theme,Tech Crunch Startup,"Anthropic 출신 연구자 스타트업 Mirendil, 과학자용 자체 AI 개발 도구 추진 (2026.6.25)",FALSE,https://www.wsj.com/tech/ai/anthropic-veterans-startup-seeks-to-help-scientists-develop-their-own-ai-09e2f3e5
+Theme,Tech Crunch Startup,"TechCrunch, Netris가 AI neocloud 구축 가속화 위해 a16z에서 1,500만 달러 조달 (2026.6.25)",FALSE,https://techcrunch.com/2026/06/25/netris-raises-15m-series-a-from-a16z-to-help-ai-neoclouds-go-live-faster/
+Theme,Tech Crunch Startup,"TechCrunch, General Intuition이 게임플레이 데이터로 현실 대응 AI agent 학습 위해 3.2억 달러 조달 (2026.6.25)",FALSE,https://techcrunch.com/2026/06/25/general-intuitions-2-3b-bet-that-video-games-can-train-ai-agents-for-the-real-world/
 Theme,Tech Crunch Startup,"Patronus AI, AI agent 스트레스테스트용 digital worlds 구축 위해 5천만 달러 조달 (2026.6.25)",FALSE,https://techcrunch.com/2026/06/25/patronus-ai-lands-50m-to-build-digital-worlds-that-stress-test-ai-agents/
