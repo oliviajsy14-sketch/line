@@ -1,5 +1,6 @@
 대분류,Query / Service,Korean Title,Check Box,URL
 AI Agent,AI Agent - Google Query,"Notion, AI 에이전트 집중 위해 Notion Mail 9월 종료 예정 (2026.6.25)",FALSE,https://techcrunch.com/2026/06/25/notion-mail-shuts-down-amid-agent-takeover/
+AI Agent,AI Agent - Google Query,"WSJ, OpenAI·Google·Anthropic 내부 AI agent 활용 확산 조명 (2026.6.24)",FALSE,https://www.wsj.com/tech/ai/see-how-ai-giants-are-using-ai-in-their-own-offices-1ac00a70
 AI Agent,"OpenClaw (Moltbot, Clawdbot)",n/a,FALSE,
 AI Agent,Paperclip,n/a,FALSE,
 AI Agent,BabyAGI,n/a,FALSE,
@@ -25,17 +26,23 @@ AI Agent,Hume AI,n/a,FALSE,
 AI Agent,Mersoom,n/a,FALSE,
 AI Agent,Bot Madang,n/a,FALSE,
 AI/GPT,AI - Google Query,AI 프로젝트와 칩 코드명이 식품명 브랜딩으로 확산 (2026.6.26),FALSE,https://www.businessinsider.com/ai-project-names-fruit-veggies-grocery-list-2026-6
+AI/GPT,AI - Google Query,AI 업계의 뉴욕 RAISE Act·규제 선거 개입 논쟁 지속 (2026.6.26),FALSE,https://www.vox.com/politics/493132/alex-bores-ny-primaries-micah-lasher-ai-regulation
+AI/GPT,AI - Google Query,2026년 주요 generative AI coding tools 16종 비교 (2026.6.24),FALSE,https://www.marktechpost.com/2026/06/24/top-generative-ai-coding-tools-of-2026/
 AI/GPT,OpenAI,"OpenAI, Broadcom과 첫 자체 추론 칩 ""Jalapeño"" 공개 (2026.6.24)",FALSE,https://techcrunch.com/2026/06/24/openai-unveils-its-first-custom-chip-built-by-broadcom/
-AI/GPT,ChatGPT,n/a,FALSE,
+AI/GPT,ChatGPT,"OpenAI, ChatGPT for Excel·Google Sheets 사용 안내 업데이트 (2026.6.24)",FALSE,https://help.openai.com/en/articles/20001063-chatgpt-for-excel-and-google-sheets
 AI/GPT,Sora,n/a,FALSE,
-AI/GPT,Codex,n/a,FALSE,
+AI/GPT,Codex,"OpenAI, Codex·ChatGPT for Excel용 flexible credits 안내 업데이트 (2026.6.24)",FALSE,https://help.openai.com/en/articles/12642688-using-credits-for-flexible-usage-in-chatgpt-freegopluspro
+AI/GPT,Codex,"OpenAI, GPT-5.5 기준 Codex credit rate card 공개·업데이트 (2026.6.24)",FALSE,https://help.openai.com/en/articles/20001106-codex-rate-card
 AI/GPT,Meta AI,"미 백악관, Meta에 첨단 AI 모델 정부 사전 평가 참여 요청 (2026.6.25)",FALSE,https://www.techradar.com/pro/we-hope-to-sign-the-agreement-soon-white-house-calls-on-meta-to-submit-ai-models-for-review-citing-abilities-and-vulnerabilities-evaluation
+AI/GPT,Meta AI,"Meta, AI agent 보안 강화를 위해 Virtue AI 공동창업자 영입 (2026.6.25)",FALSE,https://www.axios.com/2026/06/25/meta-hires-virtue-ai-founders-security
 AI/GPT,Google AI,"Google Research, LLM 추론이 파라메트릭 지식 회상을 개선한다는 연구 공개 (2026.6.24)",FALSE,https://research.google/blog/
+AI/GPT,Google AI,"Google, Gemini Embedding 2 문서 공개로 omnimodal embedding 지원 명시 (2026.6.24)",FALSE,https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/embedding-2
 AI/GPT,GeminI,"Google, Gemini 3.5 Flash에 Computer Use 도구 public preview 출시 (2026.6.24)",FALSE,https://ai.google.dev/gemini-api/docs/changelog
+AI/GPT,GeminI,"Google, Gemini 3.5 Flash의 Computer Use 등 Gemini 3 계열 기능 계승 안내 (2026.6.24)",FALSE,https://ai.google.dev/gemini-api/docs/whats-new-gemini-3.5
 AI/GPT,Amazon AI,n/a,FALSE,
 AI/GPT,Nova AI,n/a,FALSE,
-AI/GPT,Anthropic,n/a,FALSE,
-AI/GPT,Claude,n/a,FALSE,
+AI/GPT,Anthropic,Anthropic 모델 접근 제한으로 AI 법률 스타트업 Legion이 미국 정부 제소 (2026.6.24),FALSE,https://techstrong.ai/articles/ai-startup-sues-u-s-government-after-order-forces-anthropic-to-block-foreign-engineers/
+AI/GPT,Claude,"Anthropic, Alibaba의 Claude 대규모 distillation 공격 의혹 제기 (2026.6.26)",FALSE,https://www.businessinsider.com/anthropic-china-alibaba-exploiting-ai-models-distillation-attack-2026-6
 AI/GPT,Claude Code,n/a,FALSE,
 AI/GPT,Kakao AI,n/a,FALSE,
 AI/GPT,Microsoft AI,n/a,FALSE,
@@ -49,7 +56,7 @@ AI/GPT,Inflection AI,n/a,FALSE,
 AI/GPT,Ayar Labs,n/a,FALSE,
 AI/GPT,Canva AI,n/a,FALSE,
 AI/GPT,Speak AI,n/a,FALSE,
-AI/GPT,Anysphere (Cursor),n/a,FALSE,
+AI/GPT,Anysphere (Cursor),Generative AI coding tools 비교에서 Cursor 등 개발 에이전트형 도구 주목 (2026.6.24),FALSE,https://www.marktechpost.com/2026/06/24/top-generative-ai-coding-tools-of-2026/
 AI/GPT,Physical Intelligence,n/a,FALSE,
 AI/GPT,Thinking Machines Lab,n/a,FALSE,
 AI/GPT,Moonshot AI,n/a,FALSE,
@@ -70,7 +77,7 @@ AI/GPT,Sigma Browser (SigmaOS),n/a,FALSE,
 AI/GPT,Zen Browser,n/a,FALSE,
 AI/GPT,Wavebox,n/a,FALSE,
 AI/GPT,Vivaldi Browser,n/a,FALSE,
-AI/GPT,Safari,n/a,FALSE,
+AI/GPT,Safari,"Google Meet, iPhone Safari에서 앱·계정 없이 회의 참여 지원 (2026.6.24)",FALSE,https://apple.gadgethacks.com/news/google-meet-on-safari-iphone-no-app-or-account-needed/
 AI/GPT,Sidekick Browser,n/a,FALSE,
 AI/GPT,Shift Browser,n/a,FALSE,
 AI/GPT,Orion Browser,n/a,FALSE,
@@ -88,7 +95,7 @@ Global Big Tech,Amazon Prime,n/a,FALSE,
 Global Big Tech,Apple,n/a,FALSE,
 Global Big Tech,iOS,n/a,FALSE,
 Global Big Tech,Netflix,n/a,FALSE,
-Global Big Tech,Google,n/a,FALSE,
+Global Big Tech,Google,"Google Meet, iPhone Safari 무설치 회의 참여 지원으로 접근성 확대 (2026.6.24)",FALSE,https://apple.gadgethacks.com/news/google-meet-on-safari-iphone-no-app-or-account-needed/
 Global Big Tech,YouTube,n/a,FALSE,
 Global Big Tech,Android,n/a,FALSE,
 Global Big Tech,Gmail,n/a,FALSE,
@@ -115,7 +122,7 @@ Asia Big Tech,토스,n/a,FALSE,
 Asia Big Tech,Tencent,n/a,FALSE,
 Asia Big Tech,WeChat (微信),n/a,FALSE,
 Asia Big Tech,ByteDance,n/a,FALSE,
-Asia Big Tech,Alibaba,n/a,FALSE,
+Asia Big Tech,Alibaba,"Anthropic, Alibaba Cloud Qwen 관련 Claude distillation 의혹 제기 (2026.6.26)",FALSE,https://www.businessinsider.com/anthropic-china-alibaba-exploiting-ai-models-distillation-attack-2026-6
 Social,TikTok,n/a,FALSE,
 Social,Douyin,n/a,FALSE,
 Social,Snapchat,n/a,FALSE,
@@ -133,3 +140,4 @@ Theme,Gen Z - Google Query,n/a,FALSE,
 Theme,1020 trend - Google Query,n/a,FALSE,
 Theme,Social app - Google Query,n/a,FALSE,
 Theme,Tech Crunch Startup,"Notion, 메일 제품 종료 후 AI agent 중심 제품 전략으로 전환 (2026.6.25)",FALSE,https://techcrunch.com/2026/06/25/notion-mail-shuts-down-amid-agent-takeover/
+Theme,Tech Crunch Startup,"Anthropic 출신 연구자 스타트업 Mirendil, 과학자용 자체 AI 개발 도구 추진 (2026.6.25)",FALSE,https://www.wsj.com/tech/ai/anthropic-veterans-startup-seeks-to-help-scientists-develop-their-own-ai-09e2f3e5
