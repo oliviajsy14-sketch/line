@@ -3,7 +3,7 @@
 ## 목차
 
 - [자동화 실행 개요](#자동화-실행-개요)
-- [자동화 실행 모드](#자동화-실행-모드)
+- [자동화 실행 기준](#자동화-실행-기준)
 - [업무 목적](#업무-목적)
 - [자동화 입력값](#자동화-입력값)
 - [자동화 출력값](#자동화-출력값)
@@ -11,7 +11,7 @@
 - [Sheet 입력 방식](#sheet-입력-방식)
 - [기본 작업 단위](#기본-작업-단위)
 - [날짜 입력 방식](#날짜-입력-방식)
-- [Weekly IT Trend Sheet와 Global IT Trend Sheet 구분](#weekly-it-trend-sheet와-global-it-trend-sheet-구분)
+- [통합 Archiving Sheet 기준](#통합-archiving-sheet-기준)
 - [Query List 적용 방식](#query-list-적용-방식)
 - [Query 전체 리스트](#query-전체-리스트)
 - [AI Agent 구역 처리 방식](#ai-agent-구역-처리-방식)
@@ -53,12 +53,12 @@
 
 ## 자동화 실행 개요
 
-이 문서는 Weekly IT Trend Sheet와 Global IT Trend Sheet 기사 아카이빙 자동화를 위한 실행 기준이다.
+이 문서는 통합 Archiving Sheet 기사 아카이빙 자동화를 위한 실행 기준이다.
 
 자동화 agent는 아래 흐름으로 작업한다.
 
-1. 작업자가 입력한 날짜 범위와 실행 모드 확인
-2. 실행 모드에 맞는 Query List 선택
+1. 작업자가 입력한 날짜 범위와 자동화 실행 기준 확인
+2. 통합 Query List 선택
 3. Query별 Official Source, Blog, Newsroom, GitHub, Release Notes, Changelog 우선 확인
 4. Google Query 또는 Google News/Search로 누락 기사 보완
 5. 기사 날짜, 중복 여부, Paywall 여부, 제외 대상 여부 검수
@@ -68,27 +68,23 @@
 9. 작업자가 최종 검토 후 직접 Check Box 선택
 10. 검색 실패, 제외 기사, Paywall, 중복 등은 Sheet 본문이 아니라 실행 로그에 기록
 
-## 자동화 실행 모드
+## 자동화 실행 기준
 
-자동화 agent는 실행 전 반드시 아래 모드 중 하나를 선택한다.
-
-| run_mode | 작업 대상 | 사용 Query List | 출력 대상 |
-|---|---|---|---|
-| weekly | Weekly IT Trend Sheet | Weekly Sheet Query | Weekly IT Trend Sheet |
-| global | Global IT Trend Sheet | Global IT Trend Sheet Query | Global IT Trend Sheet |
+자동화 agent는 Weekly / Global 시트를 별도로 나누지 않고 통합 Archiving Sheet 기준으로 작업한다.
 
 운영 기준:
 
-- `run_mode=weekly`인 경우 Weekly Sheet Query만 사용한다.
-- `run_mode=global`인 경우 Global IT Trend Sheet Query만 사용한다.
-- 두 Query List를 임의로 병합하지 않는다.
-- 선택된 run_mode와 다른 Query List는 사용하지 않는다.
-- 작업자가 run_mode를 명시하지 않은 경우 자동화 agent는 작업을 시작하지 않고 run_mode 확인이 필요하다고 표시한다.
+- 별도 실행 모드를 선택하지 않는다.
+- Weekly / Global Sheet를 별도 Query List로 분리하지 않는다.
+- 기존 Weekly / Global Query는 하나의 통합 Query List로 합쳐 사용한다.
+- 출력 대상은 Excel workbook 또는 Excel 호환 Sheet다.
+- 자동화 agent는 통합 Query List 전체를 기준으로 기사 수집과 Sheet 입력을 진행한다.
+- 작업자가 특정 카테고리만 요청한 경우에도 Query List 자체를 분리하지 않고, 해당 카테고리 범위만 필터링해 실행한다.
 
 ## 업무 목적
 
 - 주간 단위로 주요 IT 및 AI 관련 뉴스 수집
-- 수집 기사를 기사 리스트업 Sheet에 카테고리별 정리
+- 수집 기사를 기사 리스트업 Excel Sheet에 카테고리별 정리
 - Weekly AI Trend Report 및 Global IT Trend Report 작성에 활용
 - 중복 기사, 비대상 기사, 단순 PR성 기사 제외
 - Query별 관련 기사를 넓게 수집하고 최종 리포트 반영 여부는 작업자가 Check Box로 선택
@@ -99,13 +95,12 @@
 
 | 입력값 | 필수 여부 | 설명 | 예시 |
 |---|---|---|---|
-| run_mode | 필수 | 작업 대상 시트 구분 | `weekly` 또는 `global` |
 | date_range | 필수 | 검색 기간 | `2026.6.18~2026.6.24` |
-| sheet_name | 필수 | 작업할 Sheet 이름 또는 탭명 | `6월 4주` |
-| source_sheet_template | 권장 | 기존 Sheet 템플릿 | 이전 주차 Sheet |
-| query_list | 자동 선택 | run_mode에 따라 자동 선택 | Weekly Sheet Query / Global IT Trend Sheet Query |
+| sheet_name | 필수 | 작업할 Excel Sheet 이름 또는 탭명 | `6월 4주` |
+| source_sheet_template | 권장 | 기존 Excel Sheet 템플릿 | 이전 주차 Sheet |
+| query_list | 필수 | 통합 Query List | Query 전체 리스트 |
 | official_source_links | 필수 | Google Query 전 우선 확인 링크 | Appendix A |
-| previous_archive | 권장 | 과거 중복 확인용 기존 아카이브 | 이전 주차 Sheet |
+| previous_archive | 권장 | 과거 중복 확인용 기존 아카이브 | 이전 주차 Excel Sheet |
 | exclude_companies | 필수 | 제외 대상 기업 | Naver / LINE / LY Corporation 단독 기사 |
 
 입력 기준:
@@ -114,10 +109,11 @@
 - 날짜에는 `/`를 사용하지 않는다.
 - 월/일에는 0 padding을 사용하지 않는다.
 - 예: 월/일 두 자리 0 padding 입력이 아니라 `2026.6.8~2026.6.14`처럼 입력한다.
+- 출력 파일은 `.xlsx` Excel workbook을 기본 산출물로 한다.
 
 ## 자동화 출력값
 
-자동화 agent는 아래 구조로 결과를 생성한다.
+자동화 agent는 Excel workbook 또는 Excel 호환 Sheet에 아래 구조로 결과를 생성한다.
 
 - 대분류
 - Query / Service
@@ -127,11 +123,18 @@
 
 자동화 agent는 아래 컬럼 외의 컬럼을 임의로 추가하지 않는다.
 
+출력 파일 기준:
+
+- 기본 파일 형식: `.xlsx`
+- Sheet 탭명: 작업자가 입력한 `sheet_name`
+- Check Box는 기본 미체크 상태로 생성한다.
+- Excel에서 실제 체크박스 삽입이 어려운 경우 빈 체크박스 기호 `☐` 또는 `FALSE`를 임시 값으로 사용할 수 있다.
+
 ## Output Schema
 
 | Field | Required | 입력 규칙 |
 |---|---|---|
-| 대분류 | 필수 | Query List의 Category와 동일하게 입력 |
+| 대분류 | 필수 | 통합 Query List의 Category와 동일하게 입력 |
 | Query / Service | 필수 | Query List 표기 그대로 입력 |
 | Korean Title | 필수 | 기사 제목 입력, 기사 없음 확인 시 `n/a` 입력 |
 | Check Box | 필수 | 신규 기사는 기본 미체크 상태 |
@@ -167,7 +170,7 @@ Sheet 입력 구조는 아래 형식을 따른다.
 
 입력 기준:
 
-- 대분류와 Query / Service 순서는 해당 run_mode의 Query List 순서를 strict하게 따른다.
+- 대분류와 Query / Service 순서는 통합 Query List 순서를 strict하게 따른다.
 - Query 이름은 임의로 수정하지 않는다.
 - 특정 Query에서 기사가 여러 개 발견되면 같은 Query 아래 여러 행으로 입력한다.
 - 특정 Query를 확인했지만 입력할 기사가 없으면 Korean Title 칸에 `n/a`를 입력한다.
@@ -512,15 +515,14 @@ Source 우선순위 세부 기준은 `Appendix C. Source 우선순위 세부 기
 
 ## Query List 적용 방식
 
-- 자동화 agent는 작업 대상 시트에 맞는 Query List만 사용한다.
-- Weekly IT Trend Sheet 작업 시 `Weekly Sheet Query`만 사용한다.
-- Global IT Trend Sheet 작업 시 `Global IT Trend Sheet Query`만 사용한다.
-- 두 Query List를 임의로 병합하지 않는다.
-- Query 순서는 아래에 정의된 순서를 strict하게 따른다.
+- 자동화 agent는 통합 Query List 하나만 사용한다.
+- 통합 Query List를 별도로 나누지 않는다.
+- 기존 Weekly / Global Query는 모두 통합 Query List에 합쳐 관리한다.
+- Query 순서는 `Query 전체 리스트`에 정의된 통합 순서를 strict하게 따른다.
 - Query 이름은 임의로 수정하지 않는다.
 - Query별 공식 링크가 있으면 Google Query 전 우선 확인 링크를 먼저 확인한다.
 - Query에 `Google Query`가 표시되어 있으면 Google Search 또는 Google News 중심으로 검색한다.
-- Query별 기사 입력 시 Sheet에는 `Korean Title`, `Check Box`, `URL` 중심으로 입력한다.
+- Query별 기사 입력 시 Excel Sheet에는 `Korean Title`, `Check Box`, `URL` 중심으로 입력한다.
 
 ## Official Source 확인 방식
 
@@ -1220,21 +1222,21 @@ Korean Title 작성 시 신규 기능명 또는 신규 서비스명에는 큰따
 
 ## Machine-readable Query Table
 
-| Sheet | Category | Query | Search Type |
+| Scope | Category | Query | Search Type |
 |---|---|---|---|
-| weekly | AI Agent | AI Agent | Google Query |
-| weekly | AI Agent | OpenClaw (Moltbot, Clawdbot) | Official First |
-| weekly | AI Agent | Paperclip | Official First |
-| weekly | AI | OpenAI | Official First |
-| weekly | AI | Gemini | Official First |
-| weekly | Browser | Arc Browser | Official First |
-| weekly | Browser | Voice Synthesis | Google Query |
-| global | AI Agent | AI Agent - Google Query | Google Query |
-| global | AI/GPT | AI - Google Query | Google Query |
-| global | AI/GPT | OpenAI | Official First |
-| global | Global Big Tech | Meta | Official First |
-| global | Social | TikTok | Official First |
-| global | Theme | Gen Z - Google Query | Google Query |
+| unified | AI Agent | AI Agent | Google Query |
+| unified | AI Agent | OpenClaw (Moltbot, Clawdbot) | Official First |
+| unified | AI Agent | Paperclip | Official First |
+| unified | AI/GPT | OpenAI | Official First |
+| unified | AI/GPT | Gemini / GeminI | Official First |
+| unified | AI Browser / Browser | Arc Browser | Official First |
+| unified | AI/GPT | Voice Synthesis | Google Query |
+| unified | AI Agent | AI Agent - Google Query | Google Query |
+| unified | AI/GPT | AI - Google Query | Google Query |
+| unified | AI/GPT | OpenAI | Official First |
+| unified | Global Big Tech | Meta | Official First |
+| unified | Social | TikTok | Official First |
+| unified | Theme | Gen Z - Google Query | Google Query |
 
 기준:
 
@@ -1481,7 +1483,7 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - CrewAI 관련 기사는 `AI Agent > CrewAI`에 입력한다.
 - LangGraph 관련 기사는 `AI Agent > LangGraph`에 입력한다.
 - KIRA 관련 기사는 `AI Agent > KIRA`에 입력한다.
-- Wrtn Crack 또는 Crack 관련 기사는 해당 시트의 Query 표기에 맞춰 `Wrtn Crack` 또는 `Crack (크랙)`에 입력한다.
+- Wrtn Crack 또는 Crack 관련 기사는 통합 Query 표기에 맞춰 `Wrtn Crack` 또는 `Crack (크랙)` 중 더 가까운 Query에 입력한다.
 - Nomi, Kindroid, Paradot, Replika, Poketomo, Hume AI 등 AI Agent 구역 내 세부 Query와 직접 관련된 기사는 각각의 세부 Query 아래에 입력한다.
 - AI Agent 구역 안에 동일하거나 더 구체적인 세부 Query가 존재하면 `AI Agent > AI Agent` 기본 Query에 넣지 않는다.
 - AI Agent 기본 Query는 세부 Query와 직접 매칭되지 않는 AI Agent 기사만 입력하는 fallback Query다.
@@ -1584,37 +1586,37 @@ md 파일에는 체크박스 컬럼을 `Check Box`로 표기하되, 실제 Googl
 - `[Google] Gemini overlay와 Gemini Live UI 통합 재설계 통해 AOS 상호작용 방식과 Multi-modal 접근성 개선 (2026.4.7)`
 - `[Market] AI data center, 투자자 요구로 Big Tech 대상 전력과 수자원 사용량 공개 압박 확대 (2026.4.8)`
 
-## Weekly IT Trend Sheet와 Global IT Trend Sheet 구분
+## 통합 Archiving Sheet 기준
 
-Weekly IT Trend Sheet와 Global IT Trend Sheet는 서로 다른 시트이며, 사용하는 Query List도 다르다.
+기존 Weekly IT Trend Sheet와 Global IT Trend Sheet의 Query를 별도 목록으로 나누지 않는다.
 
-- Weekly IT Trend Sheet:
-  - AI Agent, AI, Browser 중심 Query를 사용한다.
-  - Weekly AI Trend Report 및 AI 중심 아카이빙에 활용한다.
-  - AI Agent / AI / Browser 관련 항목을 넓게 확인한다.
-
-- Global IT Trend Sheet:
-  - AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme Query를 사용한다.
-  - Global IT Trend Report 작성에 활용한다.
-  - AI뿐 아니라 Big Tech, Asia Big Tech, Social, Theme 관련 IT/플랫폼/시장 트렌드까지 포함한다.
-
-두 시트의 Query List는 서로 섞지 않는다.
-자동화 agent는 작업 대상 시트가 Weekly IT Trend Sheet인지 Global IT Trend Sheet인지 먼저 확인한 뒤, 해당 시트의 Query List만 사용한다.
+- 모든 Query는 `Query 전체 리스트`의 통합 Query List를 기준으로 관리한다.
+- 최종 결과는 하나의 Excel workbook 또는 Excel 호환 Sheet로 생성한다.
+- Excel workbook 안에서는 필요 시 카테고리별 구역 또는 탭을 둘 수 있으나, Query List는 분리하지 않는다.
+- Weekly AI Trend Report와 Global IT Trend Report는 같은 통합 Sheet 결과를 기반으로 후속 작성한다.
+- 자동화 agent는 통합 Query List 전체를 기준으로 검색, 정렬, 입력을 수행한다.
 
 ## Query 전체 리스트
 
-Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`로 분리한다.
-자동화 agent는 작업 대상 시트에 해당하는 Query List만 사용하고, 두 Query List를 임의로 병합하지 않는다.
+Query 전체 리스트는 Weekly / Global Sheet를 나누지 않고 하나의 통합 Query List로 사용한다.
+자동화 agent는 아래 통합 Query 순서와 표기를 기준으로 모든 Query를 확인한다.
 
-### Weekly Sheet Query
+운영 기준:
 
-아래 Query List는 `Weekly IT Trend Sheet`에 사용하는 Query이다.
-아래 순서와 표기를 strict하게 유지한다.
+- 통합 Query List를 별도로 분리하지 않는다.
+- 기존 Weekly / Global Query에 있던 모든 Query를 통합 Query List에 합친다.
+- Query 이름은 아래 표기를 기준으로 사용하고, 기존 시트별 표기 차이가 있던 항목은 필요한 경우 둘 다 유지한다.
+- 예: `Wrtn Crack`과 `Crack (크랙)`은 모두 통합 Query List에 유지한다.
+- 예: `Gemini`와 `GeminI`처럼 기존 Query 표기가 달랐던 항목은 `Gemini / GeminI`처럼 통합 표기로 관리한다.
+- 공식 링크가 있는 Query는 Google Query 전 우선 확인 링크를 먼저 확인한다.
+- `Google Query`가 붙은 Query는 Google Search 또는 Google News 중심으로 검색한다.
+- Sheet 입력 시 대분류 → Query / Service → 기사 리스트 순서를 유지한다.
 
-#### AI Agent
+### AI Agent
 
 [AI Agent]
 - AI Agent
+- AI Agent - Google Query
 - OpenClaw (Moltbot, Clawdbot)
 - Paperclip
 - BabyAGI
@@ -1625,6 +1627,7 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - A.(에이닷)
 - KIRA
 - Wrtn Crack
+- Crack (크랙)
 - Rinna
 - Cotomo
 - CrewAI
@@ -1640,9 +1643,11 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - Mersoom
 - Bot Madang
 
-#### AI
+### AI/GPT
 
-[AI]
+[AI/GPT]
+- AI
+- AI - Google Query
 - Lovable
 - Generative AI
 - OpenAI
@@ -1652,7 +1657,7 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - Meta AI
 - Scale AI
 - Google AI
-- Gemini
+- Gemini / GeminI
 - Veo
 - NotebookLM
 - Google Chrome
@@ -1663,6 +1668,7 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - Claude
 - Claude Code
 - Microsoft
+- Microsoft AI
 - Microsoft Edge
 - Bing
 - Copilot
@@ -1672,7 +1678,9 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - Thinking Machines Lab
 - Perplexity AI
 - Comet
+- Comet Browser
 - Stability.ai
+- Stability AI
 - Anysphere (Cursor)
 - ElevenLabs
 - Speak AI
@@ -1680,6 +1688,7 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - Ayar Labs
 - Physical Intelligence
 - Inflection AI
+- Inflection AI (Pi)
 - Moonshot AI
 - Canva AI
 - Le Chat
@@ -1688,26 +1697,7 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - Skywalker.ai
 - Kling AI
 - Seedance
-
-#### Browser
-
-[Browser]
-- Arc Browser
-- Dia Browser
-- Brave Browser
-- Opera One
-- Sigma Browser (SigmaOS)
-- Zen Browser
-- Wavebox
-- Vivaldi Browser
-- Sidekick Browser
-- Shift Browser
-- Orion Browser
-- Maxthon Browser
-- Firefox
-- Samsung Internet
-- UC Browser
-- CryptoTab Browser
+- Zeta
 - AI Startup
 - Stable Diffusion
 - DALL-E
@@ -1724,7 +1714,6 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - AI Plugin
 - Sam Altman
 - LLM
-- Inflection AI (Pi)
 - Chatbot
 - Adobe AI
 - Adobe Firefly
@@ -1742,90 +1731,17 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - Microsoft Industry Blogs
 - blog.google
 
-### Global IT Trend Sheet Query
+### AI Browser / Browser
 
-아래 Query List는 `Global IT Trend Sheet`에 사용하는 Query이다.
-아래 순서와 표기를 strict하게 유지한다.
-
-#### AI Agent
-
-[AI Agent]
-- AI Agent - Google Query
-- OpenClaw (Moltbot, Clawdbot)
-- Paperclip
-- BabyAGI
-- Microsoft AutoGen
-- AutoGPT
-- AgentGPT
-- Claude Cowork
-- A.(에이닷)
-- KIRA
-- Crack (크랙)
-- Rinna
-- Cotomo
-- CrewAI
-- AutoGen
-- LangGraph
-- Chai
-- Nomi
-- Kindroid
-- Paradot
-- Replika
-- Poketomo
-- Hume AI
-- Mersoom
-- Bot Madang
-
-#### AI/GPT
-
-[AI/GPT]
-- AI - Google Query
-- OpenAI
-- ChatGPT
-- Sora
-- Codex
-- Meta AI
-- Google AI
-- GeminI
-- Amazon AI
-- Nova AI
-- Anthropic
-- Claude
-- Claude Code
-- Kakao AI
-- Microsoft AI
-- Databricks
-- Perplexity AI
-- Cohere
-- ElevenLabs
-- Lovable
-- Stability AI
-- Inflection AI
-- Ayar Labs
-- Canva AI
-- Speak AI
-- Anysphere (Cursor)
-- Physical Intelligence
-- Thinking Machines Lab
-- Moonshot AI
-- Le Chat
-- Leonardo AI
-- Writer AI
-- Zeta
-- Kling AI
-- Seedance
+[AI Browser / Browser]
 - Arc Browser
 - Dia Browser
 - Brave Browser
-- Microsoft Edge
-- Google Chrome
-- Comet Browser
 - Opera One
 - Sigma Browser (SigmaOS)
 - Zen Browser
 - Wavebox
 - Vivaldi Browser
-- Safari
 - Sidekick Browser
 - Shift Browser
 - Orion Browser
@@ -1835,7 +1751,7 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - UC Browser
 - CryptoTab Browser
 
-#### Global Big Tech
+### Global Big Tech
 
 [Global Big Tech]
 - Meta
@@ -1854,7 +1770,7 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - Microsoft
 - Grab
 
-#### Asia Big Tech
+### Asia Big Tech
 
 [Asia Big Tech]
 - Rakuten (楽天市場)
@@ -1880,7 +1796,7 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - ByteDance
 - Alibaba
 
-#### Social
+### Social
 
 [Social]
 - TikTok
@@ -1895,15 +1811,21 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 - BeReal
 - Discord
 
-#### Theme
+### Theme
 
 [Theme]
 - Super App (LinkedIn, Reddit, Spotify, VSCO, Paypal)
+- Reddit
+- Spotify
+- VSCO
+- LinkedIn
+- PayPal
 - MZ Gen - Google Query
 - Gen Z - Google Query
 - 1020 trend - Google Query
 - Social app - Google Query
 - Tech Crunch Startup
+- TechCrunch Startup
 
 ## Query와 우선 확인 링크 연결 방식
 
@@ -1917,12 +1839,12 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
   - 예: `Crack (크랙)` ↔ `Wrtn Crack`
 - 단, Sheet Query 표기는 변경하지 않는다.
 - 공식 링크가 없는 Query는 Google Query로 검색한다.
-- Query List에 없는 링크 항목은 링크 목록에는 유지할 수 있지만, 해당 시트의 Query 배열에는 임의로 추가하지 않는다.
+- Query List에 없는 링크 항목은 링크 목록에는 유지할 수 있지만, 통합 Query List에는 임의로 추가하지 않는다.
 
 ## Query별 Sheet 입력 방식
 
 - Sheet는 대분류 → Query / Service → 기사 리스트 순서로 입력한다.
-- 대분류와 Query / Service 순서는 해당 시트의 Query List 순서를 strict하게 따른다.
+- 대분류와 Query / Service 순서는 통합 Query List 순서를 strict하게 따른다.
 - 기사 입력 시 Query / Service 순서를 바꾸지 않는다.
 - 기사 발견 Query와 최종 배치 Query는 다를 수 있다.
 - 최종 배치 Query는 검색된 위치가 아니라 기사 핵심 내용과 기존 Query List 매칭 여부를 기준으로 결정한다.
@@ -1942,8 +1864,8 @@ Query 전체 리스트는 `Weekly Sheet Query`와 `Global IT Trend Sheet Query`�
 
 Query에서 발견한 기사는 반드시 아래 순서로 확인한다.
 
-1. 작업 대상 시트가 Weekly IT Trend Sheet인지 Global IT Trend Sheet인지 확인
-2. 해당 시트의 Query List 순서와 표기 확인
+1. 통합 Archiving Sheet 기준과 통합 Query List 사용 여부 확인
+2. 통합 Query List 순서와 표기 확인
 3. 날짜 범위 적합 여부 확인
 4. 기사 원문 접근 가능 여부 확인
 5. Paywall 여부 확인
@@ -1957,9 +1879,9 @@ Query에서 발견한 기사는 반드시 아래 순서로 확인한다.
 
 ## 최종 검수 체크리스트
 
-- [ ] run_mode가 `weekly` 또는 `global` 중 하나로 지정되었는지 확인
-- [ ] run_mode에 맞는 Query List만 사용했는지 확인
-- [ ] Weekly Query와 Global Query를 섞지 않았는지 확인
+- [ ] 통합 Archiving Sheet 기준으로 실행했는지 확인
+- [ ] 통합 Query List 하나만 사용했는지 확인
+- [ ] 통합 Query List를 기준으로 모든 Query를 합쳐 사용했는지 확인
 - [ ] 검색 기간이 `yyyy.m.d~yyyy.m.d` 형식인지 확인
 - [ ] Sheet 출력 컬럼이 `대분류 / Query / Service / Korean Title / Check Box / URL`만 포함하는지 확인
 - [ ] Original Title, Status, Note, Cluster ID 등 금지 컬럼이 없는지 확인
@@ -1974,12 +1896,11 @@ Query에서 발견한 기사는 반드시 아래 순서로 확인한다.
 - [ ] 날짜에 `/` 또는 0 padding이 없는지 확인
 - [ ] Naver / LINE / LY Corporation 단독 기사가 제외되었는지 확인
 - [ ] 실행 로그에 검색 실패, Paywall, 제외 기사 등이 기록되었는지 확인
-- [ ] Weekly IT Trend Sheet Query와 Global IT Trend Sheet Query가 분리되어 있는지 확인
-- [ ] Weekly Query 순서가 제공된 순서와 일치하는지 확인
-- [ ] Global IT Trend Query 순서가 제공된 순서와 일치하는지 확인
+- [ ] 통합 Query 순서가 문서에 정의된 순서와 일치하는지 확인
+- [ ] 통합 Query에 기존 Global IT Trend Query가 포함되었는지 확인
 - [ ] Query 표기가 임의로 변경되지 않았는지 확인
-- [ ] `Wrtn Crack`과 `Crack (크랙)`의 시트별 표기가 구분되어 있는지 확인
-- [ ] Weekly Sheet Query와 Global IT Trend Sheet Query가 합쳐져 있지 않은지 확인
+- [ ] `Wrtn Crack`과 `Crack (크랙)`이 통합 Query List에 모두 유지되었는지 확인
+- [ ] 통합 Query List가 분리되지 않았는지 확인
 - [ ] Query List에 없는 항목이 임의로 Query로 추가되지 않았는지 확인
 - [ ] Global IT / AI / Big Tech / Asia Tech / Social / Market Trend 관련 기사를 중요도와 관계없이 모두 리스트업했는지 확인
 - [ ] 각 Query 섹션 안에서 `시장 영향이 큰 기사 → 기업/서비스 변화 기사 → 일반 관련 기사 → 중복/보조 출처` 순서로 정렬했는지 확인
@@ -2031,9 +1952,10 @@ Query에서 발견한 기사는 반드시 아래 순서로 확인한다.
 
 최종 산출물은 아래와 같다.
 
-- 주차별 기사 리스트업 Sheet 탭
-- Weekly IT Trend Sheet 결과
-- Global IT Trend Sheet 결과
+- 기본 산출물 형식: `.xlsx` Excel workbook
+
+- 주차별 기사 리스트업 Excel Sheet 탭 또는 Excel workbook
+- 통합 Archiving Excel Sheet 결과
 - 최종 Korean Title 리스트
 - URL이 포함된 기사 후보 리스트
 - 자동화 실행 로그
@@ -3865,8 +3787,10 @@ https://techcrunch.com/category/startups/
 
 ## 수정 요약
 
+- Weekly / Global Sheet 분리 기준 제거 및 통합 Query List로 병합
+- 최종 결과물을 Excel workbook(`.xlsx`) 또는 Excel 호환 Sheet로 생성하는 기준 추가
+
 - AI Agent 기사는 세부 Query 매칭 우선, 세부 Query가 없을 때만 AI Agent 기본 Query에 배치하는 기준 추가
-- 자동화 실행 모드(`weekly`, `global`) 추가
 - 자동화 입력값과 Output Schema 구체화
 - 중복 기사 처리 방식 통합
 - 검색 실패와 `n/a` 상태 구분
