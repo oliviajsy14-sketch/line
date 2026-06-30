@@ -227,22 +227,203 @@ previous_week:
 Master queries are grouped into six categories. The run processes them in this order, one full category before the next. Per-query Primary and Secondary sources are listed in the source maps in Section 4.
 
 #### 1. AI Agent
-All Other AI Agent News, OpenClaw (Moltbot, Clawdbot), Paperclip, BabyAGI, Microsoft AutoGen, AutoGPT, AgentGPT, Claude Cowork, A.(에이닷), KIRA, Wrtn Crack, Rinna, Cotomo, CrewAI, AutoGen, LangGraph, Chai, Nomi, Kindroid, Paradot, Replika, Poketomo, Hume AI, Mersoom, Bot Madang, NVIDIA
+
+- All Other AI Agent News
+- OpenClaw (Moltbot, Clawdbot)
+- Paperclip
+- BabyAGI
+- Microsoft AutoGen
+- AutoGPT
+- AgentGPT
+- Claude Cowork
+- A.(에이닷)
+- KIRA
+- Wrtn Crack
+- Rinna
+- Cotomo
+- CrewAI
+- AutoGen
+- LangGraph
+- Chai
+- Nomi
+- Kindroid
+- Paradot
+- Replika
+- Poketomo
+- Hume AI
+- Mersoom
+- Bot Madang
+- NVIDIA
 
 #### 2. AI/GPT
-All Other AI/GPT News, Lovable, Generative AI, OpenAI, ChatGPT, Codex, Sora, Meta AI, Scale AI, Google AI, Gemini, Veo, NotebookLM, Google Chrome, Amazon AI, Nova AI, Trainium, Anthropic, Claude, Claude Code, Microsoft AI, Microsoft Edge, Bing, Copilot, Apple AI, Safari, Databricks, Thinking Machines Lab, Perplexity AI, Comet, Stability AI, Anysphere (Cursor), ElevenLabs, Speak AI, Writer AI, Ayar Labs, Physical Intelligence, Inflection AI, Moonshot AI, Canva AI, Le Chat, Leonardo AI, Cohere, Skywalker.ai, Kling AI, Seedance, Arc Browser, Dia Browser, Brave Browser, Opera One, Sigma Browser (SigmaOS), Zen Browser, Wavebox, Vivaldi Browser, Sidekick Browser, Shift Browser, Orion Browser, Maxthon Browser, Firefox, Samsung Internet, UC Browser, CryptoTab Browser, AI Startup, Stable Diffusion, DALL-E, Content Generator, Craiyon, Midjourney, MyHeritage, Voice Synthesis, Dream Fusion, AI Bot, AI Healthcare, Image AI, AI Assistant, AI Plugin, Sam Altman, LLM, Inflection AI (Pi), Chatbot, Adobe AI, Adobe Firefly, character.ai, Zeta, MDM, yandex, Kakao Brain, Kakao AI, Japan AI, Korea AI, China AI, US AI, AI Character, Copyright Shield
+
+- All Other AI/GPT News
+- Lovable
+- Generative AI
+- OpenAI
+- ChatGPT
+- Codex
+- Sora
+- Meta AI
+- Scale AI
+- Google AI
+- Gemini
+- Veo
+- NotebookLM
+- Google Chrome
+- Amazon AI
+- Nova AI
+- Trainium
+- Anthropic
+- Claude
+- Claude Code
+- Microsoft AI
+- Microsoft Edge
+- Bing
+- Copilot
+- Apple AI
+- Safari
+- Databricks
+- Thinking Machines Lab
+- Perplexity AI
+- Comet
+- Stability AI
+- Anysphere (Cursor)
+- ElevenLabs
+- Speak AI
+- Writer AI
+- Ayar Labs
+- Physical Intelligence
+- Inflection AI
+- Moonshot AI
+- Canva AI
+- Le Chat
+- Leonardo AI
+- Cohere
+- Skywalker.ai
+- Kling AI
+- Seedance
+- Arc Browser
+- Dia Browser
+- Brave Browser
+- Opera One
+- Sigma Browser (SigmaOS)
+- Zen Browser
+- Wavebox
+- Vivaldi Browser
+- Sidekick Browser
+- Shift Browser
+- Orion Browser
+- Maxthon Browser
+- Firefox
+- Samsung Internet
+- UC Browser
+- CryptoTab Browser
+- AI Startup
+- Stable Diffusion
+- DALL-E
+- Content Generator
+- Craiyon
+- Midjourney
+- MyHeritage
+- Voice Synthesis
+- Dream Fusion
+- AI Bot
+- AI Healthcare
+- Image AI
+- AI Assistant
+- AI Plugin
+- Sam Altman
+- LLM
+- Inflection AI (Pi)
+- Chatbot
+- Adobe AI
+- Adobe Firefly
+- character.ai
+- Zeta
+- MDM
+- yandex
+- Kakao Brain
+- Kakao AI
+- Japan AI
+- Korea AI
+- China AI
+- US AI
+- AI Character
+- Copyright Shield
 
 #### 3. Global Big Tech
-Meta, Facebook, Instagram, WhatsApp, Amazon, Amazon Prime, Apple, iOS, Netflix, Google, YouTube, Android, Gmail, Microsoft, Grab
+
+- Meta
+- Facebook
+- Instagram
+- WhatsApp
+- Amazon
+- Amazon Prime
+- Apple
+- iOS
+- Netflix
+- Google
+- YouTube
+- Android
+- Gmail
+- Microsoft
+- Grab
 
 #### 4. Asia Big Tech
-Rakuten (楽天市場), note（ノート), DeNA, Gree (グリー), Gunosy (グノシー), Time Tree (タイムツリ), Mercari(メルカリ), The Bridge, Ascii Startup, CNET, Diamond, Kakao, 카카오, 카카오톡, Coupang, 쿠팡, Toss, 토스, Tencent, WeChat (微信), ByteDance, Alibaba
+
+- Rakuten (楽天市場)
+- note（ノート)
+- DeNA
+- Gree (グリー)
+- Gunosy (グノシー)
+- Time Tree (タイムツリ)
+- Mercari(メルカリ)
+- The Bridge
+- Ascii Startup
+- CNET
+- Diamond
+- Kakao
+- 카카오
+- 카카오톡
+- Coupang
+- 쿠팡
+- Toss
+- 토스
+- Tencent
+- WeChat (微信)
+- ByteDance
+- Alibaba
 
 #### 5. Social
-TikTok, Douyin, Snapchat, Telegram, Pinterest, X, XChat, BlueSky, Twitch, BeReal, Discord
+
+- TikTok
+- Douyin
+- Snapchat
+- Telegram
+- Pinterest
+- X
+- XChat
+- BlueSky
+- Twitch
+- BeReal
+- Discord
 
 #### 6. Theme
-Other Super Apps, Spotify, Linkedin, Figma, Paypal, Reddit, VSCO, locket, MZ Gen, Gen Z, 1020 trend, Social app, Tech Crunch Startup
+
+- Other Super Apps
+- Spotify
+- Linkedin
+- Figma
+- Paypal
+- Reddit
+- VSCO
+- locket
+- MZ Gen
+- Gen Z
+- 1020 trend
+- Social app
+- Tech Crunch Startup
 
 Notes:
 - The `All Other ...` entries (and `Other Super Apps`) are catch-all queries for category-relevant stories not matched by a more specific query in that category.
