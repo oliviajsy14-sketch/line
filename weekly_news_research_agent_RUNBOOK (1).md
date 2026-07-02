@@ -2,7 +2,7 @@
 
 You are the executing agent. When you are asked to run the weekly pipeline for a date range, follow this runbook end to end: collect that week's real news and write the two output files in Section 1 (the HTML report and the JSON data file). This file is your instructions, not the report itself. Section 0 says exactly what a run does.
 
-**Purpose.** In one run, for a fixed list of master queries grouped into six categories over a given week, collect news article links from primary sources, Google News, and secondary sources (trusted news sites); group links covering the same event into clusters; render each cluster as one row (category, master query, a formatted headline, a clickable selection checkbox, and up to three source links) in a self-contained HTML report; and remove any story already covered last week.
+**Purpose.** In one run, for a fixed list of master queries grouped into six categories over a given week, collect news article links from primary sources, Google News, and secondary sources (trusted news sites); group links covering the same event into clusters; render each cluster as one row (category, master query, formatted headline, checkbox, sources, tier, date) and each empty master query as one visible n/a row in a self-contained HTML report; and remove any story already covered last week.
 
 The pipeline runs in seven phases (0 to 6): set up the run, collect and headline from primary sources, then secondary sources, then Google News, arrange each master query's stories by tier, mark empty queries n/a, and drop repeats. Headlines are written during collection, one per cluster. Collection uses the `web_search` and `web_fetch` tools. The deliverable is one self-contained `report_{since}_{until}.html`, rendered from a machine-readable `data_{since}_{until}.json` that also serves as next week's dedup memory; both are written by Python. See Section 0 for how to run it on Claude Code.
 
@@ -49,12 +49,12 @@ Do NOT convert this runbook to HTML. Generate the report from collected news by 
   - `web_fetch` on the Phase 1 source pages (newsrooms, blogs, GitHub releases, changelogs) listed in Section 4.
   - `web_search` as the fallback, and for the Phase 2 secondary sites, using `site:` filters plus the date window in the query.
   - This is best-effort. Note what each query actually returned.
-- **Report and data I/O.** Write a Python script (run with bash) that builds the two output files in Section 1 from the same final records: the full machine-readable `data_{since}_{until}.json` and the clean user-facing `report_{since}_{until}.html`. No Excel, no `openpyxl`. The HTML is one file with inline CSS and JS, declares `<meta charset="utf-8">`, uses a CJK-capable font stack so Korean and Japanese render, contains static pre-rendered article rows in the DOM at build time, and includes working checkbox controls. Validation data belongs in JSON unless explicitly requested in HTML.
+- **Report and data I/O.** Write a Python script (run with bash) that builds the two output files in Section 1 from the same final records: the full machine-readable `data_{since}_{until}.json` and the clean user-facing `report_{since}_{until}.html`. No Excel, no `openpyxl`. The HTML is one file with inline CSS and JS, declares `<meta charset="utf-8">`, uses a CJK-capable font stack so Korean and Japanese render, contains static pre-rendered article and n/a rows in the DOM at build time, and includes working checkbox controls. Validation data belongs in JSON unless explicitly requested in HTML.
 - **Filesystem.** Keep all working state in the project directory.
 
 ### Files and I/O contract
-- Deliverable: `./output/report_{since}_{until}.html`, one self-contained HTML file (Section 1a): a clean article-selection list with only visible article rows by default, no verbose validation/audit tables by default, static pre-rendered HTML rows, and working checkbox controls.
-- Data file: `./output/data_{since}_{until}.json`, the full machine-readable data (Section 1b): kept clusters, hidden n/a rows, validation logs, source-check evidence, crawl manifest, and dedup memory. The report and data file are built from the same final records.
+- Deliverable: `./output/report_{since}_{until}.html`, one self-contained HTML file (Section 1a): a clean article-selection list with all master queries with article or visible n/a rows, no verbose validation/audit tables by default, static pre-rendered article and n/a HTML rows, and working checkbox controls.
+- Data file: `./output/data_{since}_{until}.json`, the full machine-readable data (Section 1b): kept clusters, visible n/a rows, validation logs, source-check evidence, crawl manifest, and dedup memory. The report and data file are built from the same final records.
 - Archive: after the run, copy the data file to `./archive/data_{since}_{until}.json`.
 - Previous week: Phase 6 reads `previous_week.data_path` (Section 3a), the prior week's archived data file. If it does not exist, skip the repetition drop and note it.
 - Selections: the desk ticks rows in the report; ticks autosave in the browser, and an "Export selections" button downloads `selections_{since}_{until}.json` for a later step. No fixed schema yet (Section 1a).
@@ -76,25 +76,29 @@ Two files: the HTML report (the deliverable) and the JSON data file (machine-rea
 
 One self-contained file, `./output/report_{since}_{until}.html`: inline CSS and JS, `<meta charset="utf-8">`, a CJK-capable font stack (for example `system-ui, "Apple SD Gothic Neo", "Noto Sans KR", "Noto Sans JP", sans-serif`), and no external requests. The final HTML must be readable when opened locally as a `file://` file.
 
-The HTML report is primarily an **article selection list**, not a validation dashboard. Default visible content should be:
+The HTML report is a complete **article checklist**, not a validation dashboard. Default visible content should be:
 - Header with the run date range and generated date.
-- Compact summary counts, including total visible article count and category counts.
-- Article rows grouped by category and master query.
-- Selection checkboxes.
-- Up to three source links per row.
+- Compact summary counts, including total visible article count, visible n/a count, and category counts.
+- All categories in strict Section 3b order.
+- All master queries in strict Section 3b order.
+- All surviving article rows plus one visible `n/a` row for every master query with no surviving article.
+- Selection checkboxes for non-n/a article rows.
+- Up to three source links per article row.
+
+The visible HTML table column order must be: Category; Master Query; Headline / Title; Checkbox; URL / Sources; Tier; Date. The checkbox must appear between the headline/title and the URL/source links. Do not place the checkbox as the first column.
 
 Do **not** show large validation tables, source-completion manifests, n/a audit tables, or internal crawler logs in the HTML by default. Store validation, source-check evidence, crawl logs, n/a evidence, and site manifest in JSON/run log only, unless the user explicitly asks to display them in HTML. Validation data belongs in JSON unless explicitly requested in HTML.
 
-`n/a` rows must be preserved in JSON but hidden from the default HTML article list. The HTML may include a small optional toggle for “Show n/a rows,” but the default view must show article rows only. Hidden n/a rows must not have active checkboxes.
+`n/a` rows must be preserved in JSON and shown in the default HTML article list. Every master query listed in Section 3b must appear in the final HTML in strict order. If a master query has one or more surviving clusters, show all article rows under that query; if it has no surviving cluster after full collection and filtering, show exactly one visible `n/a` row. Do not hide n/a rows, move them to a separate audit table, or remove them from the HTML. n/a rows must appear in the same strict category/master-query order as article rows and must not have active checkboxes.
 
-Article rows must be rendered as static HTML first. JavaScript may enhance checkbox autosave/export, but if JavaScript fails, the article list must still be visible. Do not rely only on `JSON.parse()` rendering for the visible article list. The generated HTML must contain the rendered article rows in the DOM at build time.
+Article and n/a rows must be rendered as static HTML first. JavaScript may enhance checkbox autosave/export, but if JavaScript fails, the article list must still be visible. Do not rely only on `JSON.parse()` rendering for the visible article list. The generated HTML must contain the rendered article rows in the DOM at build time.
 
 Keep the visual format clean and compact. Avoid oversized cards, long audit notes, excessive metadata, and validation-dashboard layouts.
 
 Minimal HTML, full JSON rule:
-- The HTML report is for human article selection. Keep it minimal.
-- Allowed in default HTML: title, date range, generated date, total article count, category counts, article table grouped by strict query order, checkbox controls, source links, and an optional small note section.
-- Not allowed in default HTML unless explicitly requested: full source-completion checklist, every-site crawl manifest, Google query logs, n/a audit table, Asia audit table, quality gate table, long crawler notes, or raw search result counts for every source.
+- The HTML report is for human article selection and n/a confirmation. Keep it minimal.
+- Allowed in default HTML: title, date range, generated date, total article count, category counts, full article/n/a table grouped by strict query order, checkbox controls, source links, export selections button, and an optional small note section.
+- Not allowed in default HTML unless explicitly requested: hiding n/a rows, putting the checkbox as the first column, separating n/a into a different page or audit-only section, skipping master queries with no articles, full source-completion checklist, every-site crawl manifest, Google query logs, Asia audit table, quality gate table, long crawler notes, or raw search result counts for every source.
 - These items must be saved to JSON under `validation`, `source_manifest`, `google_search_log`, and `na_audit`.
 
 Selection checkboxes:
@@ -106,7 +110,7 @@ Selection checkboxes:
 Rendering rules:
 - One cluster = one row = one headline = up to three source links.
 - HTML-escape every dynamic value before injecting it: headlines contain `"` and `[ ]`, and source URLs contain `&`.
-- Rows read grouped by category and master query using the strict display order in Section 3b-1.
+- Rows read grouped by category and master query using the strict display order in Section 3b-1; every Section 3b master query must appear, with article rows or exactly one visible n/a row.
 - The `[Company]` tag in the headline is the owning company and may differ from the master query (master query `iOS` carries `[Apple]`; `WhatsApp` carries `[Meta]`). Sub-brands roll up to their parent: Facebook, Instagram, and WhatsApp carry `[Meta]`; YouTube, Gmail, and Android carry `[Google]`; Amazon Prime carries `[Amazon]`. Whole-market and multi-company stories carry `[Market]`.
 
 ### 1b. Data file (machine-readable record and dedup memory)
@@ -415,10 +419,39 @@ Apply the **trigger cluster size rule** (Section 3f): if more than 50% of a quer
 With the headlines and clusters from Phases 1 to 3 in hand, go through every master query in the category and assign each cluster a tier using Section 3d. First apply the content exclusion rules (Tier 4, Section 3d.4) and drop those clusters outright. Then classify each surviving cluster as Tier 1, 2, or 3 by the Section 3d order, reading the cluster's opened source where the headline alone is not enough to judge. Arrange each master query's clusters by tier, Tier 1 first, then Tier 2, then Tier 3, and store the tier on each cluster record in the data file. Nothing else is cut: every cluster that is not Tier 4 and not a last-week repeat is written.
 
 ### Phase 5: N/a establishment
-After Phases 1 to 3, any master query with no surviving cluster gets exactly one n/a record in JSON, so coverage gaps are preserved without cluttering the default HTML. Do not render n/a rows in the default HTML article list. A hidden n/a row may be shown only if a `Show n/a` toggle is enabled. n/a rows must never have active checkboxes. Before setting n/a, confirm Phase 1, Phase 2, and Phase 3 were completed for that master query. Save n/a evidence in JSON only, including: primary checked, secondary checked, Google US checked, Google KR/JP checked where applicable, representative query, and reason for n/a. A genuine "checked, nothing to report" is `n/a`; a fetch or access failure is not `n/a`, it goes to the run log.
+After Phases 1 to 3 are fully completed, any master query with no surviving cluster gets one visible n/a row in the HTML and one n/a record in the JSON. A master query can be marked n/a only after all applicable sources were checked: official newsroom / press page; official blog; official changelog / release notes; GitHub releases, if listed in the source map; relevant secondary sources; Google US keyword search; Google KR keyword search, if Korean/local-language relevance exists; Google JP keyword search, if Japanese/local-language relevance exists; and local-language keyword search for Asia Big Tech, if applicable. Do not mark n/a immediately after the official source is empty. Do not mark n/a immediately after only secondary sources are empty. Do not mark n/a until Google keyword searches are also complete.
+
+For Asia Big Tech, do not mark n/a until the official newsroom or official page has been checked, local-language Google search has been checked, Google US has been checked, Google KR or Google JP has been checked where applicable, and relevant regional secondary sources have been checked. n/a rows must never have active checkboxes. A genuine "checked, nothing to report" is `n/a`; a fetch or access failure is not `n/a`, it goes to the run log.
+
+Each n/a record must include evidence in JSON:
+
+```json
+{
+  "cluster_id": "na_...",
+  "category": "...",
+  "master_query": "...",
+  "headline": "n/a",
+  "dedup_status": "keep",
+  "is_na": true,
+  "na_evidence": {
+    "official_newsroom_checked": true,
+    "official_blog_checked": true,
+    "github_checked": true,
+    "secondary_checked": true,
+    "google_us_checked": true,
+    "google_kr_checked": true,
+    "google_jp_checked": true,
+    "local_language_checked": true,
+    "representative_queries": ["..."],
+    "reason": "No relevant non-duplicate Tier 1-3 article found within date range after full source check."
+  }
+}
+```
+
+If a source type is not applicable, mark it as `"not_applicable"` rather than omitting it.
 
 ### Phase 6: Repetition check
-Two passes. First, the across-week check: load last week's data file from `previous_week.data_path` and, for each cluster this week, decide whether it covers the **same news event** as any last-week cluster (compare on `article_texts`), even if the specific articles differ; set `dedup_status = drop` for genuine repeats (Tier 4 #6) and `keep` for real follow-on developments with new facts or escalation. Second, the within-week check: compare this week's clusters against each other and drop any duplicate, so the same event is not rendered twice across master queries. Save this week's data file to the archive path so next week's check can read it. Then build the deliverable: write both `data_{since}_{until}.json` and `report_{since}_{until}.html` from the same final records. The JSON contains full records, hidden n/a rows, validation logs, source-check evidence, and the crawl manifest. The HTML contains the clean user-facing article list with static pre-rendered rows, working checkboxes, and no verbose validation/audit tables by default.
+Two passes. First, the across-week check: load last week's data file from `previous_week.data_path` and, for each cluster this week, decide whether it covers the **same news event** as any last-week cluster (compare on `article_texts`), even if the specific articles differ; set `dedup_status = drop` for genuine repeats (Tier 4 #6) and `keep` for real follow-on developments with new facts or escalation. Second, the within-week check: compare this week's clusters against each other and drop any duplicate, so the same event is not rendered twice across master queries. Save this week's data file to the archive path so next week's check can read it. Then build the deliverable: write both `data_{since}_{until}.json` and `report_{since}_{until}.html` from the same final records. The JSON contains full records, visible n/a rows, validation logs, source-check evidence, and the crawl manifest. The HTML contains the clean user-facing article/n/a checklist with static pre-rendered rows, working checkboxes, and no verbose validation/audit tables by default.
 
 ### Per-category source maps (Phases 1 and 2)
 Each query lists its source URLs and, in parentheses, the handling rule. (`GH` = read GitHub releases; `changelog` / `release notes` = treat a notable release as the event.) Primary sources are read in Phase 1; Secondary sources in Phase 2.
@@ -713,7 +746,7 @@ Theme:
 - Master query list and the per-category source maps come from the canonical runbook; the procedure has since been rearranged (see the architecture bullets below).
 - Section 4 source maps are now the **union of both specs' links**, deduped. Several queries that were "unresolved/verify/homepage-only" now have concrete official channels (for example Speak AI, Stability AI, KIRA, LangGraph, Pi), and many queries gained official docs / changelogs / release-notes and a shared common-feed block.
 - Added the Naver / LINE / LY Corporation single-company drop (now Tier 4 #8, Section 3d.4), with a `[Market]`-only exception.
-- The report row carries five fields: Category, Master Query, Headline, a clickable selection checkbox, and up to three source links (Section 1a). The checkbox is a real `<input>` the desk ticks; the agent never pre-ticks it. Source links render as clickable anchors, primary then secondary then Google News.
+- The report row uses the required column order: Category, Master Query, Headline / Title, Checkbox, URL / Sources, Tier, Date (Section 1a). The checkbox is a real `<input>` the desk ticks; the agent never pre-ticks it. Source links render as clickable anchors, primary then secondary then Google News.
 - Source taxonomy simplified to two defined types: Primary source (the query's official channel) and Secondary source (a defined news outlet or catch-all or keyword feed). Links found via Google search at run time are the third, undefined type. This replaces the earlier Group 1 / Group 2 / Group 3 split.
 - Agent-efficiency notes: resolve Google News redirects only for kept links; add the US-edition pass for an Asian query only when the local-edition pass is thin; cap each cluster at 3 sources so collection stops early; all phases run inline, no spawned sub-agents.
 - Procedure rearranged into Phases 0 to 6: Phase 0 setup; Phase 1 primary sources, one headline per link; Phase 2 secondary sources, clustered into Phase 1 with a 3-source cap; Phase 3 Google News across US, KR, and JP with the trigger cluster size rule; Phase 4 tier arrangement; Phase 5 n/a establishment; Phase 6 repetition check (across-week and within-week). Headlines are now written during collection, not in a separate pass.
@@ -726,46 +759,61 @@ Theme:
 
 ### Final quality gate before writing files
 
-Before writing the final HTML, validate internally:
-- Category order matches Section 3b.
-- Master query order matches Section 3b.
-- Default HTML shows article rows only, not audit tables.
-- n/a rows are hidden by default.
-- Every visible article row has a working checkbox.
-- Every visible article row has at least one source link.
-- Source links are valid URLs.
-- No row is duplicated across master queries.
-- TechCrunch, Social Media Today, 9to5Google, and 9to5Mac were checked.
-- Google US was checked for every master query.
-- Google KR/JP were checked for Asia/local-language queries.
-- Asia Big Tech official newsroom/source pages were checked before n/a.
-- Static HTML render test passes with JavaScript disabled.
+Before finalizing, validate internally:
+- Every Section 3b master query appears in the HTML.
+- Category order exactly matches Section 3b.
+- Master query order exactly matches Section 3b.
+- n/a rows are visible, not hidden.
+- Every n/a row has no active checkbox.
+- Every non-n/a article row has a real checkbox.
+- Checkbox column appears after the headline/title column.
+- Source URL column appears after the checkbox column.
+- Every n/a was assigned only after newsroom/blog/GitHub/secondary/Google searches were completed as applicable.
+- Google US was checked before any query was marked n/a.
+- Google KR/JP/local-language searches were checked before Asia queries were marked n/a.
+- Static HTML render test passes locally.
 
-If any gate fails, fix the data/report before finalizing. Do not show the full quality gate table in the default HTML. Save the gate results to JSON.
+Do not finalize the report if any of these checks fail. Do not show the full quality gate table in the default HTML. Save the gate results to JSON.
 
 ## 6. Report template (fill this and save as report.html)
 
-The weekly report must be generated as static HTML with pre-rendered article rows. The JSON data may still be embedded for checkbox export, but the visible article list must not depend on runtime JSON parsing. Article rows must already exist in the DOM at build time so the report is readable with JavaScript disabled.
+The weekly report must be generated as static HTML with pre-rendered article and n/a rows. The JSON data may still be embedded for checkbox export, but the visible article list must not depend on runtime JSON parsing. Article and n/a rows must already exist in the DOM at build time so the report is readable with JavaScript disabled.
 
 Generate the HTML from the same final records used for `data_{since}_{until}.json`. Save verbose validation, source manifests, Google query logs, crawl logs, and n/a audit evidence in JSON under `validation`, `source_manifest`, `google_search_log`, and `na_audit`; do not show those tables in the default HTML unless explicitly requested.
+
+The visible HTML table column order must be: Category; Master Query; Headline / Title; Checkbox; URL / Sources; Tier; Date. The checkbox must appear between the headline/title and the URL/source links. Do not place the checkbox as the first column.
 
 The generated HTML must include this row structure for each non-n/a cluster:
 
 ```html
 <tr class="article-row" data-cluster-id="..." data-category="..." data-master-query="...">
-  <td class="select-cell">
-    <input type="checkbox" class="row-check" data-cluster-id="..." aria-label="Select article">
-  </td>
   <td class="category-cell">AI/GPT</td>
   <td class="query-cell">ChatGPT</td>
   <td class="headline-cell">[OpenAI] ... (2026.6.17)</td>
-  <td class="tier-cell">Tier 1</td>
+  <td class="select-cell">
+    <input type="checkbox" class="row-check" data-cluster-id="..." aria-label="Select article">
+  </td>
   <td class="source-cell">
     <a href="..." target="_blank" rel="noopener noreferrer">Source 1</a>
     <a href="..." target="_blank" rel="noopener noreferrer">Source 2</a>
     <a href="..." target="_blank" rel="noopener noreferrer">Source 3</a>
   </td>
+  <td class="tier-cell">Tier 1</td>
   <td class="date-cell">2026-06-17</td>
+</tr>
+```
+
+For n/a rows, use the same column order, but the checkbox cell must be inactive:
+
+```html
+<tr class="na-row" data-category="..." data-master-query="...">
+  <td class="category-cell">AI/GPT</td>
+  <td class="query-cell">Some Query</td>
+  <td class="headline-cell">n/a</td>
+  <td class="select-cell"></td>
+  <td class="source-cell"></td>
+  <td class="tier-cell"></td>
+  <td class="date-cell"></td>
 </tr>
 ```
 
@@ -783,9 +831,9 @@ Source link requirements:
 - Links must open in a new tab.
 - Preserve real publisher URLs where available.
 
-The HTML report is for human article selection. Keep it minimal. Allowed in default HTML: title, date range, generated date, total article count, category counts, article table grouped by strict query order, checkbox controls, source links, and an optional small note section. Not allowed in default HTML unless explicitly requested: full source-completion checklist, every-site crawl manifest, Google query logs, n/a audit table, Asia audit table, quality gate table, long crawler notes, or raw search result counts for every source.
+The HTML report is for human article selection and n/a confirmation. Keep it minimal. Allowed in default HTML: title, date range, generated date, total article count, category counts, full article/n/a table grouped by strict query order, checkbox controls, source links, export selections button, and an optional small note section. Not allowed in default HTML unless explicitly requested: hiding n/a rows, putting the checkbox as the first column, separating n/a into a different page or audit-only section, skipping master queries with no articles, full source-completion checklist, every-site crawl manifest, Google query logs, Asia audit table, quality gate table, long crawler notes, or raw search result counts for every source.
 
-The embedded HTML below is illustrative only. If kept as a starting point, revise it so article rows are pre-rendered in `<table>`/`<tbody>` HTML rather than being created only from the JSON script block.
+The embedded HTML below is illustrative only. If kept as a starting point, revise it so article and n/a rows are pre-rendered in `<table>`/`<tbody>` HTML rather than being created only from the JSON script block.
 
 ```html
 <!doctype html>
@@ -801,10 +849,10 @@ The embedded HTML below is illustrative only. If kept as a starting point, revis
   table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e5e7eb}
   th,td{padding:8px 10px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}
   th{font-size:12px;background:#f1f3f5;color:#4b5563}
-  .select-cell{width:44px;text-align:center}.category-cell{width:120px}.query-cell{width:160px}.tier-cell{width:70px}.date-cell{width:105px}
+  .category-cell{width:120px}.query-cell{width:160px}.select-cell{width:70px;text-align:center}.tier-cell{width:70px}.date-cell{width:105px}
   .source-cell a{margin-right:8px;color:#2447d8;text-decoration:none}.source-cell a:hover{text-decoration:underline}
   .category-break td{background:#eef1fe;font-weight:700}.query-break td{background:#fafafa;color:#4b5563;font-weight:600}
-  .na-row{display:none;color:#6b7280;font-style:italic}.show-na .na-row{display:table-row}.selected{background:#f0fff7}
+  .na-row{color:#6b7280;font-style:italic}.selected{background:#f0fff7}
 </style>
 </head>
 <body>
@@ -819,25 +867,32 @@ The embedded HTML below is illustrative only. If kept as a starting point, revis
   <section class="controls">
     <button id="export" type="button">Export selections</button>
     <button id="clear" type="button">Clear all</button>
-    <label><input id="show-na" type="checkbox"> Show n/a rows</label>
     <span id="selected-count">0 selected</span>
   </section>
   <table aria-label="Article selection list">
     <thead>
-      <tr><th>Select</th><th>Category</th><th>Master query</th><th>Headline</th><th>Tier</th><th>Sources</th><th>Date</th></tr>
+      <tr><th>Category</th><th>Master Query</th><th>Headline / Title</th><th>Checkbox</th><th>URL / Sources</th><th>Tier</th><th>Date</th></tr>
     </thead>
     <tbody>
-      <!-- Pre-render category/query separator rows and one article row per non-n/a cluster here, sorted by Section 3b-1. -->
+      <!-- Pre-render every Section 3b master query here in strict order: article rows when present, otherwise one visible n/a row. -->
       <tr class="article-row" data-cluster-id="..." data-category="..." data-master-query="...">
-        <td class="select-cell"><input type="checkbox" class="row-check" data-cluster-id="..." aria-label="Select article"></td>
         <td class="category-cell">AI/GPT</td>
         <td class="query-cell">ChatGPT</td>
         <td class="headline-cell">[OpenAI] ... (2026.6.17)</td>
-        <td class="tier-cell">Tier 1</td>
+        <td class="select-cell"><input type="checkbox" class="row-check" data-cluster-id="..." aria-label="Select article"></td>
         <td class="source-cell"><a href="..." target="_blank" rel="noopener noreferrer">Source 1</a></td>
+        <td class="tier-cell">Tier 1</td>
         <td class="date-cell">2026-06-17</td>
       </tr>
-      <!-- Optional hidden n/a rows may be pre-rendered with class="na-row" and no checkbox/input. -->
+      <tr class="na-row" data-category="AI/GPT" data-master-query="Some Query">
+        <td class="category-cell">AI/GPT</td>
+        <td class="query-cell">Some Query</td>
+        <td class="headline-cell">n/a</td>
+        <td class="select-cell"></td>
+        <td class="source-cell"></td>
+        <td class="tier-cell"></td>
+        <td class="date-cell"></td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -851,7 +906,6 @@ function restore(){let ids=[];try{ids=JSON.parse(localStorage.getItem(STORE_KEY)
 function fullRecords(){try{return JSON.parse(document.getElementById('report-data').textContent).data||[]}catch{return []}}
 document.getElementById('export').addEventListener('click',()=>{const ids=new Set(selectedIds());const selected=fullRecords().filter(r=>ids.has(r.cluster_id));const blob=new Blob([JSON.stringify({since:RUN.since,until:RUN.until,count:selected.length,selections:selected},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`selections_${RUN.since}_${RUN.until}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);});
 document.getElementById('clear').addEventListener('click',()=>{document.querySelectorAll('.row-check').forEach(cb=>{cb.checked=false;cb.closest('tr').classList.remove('selected')});save();});
-document.getElementById('show-na').addEventListener('change',e=>document.body.classList.toggle('show-na',e.target.checked));
 restore();
 </script>
 </body>
@@ -865,7 +919,7 @@ At the end of the run, the agent should report only:
 - HTML path
 - JSON path
 - total visible article count
-- hidden n/a count
+- visible n/a count
 - whether strict query order passed
 - whether checkbox test passed
 - whether local static render test passed
