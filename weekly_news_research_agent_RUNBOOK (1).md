@@ -2,7 +2,7 @@
 
 You are the executing agent. When you are asked to run the weekly pipeline for a date range, follow this runbook end to end: collect that week's real news and write the two output files in Section 1 (the HTML report and the JSON data file). This file is your instructions, not the report itself. Section 0 says exactly what a run does.
 
-**Purpose.** In one run, for a fixed list of master queries grouped into six categories over a given week, collect news article links from primary sources, Google News, and secondary sources (trusted news sites); group links covering the same event into clusters; render each cluster as one row (category, master query, formatted headline, checkbox, sources, tier, date) and each empty master query as one visible n/a row in a self-contained HTML report; and remove any story already covered last week.
+**Purpose.** In one run, for a fixed list of master queries grouped into six categories over a given week, collect news article links from primary sources, Google News, and secondary sources (trusted news sites); group links covering the same event into clusters; render each cluster as one row (Select, Headline, Tier, Sources, Date) in a static `Weekly Tech News Article List` HTML report, with n/a evidence preserved in validation/JSON after full search completion; and remove any story already covered last week.
 
 The pipeline runs in seven phases (0 to 6): set up the run, collect and headline from primary sources, then secondary sources, then Google News, arrange each master query's stories by tier, mark empty queries n/a, and drop repeats. Headlines are written during collection, one per cluster. Collection uses the `web_search` and `web_fetch` tools. The deliverable is one self-contained `report_{since}_{until}.html`, rendered from a machine-readable `data_{since}_{until}.json` that also serves as next week's dedup memory; both are written by Python. See Section 0 for how to run it on Claude Code.
 
@@ -49,12 +49,12 @@ Do NOT convert this runbook to HTML. Generate the report from collected news by 
   - `web_fetch` on the Phase 1 source pages (newsrooms, blogs, GitHub releases, changelogs) listed in Section 4.
   - `web_search` as the fallback, and for the Phase 2 secondary sites, using `site:` filters plus the date window in the query.
   - This is best-effort. Note what each query actually returned.
-- **Report and data I/O.** Write a Python script (run with bash) that builds the two output files in Section 1 from the same final records: the full machine-readable `data_{since}_{until}.json` and the clean user-facing `report_{since}_{until}.html`. No Excel, no `openpyxl`. The HTML is one file with inline CSS and JS, declares `<meta charset="utf-8">`, uses a CJK-capable font stack so Korean and Japanese render, contains static pre-rendered article and n/a rows in the DOM at build time, and includes working checkbox controls. Validation data belongs in JSON unless explicitly requested in HTML.
+- **Report and data I/O.** Write a Python script (run with bash) that builds the two output files in Section 1 from the same final records: the full machine-readable `data_{since}_{until}.json` and the clean user-facing `report_{since}_{until}.html`. No Excel, no `openpyxl`. The HTML is one file with inline CSS and JS, declares `<meta charset="utf-8">`, uses a CJK-capable font stack so Korean and Japanese render, contains static pre-rendered article rows in the DOM at build time, and includes working checkbox controls. Validation data belongs in JSON unless explicitly requested in HTML.
 - **Filesystem.** Keep all working state in the project directory.
 
 ### Files and I/O contract
-- Deliverable: `./output/report_{since}_{until}.html`, one self-contained HTML file (Section 1a): a clean article-selection list with all master queries with article or visible n/a rows, no verbose validation/audit tables by default, static pre-rendered article and n/a HTML rows, and working checkbox controls.
-- Data file: `./output/data_{since}_{until}.json`, the full machine-readable data (Section 1b): kept clusters, visible n/a rows, validation logs, source-check evidence, crawl manifest, and dedup memory. The report and data file are built from the same final records.
+- Deliverable: `./output/report_{since}_{until}.html`, one self-contained HTML file (Section 1a): a clean article-selection list with expanded article coverage, no verbose validation/audit tables by default, static pre-rendered article HTML rows, and working checkbox controls.
+- Data file: `./output/data_{since}_{until}.json`, the full machine-readable data (Section 1b): kept clusters, n/a audit records, validation logs, source-check evidence, crawl manifest, and dedup memory. The report and data file are built from the same final records.
 - Archive: after the run, copy the data file to `./archive/data_{since}_{until}.json`.
 - Previous week: Phase 6 reads `previous_week.data_path` (Section 3a), the prior week's archived data file. If it does not exist, skip the repetition drop and note it.
 - Selections: the desk ticks rows in the report; ticks autosave in the browser, and an "Export selections" button downloads `selections_{since}_{until}.json` for a later step. No fixed schema yet (Section 1a).
@@ -74,44 +74,40 @@ Two files: the HTML report (the deliverable) and the JSON data file (machine-rea
 
 ### 1a. HTML report (the deliverable)
 
-One self-contained file, `./output/report_{since}_{until}.html`: inline CSS and JS, `<meta charset="utf-8">`, a CJK-capable font stack (for example `system-ui, "Apple SD Gothic Neo", "Noto Sans KR", "Noto Sans JP", sans-serif`), and no external requests. The final HTML must be readable when opened locally as a `file://` file.
+One self-contained static HTML file, `./output/report_{since}_{until}.html`: inline CSS and JS, `<meta charset="utf-8">`, a CJK-capable font stack (for example `system-ui, "Apple SD Gothic Neo", "Noto Sans KR", "Noto Sans JP", sans-serif`), and no external requests. The final HTML must be readable when opened locally as a `file://` file. Keep the HTML title as `Weekly Tech News Article List` and keep the run date range from the source file/run arguments.
 
-The HTML report is a complete **article checklist**, not a validation dashboard. Default visible content should be:
-- Header with the run date range and generated date.
-- Compact summary counts, including total visible article count, visible n/a count, and category counts.
-- All categories in strict Section 3b order.
-- All master queries in strict Section 3b order.
-- All surviving article rows plus one visible `n/a` row for every master query with no surviving article.
-- Selection checkboxes for non-n/a article rows.
-- Up to three source links per article row.
+The HTML report is a high-coverage **article list/checklist**, not a validation dashboard. It must be regenerated from strengthened collection and validation logic, not just restyled from an earlier sparse HTML. Default visible content should be:
+- Header with date range, generated date, and metadata pills for Range, Articles, AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme, and Selected count.
+- Category sections in strict order: AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme.
+- Master query groups in the exact order defined in Section 3b or the seed HTML; never reorder them ad hoc.
+- All surviving article rows under each query; if multiple real articles exist for one query, show them all.
+- Selection checkboxes, tier badges, up to three source links, and publish date.
 
-The visible HTML table column order must be: Category; Master Query; Headline / Title; Checkbox; URL / Sources; Tier; Date. The checkbox must appear between the headline/title and the URL/source links. Do not place the checkbox as the first column.
+Final row format:
+- The visible article table uses exactly these columns: Select, Headline, Tier, Sources, Date.
+- The Select cell must contain a real clickable `<input type="checkbox">`; never use a fake button, custom div, or non-clickable element.
+- All checkboxes start unchecked.
+- Headline shows the Korean title only; do not add an Original Title column.
+- Source links use simple labels: `Source 1`, `Source 2`, `Source 3`.
+- Date uses `YYYY-MM-DD`; the headline suffix uses `YYYY.M.D` with no zero padding.
+- Every visible article row must have at least one real, reachable source URL.
 
-Do **not** show large validation tables, source-completion manifests, n/a audit tables, or internal crawler logs in the HTML by default. Store validation, source-check evidence, crawl logs, n/a evidence, and site manifest in JSON/run log only, unless the user explicitly asks to display them in HTML. Validation data belongs in JSON unless explicitly requested in HTML.
+`n/a` is assigned only at the end, after every required official source, source-first media sweep, Google US query, and applicable Asia/local-language query has completed. Do not create temporary n/a rows before collection is complete. Preserve n/a decisions and evidence in `na_audit` or validation JSON. The default HTML should remain article-row centered like the second/reference file; if n/a information is shown, put it only in a small collapsible audit section that does not interrupt the article list.
 
-`n/a` rows must be preserved in JSON and shown in the default HTML article list. Every master query listed in Section 3b must appear in the final HTML in strict order. If a master query has one or more surviving clusters, show all article rows under that query; if it has no surviving cluster after full collection and filtering, show exactly one visible `n/a` row. Do not hide n/a rows, move them to a separate audit table, or remove them from the HTML. n/a rows must appear in the same strict category/master-query order as article rows and must not have active checkboxes.
+Do **not** show large validation tables, source-completion manifests, internal crawler logs, every-site crawl manifests, or raw Google query logs in the default HTML. Store validation, source-check evidence, crawl logs, n/a evidence, source manifest, Google search log, and dedup log in JSON or embedded metadata unless the user explicitly asks to display them. Validation data belongs in JSON/metadata unless explicitly requested in HTML.
 
-Article and n/a rows must be rendered as static HTML first. JavaScript may enhance checkbox autosave/export, but if JavaScript fails, the article list must still be visible. Do not rely only on `JSON.parse()` rendering for the visible article list. The generated HTML must contain the rendered article rows in the DOM at build time.
-
-Keep the visual format clean and compact. Avoid oversized cards, long audit notes, excessive metadata, and validation-dashboard layouts.
-
-Minimal HTML, full JSON rule:
-- The HTML report is for human article selection and n/a confirmation. Keep it minimal.
-- Allowed in default HTML: title, date range, generated date, total article count, category counts, full article/n/a table grouped by strict query order, checkbox controls, source links, export selections button, and an optional small note section.
-- Not allowed in default HTML unless explicitly requested: hiding n/a rows, putting the checkbox as the first column, separating n/a into a different page or audit-only section, skipping master queries with no articles, full source-completion checklist, every-site crawl manifest, Google query logs, Asia audit table, quality gate table, long crawler notes, or raw search result counts for every source.
-- These items must be saved to JSON under `validation`, `source_manifest`, `google_search_log`, and `na_audit`.
+Article rows must be rendered as static HTML first. JavaScript may enhance checkbox autosave/export, but if JavaScript fails, the article list must still be visible. Do not rely only on `JSON.parse()` rendering for the visible article list. The generated HTML must contain the rendered article rows in the DOM at build time.
 
 Selection checkboxes:
-- Each visible article row has a real `<input type="checkbox">` the desk ticks for final selection. The agent never pre-ticks it.
-- Each row carries its Cluster ID (for example a `data-cluster-id` attribute) so a tick maps back to one record.
 - Ticks autosave in the browser (`localStorage`, keyed by the run dates plus Cluster ID) so a reload does not lose them.
-- An "Export selections" button downloads `selections_{since}_{until}.json`: the ticked rows as full records (id, category, master query, company, headline, tier, sources, date) plus the run dates. There is no fixed downstream schema yet; this is a placeholder a later agent step can read or be adapted to.
+- `Clear checks` clears all checked rows.
+- `Export selections` downloads selected full records as JSON, including run dates and full selected records.
 
 Rendering rules:
-- One cluster = one row = one headline = up to three source links.
+- One cluster = one row = one Korean headline = up to three source links.
 - HTML-escape every dynamic value before injecting it: headlines contain `"` and `[ ]`, and source URLs contain `&`.
-- Rows read grouped by category and master query using the strict display order in Section 3b-1; every Section 3b master query must appear, with article rows or exactly one visible n/a row.
-- The `[Company]` tag in the headline is the owning company and may differ from the master query (master query `iOS` carries `[Apple]`; `WhatsApp` carries `[Meta]`). Sub-brands roll up to their parent: Facebook, Instagram, and WhatsApp carry `[Meta]`; YouTube, Gmail, and Android carry `[Google]`; Amazon Prime carries `[Amazon]`. Whole-market and multi-company stories carry `[Market]`.
+- Rows are grouped by category and master query using the strict display order in Section 3b-1.
+- The `[Company]` tag in the headline is the owning company and may differ from the master query. Sub-brands roll up to their parent in the headline: `[Meta] Instagram`, `[Meta] WhatsApp`, `[Meta] Facebook`; `[Google] YouTube`, `[Google] Android`, `[Google] Gemini`; `[Kakao] Bank`, `[Kakao] Pay`, `[Kakao] Mobility`. Whole-market and multi-company stories carry `[Market]`.
 
 ### 1b. Data file (machine-readable record and dedup memory)
 
@@ -378,7 +374,7 @@ Write headlines during collection, one source at a time as you review it, not in
 #### Cluster rule
 - A cluster holds up to 3 sources, no more.
 - The first source is the basis for the headline and is normally a primary source. If the cluster has no primary source, base it on a secondary source; if it has neither, base it on a Google News source.
-- Order a cluster's sources primary, then secondary, then Google News. Once a cluster holds 3 sources, drop any further source for that story.
+- Order a cluster's sources by source quality: official source first; closest original specialist outlet second; trusted outlets such as TechCrunch, 9to5Google, 9to5Mac, or Social Media Today; local specialist media; then general business or mainstream outlets. Once a cluster holds 3 sources, drop any further source unless it is an official source replacing a weaker Source 1.
 - The cluster's date is the publish date of its primary source if it has one, otherwise the earliest publish date among its sources.
 - Umbrella vs detail: a broad announcement and the deeper sub-stories under it are separate events, so cluster them separately (a model-suite launch is one cluster; each individually detailed model in the suite is its own cluster).
 
@@ -404,54 +400,54 @@ For each master query in the current category, open its **Primary sources** from
 ### Phase 2: Secondary sources
 For each master query, scan its **Secondary sources** from the source maps below, plus the `trusted_news_sites` (Section 3a) weighted by the current category, for in-window articles relevant to the query. Drop anything that is Tier 4 (Section 3d.4) as you go. For every remaining secondary article, apply the cluster rule (Section 3f): if it covers an event already clustered in Phase 1, add it to that cluster as an extra source up to the 3-source cap, and once a cluster holds 3 sources discard any further secondary source for it; if it covers a new event not seen in Phase 1, start a new cluster and write its headline under the headline rule. Run the `All Other ... News` and `Other Super Apps` catch-alls last, and route keyword or theme feeds to the owning master query when one exists.
 
-Secondary source sweep must be source-first before query routing. For major secondary sources, first sweep the site/date/category surface for the target week, then route each relevant article to the correct master query. Mandatory source-first sweeps: TechCrunch date/category/tag pages; Social Media Today social updates/topic pages; 9to5Google guide pages; 9to5Mac guide pages; The Verge AI/social/big tech pages; VentureBeat AI; The Decoder; MarkTechPost; SiliconAngle; ITmedia AI+; ASCII STARTUP latest/news page; Korean sources for Kakao/Coupang/Toss/Korea AI; Japanese sources for Rakuten/DeNA/Gree/Gunosy/TimeTree/Mercari/Japan AI; and Chinese sources for Tencent/WeChat/ByteDance/Alibaba/China AI. Do not only run a few hand-picked site searches. For sources with latest/news/archive pages, scan/paginate until articles before the start date appear, then stop.
+Secondary source sweep must be source-first before query routing. Do not run only a few query-specific `site:` searches. First sweep each major source's latest/archive/category/guide/topic pages for the target week, paginate until articles before the start date appear, then route each relevant article to the correct master query. Mandatory source-first sweeps include TechCrunch, 9to5Google, 9to5Mac, Social Media Today, The Verge, VentureBeat, SiliconANGLE, ZDNET, CNBC, The Decoder, MarkTechPost, and accessible alternatives for Reuters/Bloomberg/NYTimes/The Information leads.
+
+Required source-specific coverage:
+- TechCrunch: sweep latest, AI, startups, apps, and social/platform surfaces for OpenAI, Anthropic, Google, Meta, Apple, Microsoft, NVIDIA, AI infra, AI startup, agentic AI, creator tools, and social platform stories.
+- 9to5Google: sweep Gemini, Google AI, Google Search, Android, Pixel, Google Photos, Google Home, YouTube, Workspace, and Google app guide/archive surfaces. Pair Google official sources as Source 1 with 9to5Google as Source 2 when both cover the event.
+- 9to5Mac: sweep Apple, iOS, App Store, Apple Intelligence, Siri, Vision Pro, Mac, iPad, privacy, and developer policy surfaces. Pair Apple official sources as Source 1 with 9to5Mac as interpretive Source 2 when applicable.
+- Social Media Today: sweep Meta, Instagram, Facebook, WhatsApp, Threads, TikTok, YouTube, LinkedIn, Snapchat, social ads, creator monetization, and social commerce updates, and route them across Social, Global Big Tech, AI/GPT, and Theme as appropriate.
+- Asia/regional: sweep ITmedia, ASCII STARTUP, Impress Watch, CNET Japan, The Bridge, Nikkei Asia, Tech in Asia, KrASIA, Rest of World, SCMP, TechNode, 36Kr, ZDNet Korea, ETNews, Bloter, Platum, The Bell, Korea Herald, Korea JoongAng Daily, and Yonhap English where relevant.
 
 Weight the secondary outlets by category: Global English outlets (techcrunch.com through 9to5google.com, plus the-decoder.com, marktechpost.com, siliconangle.com) are the main surface for AI Agent, AI/GPT, Global Big Tech, and Social; Asia-focused English (restofworld.org, techinasia.com, kr-asia.com, scmp.com) for Asia Big Tech, super apps, and Theme; Korean (zdnet.co.kr, etnews.com, bloter.net, platum.kr, thebell.co.kr) for the Korean Asia Big Tech queries and Korea AI; Japanese (itmedia.co.jp, watch.impress.co.jp, ascii.jp, japan.cnet.com, asia.nikkei.com) for the Japanese queries; Chinese (technode.com, 36kr.com, caixinglobal.com) for the Chinese queries. Several of these paywall (bloomberg.com, reuters.com, theinformation.com, asia.nikkei.com, caixinglobal.com, scmp.com); treat a paywalled article as a lead and prefer an accessible source for the same event.
 
 ### Phase 3: Google News
 For each master query, search Google News across three editions: Google US (`US / en`), Google KR (`KR / ko`), and Google JP (`JP / ja`). On Claude Code you have no live browser, so use the Google News RSS endpoints and the `web_search` fallback from Section 0; apply the date window with `after:` / `before:` (`before:` is exclusive, pass `until + 1 day`), and do the date filtering and cross-edition dedup in code. For an Asian company, search both its English name in Google US and its local-language name in the local edition (for example Toss in Google US and `토스` in Google KR; Rakuten in Google US and `楽天` in Google JP). Pool the editions into one set and dedup the same event across them. Use the Phase 3 search-term overrides below for any query whose bare name is noisy.
 
-Google US / English search is mandatory for every master query before n/a is assigned. For Asia Big Tech, Google US search is mandatory; Google KR search is mandatory for Korean companies and Korean-language aliases; Google JP search is mandatory for Japanese companies and Japanese-language aliases; use local-language query variants listed in the search-term overrides; and do not mark any Asia Big Tech query as n/a unless local-language Google evidence exists. All Google queries must use `after:{since}` and `before:{until_plus_1}` (for example `Rakuten after:2026-06-17 before:2026-06-24`, `楽天 after:2026-06-17 before:2026-06-24`, `카카오 after:2026-06-17 before:2026-06-24`, and `토스 after:2026-06-17 before:2026-06-24`).
+Google US / English search is mandatory for every master query before n/a is assigned. Do not limit Google Query to major queries. For every master query, run the base query and these variants with `after:{since}` and `before:{until_plus_1}`: `{master query}`, `{master query} AI`, `{master query} update`, `{master query} launch`, `{master query} partnership`, `{master query} funding`, and `{master query} regulation`. Check at least the top 50 results and up to 100 where possible, using both Google News RSS and `web_search` fallback when available.
+
+For Asia Big Tech, Google US search is mandatory; Google KR search is mandatory for Korean companies and Korean-language aliases; Google JP search is mandatory for Japanese companies and Japanese-language aliases; use local-language query variants listed in the search-term overrides; and do not mark any Asia Big Tech query as n/a unless local-language Google evidence exists. Examples: `Rakuten after:2026-06-17 before:2026-06-24`, `楽天 after:2026-06-17 before:2026-06-24`, `카카오 after:2026-06-17 before:2026-06-24`, and `토스 after:2026-06-17 before:2026-06-24`. If a Google result matches an event already found in Phase 1 or 2, add it as Source 2 or Source 3 only when it adds useful context; do not create a duplicate row.
 
 Apply the **trigger cluster size rule** (Section 3f): if more than 50% of a query's Google results only repeat coverage already captured in Phases 1 and 2, re-run the search with the dominant repeated term negated (for example `Claude -Fable`) and read up to 100 results from that negated search. Apply the **cluster rule** the same way as Phase 2: add a Google source to an existing cluster up to the 3-source cap, or start a new cluster if the event is new, then write its headline under the headline rule. A Google News link is the basis for a cluster's headline only when the cluster has no primary or secondary source.
+
+### Phase 3a: Asia Big Tech reinforcement
+
+Before tiering or n/a assignment, separately reinforce Asia Big Tech. For each Asia Big Tech query, check in this order: official newsroom/blog/press/IR/developer pages; local-language official pages; Google US / English query; Google KR for Korean companies and aliases; Google JP for Japanese companies and aliases; and regional specialist media. Do not leave an Asia query as n/a without official page evidence, Google US evidence, applicable KR/JP/local-language evidence, and regional-source sweep evidence.
+
+Required local query examples include: Kakao / 카카오, KakaoTalk / 카카오톡, Kakao Pay / 카카오페이, Kakao Bank / 카카오뱅크, Kakao Mobility / 카카오모빌리티, Toss / 토스, Coupang / 쿠팡, Woowa Brothers / 배달의민족, 당근 / Karrot, Rakuten / 楽天, Mercari / メルカリ, DeNA / ディー・エヌ・エー, Note / note, LINE Yahoo / LINEヤフー, PayPay, Tencent / 腾讯, WeChat / 微信, Alibaba / 阿里巴巴, Taobao / 淘宝, ByteDance / 字节跳动, Doubao / 豆包, TikTok, Grab, Shopee, and Gojek.
 
 ### Phase 4: Tier arrangement
 With the headlines and clusters from Phases 1 to 3 in hand, go through every master query in the category and assign each cluster a tier using Section 3d. First apply the content exclusion rules (Tier 4, Section 3d.4) and drop those clusters outright. Then classify each surviving cluster as Tier 1, 2, or 3 by the Section 3d order, reading the cluster's opened source where the headline alone is not enough to judge. Arrange each master query's clusters by tier, Tier 1 first, then Tier 2, then Tier 3, and store the tier on each cluster record in the data file. Nothing else is cut: every cluster that is not Tier 4 and not a last-week repeat is written.
 
 ### Phase 5: N/a establishment
-After Phases 1 to 3 are fully completed, any master query with no surviving cluster gets one visible n/a row in the HTML and one n/a record in the JSON. A master query can be marked n/a only after all applicable sources were checked: official newsroom / press page; official blog; official changelog / release notes; GitHub releases, if listed in the source map; relevant secondary sources; Google US keyword search; Google KR keyword search, if Korean/local-language relevance exists; Google JP keyword search, if Japanese/local-language relevance exists; and local-language keyword search for Asia Big Tech, if applicable. Do not mark n/a immediately after the official source is empty. Do not mark n/a immediately after only secondary sources are empty. Do not mark n/a until Google keyword searches are also complete.
 
-For Asia Big Tech, do not mark n/a until the official newsroom or official page has been checked, local-language Google search has been checked, Google US has been checked, Google KR or Google JP has been checked where applicable, and relevant regional secondary sources have been checked. n/a rows must never have active checkboxes. A genuine "checked, nothing to report" is `n/a`; a fetch or access failure is not `n/a`, it goes to the run log.
+n/a is a final-state decision only. Do not mark n/a while any collection or routing work remains. Never assign n/a before checking official sources, TechCrunch/9to5Google/9to5Mac/Social Media Today sweeps where relevant, Google US for that master query, and applicable Google KR/JP/local-language aliases for Asia queries. Also do not assign n/a while a source sweep may still route an event from another query into this master query.
 
-Each n/a record must include evidence in JSON:
+A master query gets n/a only when all applicable sources and Google Query variants were completed and no in-range, non-duplicate Tier 1-3 article survived. Store the evidence in `na_audit` or validation JSON, not as a large default HTML table. Each n/a audit entry must include:
+- `primary_checked`
+- `secondary_checked`
+- `google_us_checked`
+- `google_kr_checked`
+- `google_jp_checked`
+- `local_language_checked`
+- `checked_queries`
+- `checked_sources`
+- `reason`
 
-```json
-{
-  "cluster_id": "na_...",
-  "category": "...",
-  "master_query": "...",
-  "headline": "n/a",
-  "dedup_status": "keep",
-  "is_na": true,
-  "na_evidence": {
-    "official_newsroom_checked": true,
-    "official_blog_checked": true,
-    "github_checked": true,
-    "secondary_checked": true,
-    "google_us_checked": true,
-    "google_kr_checked": true,
-    "google_jp_checked": true,
-    "local_language_checked": true,
-    "representative_queries": ["..."],
-    "reason": "No relevant non-duplicate Tier 1-3 article found within date range after full source check."
-  }
-}
-```
-
-If a source type is not applicable, mark it as `"not_applicable"` rather than omitting it.
+For Asia Big Tech, n/a is forbidden unless official newsroom/source page, Google US, applicable Google KR/JP, local-language aliases, and regional specialist media were all checked.
 
 ### Phase 6: Repetition check
-Two passes. First, the across-week check: load last week's data file from `previous_week.data_path` and, for each cluster this week, decide whether it covers the **same news event** as any last-week cluster (compare on `article_texts`), even if the specific articles differ; set `dedup_status = drop` for genuine repeats (Tier 4 #6) and `keep` for real follow-on developments with new facts or escalation. Second, the within-week check: compare this week's clusters against each other and drop any duplicate, so the same event is not rendered twice across master queries. Save this week's data file to the archive path so next week's check can read it. Then build the deliverable: write both `data_{since}_{until}.json` and `report_{since}_{until}.html` from the same final records. The JSON contains full records, visible n/a rows, validation logs, source-check evidence, and the crawl manifest. The HTML contains the clean user-facing article/n/a checklist with static pre-rendered rows, working checkboxes, and no verbose validation/audit tables by default.
+Two passes. First, the across-week check: load last week's data file from `previous_week.data_path` and, for each cluster this week, decide whether it covers the **same news event** as any last-week cluster (compare on `article_texts`), even if the specific articles differ; set `dedup_status = drop` for genuine repeats (Tier 4 #6) and `keep` for real follow-on developments with new facts or escalation. Second, the within-week check: compare this week's clusters against each other and drop any duplicate, so the same event is not rendered twice across master queries. Save this week's data file to the archive path so next week's check can read it. Then build the deliverable: write both `data_{since}_{until}.json` and `report_{since}_{until}.html` from the same final records. The JSON contains full records, n/a audit records, validation logs, source-check evidence, and the crawl manifest. The HTML contains the clean user-facing article checklist with static pre-rendered rows, working checkboxes, and no verbose validation/audit tables by default.
 
 ### Per-category source maps (Phases 1 and 2)
 Each query lists its source URLs and, in parentheses, the handling rule. (`GH` = read GitHub releases; `changelog` / `release notes` = treat a notable release as the event.) Primary sources are read in Phase 1; Secondary sources in Phase 2.
@@ -760,60 +756,46 @@ Theme:
 ### Final quality gate before writing files
 
 Before finalizing, validate internally:
-- Every Section 3b master query appears in the HTML.
+- Visible article count increased meaningfully versus the sparse seed/first HTML and approaches the reference/second HTML coverage level.
+- Header pills show Range, Articles, AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme, and Selected count.
+- Asia Big Tech is not left at only a token article count; if it remains very low, rerun official, regional, Google US, KR/JP, and local-language searches.
+- Social is not left at only a token article count; if it remains very low, rerun Social Media Today and social platform source sweeps.
+- AI/GPT is not left at only a token article count; if it remains very low, rerun TechCrunch, 9to5Google, Google Blog, OpenAI, Anthropic, Microsoft, Amazon, Meta, and NVIDIA sources.
+- TechCrunch, 9to5Google, 9to5Mac, and Social Media Today completion logs exist.
+- Google US was checked for every master query.
+- Google KR/JP/local-language searches were checked for applicable Asia/local-language queries.
+- Asia Big Tech official newsroom/source pages were checked before n/a.
+- Every visible article row has a real checkbox and at least one real source URL.
+- No visible article row has a broken or missing source link.
+- No event is duplicated across multiple rows or master queries.
 - Category order exactly matches Section 3b.
-- Master query order exactly matches Section 3b.
-- n/a rows are visible, not hidden.
-- Every n/a row has no active checkbox.
-- Every non-n/a article row has a real checkbox.
-- Checkbox column appears after the headline/title column.
-- Source URL column appears after the checkbox column.
-- Every n/a was assigned only after newsroom/blog/GitHub/secondary/Google searches were completed as applicable.
-- Google US was checked before any query was marked n/a.
-- Google KR/JP/local-language searches were checked before Asia queries were marked n/a.
-- Static HTML render test passes locally.
+- Master query order exactly matches Section 3b or the seed HTML/runbook order.
+- Headline format is `[Company] ... (YYYY.M.D)` with no zero padding in the suffix date.
+- Every article date is within the run range.
+- Static HTML render test passes with JavaScript disabled.
+- `Export selections`, `Clear checks`, and checkbox `localStorage` autosave work.
+- `records`, `validation`, `source_manifest`, `google_search_log`, `crawl_log`, `na_audit`, and `dedup_log` are saved in JSON or embedded metadata.
+- The phrase `best-effort targeted crawl` does not appear in the final HTML.
 
-Do not finalize the report if any of these checks fail. Do not show the full quality gate table in the default HTML. Save the gate results to JSON.
+Do not finalize the report if any of these checks fail; rerun the missing collection step instead. Do not show the full quality gate table in the default HTML. Save gate results to validation JSON/metadata.
 
 ## 6. Report template (fill this and save as report.html)
 
-The weekly report must be generated as static HTML with pre-rendered article and n/a rows. The JSON data may still be embedded for checkbox export, but the visible article list must not depend on runtime JSON parsing. Article and n/a rows must already exist in the DOM at build time so the report is readable with JavaScript disabled.
+The weekly report must be generated as static HTML with pre-rendered article rows. The JSON data may still be embedded for checkbox export and validation metadata, but the visible article list must not depend on runtime JSON parsing. Article rows must already exist in the DOM at build time so the report is readable with JavaScript disabled. Keep the document title and visible heading as `Weekly Tech News Article List`.
 
-Generate the HTML from the same final records used for `data_{since}_{until}.json`. Save verbose validation, source manifests, Google query logs, crawl logs, and n/a audit evidence in JSON under `validation`, `source_manifest`, `google_search_log`, and `na_audit`; do not show those tables in the default HTML unless explicitly requested.
+Generate the HTML from the same final records used for validation metadata. Save verbose validation, source manifests, Google query logs, crawl logs, n/a audit evidence, and dedup logs under `records`, `validation`, `source_manifest`, `google_search_log`, `crawl_log`, `na_audit`, and `dedup_log`; do not show those tables in the default HTML unless explicitly requested.
 
-The visible HTML table column order must be: Category; Master Query; Headline / Title; Checkbox; URL / Sources; Tier; Date. The checkbox must appear between the headline/title and the URL/source links. Do not place the checkbox as the first column.
+The visible HTML article table uses this column order only: Select, Headline, Tier, Sources, Date. Do not add Category, Master Query, or Original Title as table columns; show category and master query as section/group headings.
 
-The generated HTML must include this row structure for each non-n/a cluster:
-
-```html
-<tr class="article-row" data-cluster-id="..." data-category="..." data-master-query="...">
-  <td class="category-cell">AI/GPT</td>
-  <td class="query-cell">ChatGPT</td>
-  <td class="headline-cell">[OpenAI] ... (2026.6.17)</td>
-  <td class="select-cell">
-    <input type="checkbox" class="row-check" data-cluster-id="..." aria-label="Select article">
-  </td>
-  <td class="source-cell">
-    <a href="..." target="_blank" rel="noopener noreferrer">Source 1</a>
-    <a href="..." target="_blank" rel="noopener noreferrer">Source 2</a>
-    <a href="..." target="_blank" rel="noopener noreferrer">Source 3</a>
-  </td>
-  <td class="tier-cell">Tier 1</td>
-  <td class="date-cell">2026-06-17</td>
-</tr>
-```
-
-For n/a rows, use the same column order, but the checkbox cell must be inactive:
+The generated HTML must include this row structure for each visible article cluster:
 
 ```html
-<tr class="na-row" data-category="..." data-master-query="...">
-  <td class="category-cell">AI/GPT</td>
-  <td class="query-cell">Some Query</td>
-  <td class="headline-cell">n/a</td>
-  <td class="select-cell"></td>
-  <td class="source-cell"></td>
-  <td class="tier-cell"></td>
-  <td class="date-cell"></td>
+<tr class="article-row" data-cluster-id="..." data-category="AI/GPT" data-master-query="Gemini">
+  <td class="select-cell"><input type="checkbox" class="row-check" data-cluster-id="..." aria-label="Select article"></td>
+  <td class="headline-cell"><div class="headline-text">[Google] Gemini in Sheets language support 확대, spreadsheet 생성·편집 AI workflow의 다국어 접근성 강화 (2026.6.18)</div></td>
+  <td class="tier-cell"><span class="tier-badge tier-1">Tier 1</span></td>
+  <td class="source-cell"><a class="source-link" href="..." target="_blank" rel="noopener noreferrer">Source 1</a></td>
+  <td class="date-cell">2026-06-18</td>
 </tr>
 ```
 
@@ -821,9 +803,9 @@ Checkbox requirements:
 - Checkbox must be a real `<input type="checkbox">`.
 - Do not wrap it in a fake button, custom div, or non-clickable element.
 - Do not pre-check any row.
-- n/a rows must not have an active checkbox.
 - Autosave selected cluster IDs in `localStorage`.
-- Export selections must download selected full records as JSON.
+- `Clear checks` clears all selected rows.
+- `Export selections` must download selected full records as JSON.
 
 Source link requirements:
 - Show up to 3 source links.
@@ -831,9 +813,7 @@ Source link requirements:
 - Links must open in a new tab.
 - Preserve real publisher URLs where available.
 
-The HTML report is for human article selection and n/a confirmation. Keep it minimal. Allowed in default HTML: title, date range, generated date, total article count, category counts, full article/n/a table grouped by strict query order, checkbox controls, source links, export selections button, and an optional small note section. Not allowed in default HTML unless explicitly requested: hiding n/a rows, putting the checkbox as the first column, separating n/a into a different page or audit-only section, skipping master queries with no articles, full source-completion checklist, every-site crawl manifest, Google query logs, Asia audit table, quality gate table, long crawler notes, or raw search result counts for every source.
-
-The embedded HTML below is illustrative only. If kept as a starting point, revise it so article and n/a rows are pre-rendered in `<table>`/`<tbody>` HTML rather than being created only from the JSON script block.
+The HTML report is for human article selection. Keep it minimal. Allowed in default HTML: title, date range, generated date, header pills, category/query headings, full article table, checkbox controls, source links, export selections button, clear checks button, and optional collapsed audit details. Not allowed in default HTML unless explicitly requested: huge validation/source-completion tables, every-site crawl manifests, raw Google query logs, or long crawler notes.
 
 ```html
 <!doctype html>
@@ -841,7 +821,7 @@ The embedded HTML below is illustrative only. If kept as a starting point, revis
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Weekly Tech Research · {since}–{until}</title>
+<title>Weekly Tech News Article List</title>
 <style>
   body{margin:0;background:#f6f7f9;color:#15171c;font:14px/1.5 system-ui,"Apple SD Gothic Neo","Noto Sans KR","Noto Sans JP",sans-serif}
   .wrap{max-width:1180px;margin:0 auto;padding:24px}
@@ -858,11 +838,11 @@ The embedded HTML below is illustrative only. If kept as a starting point, revis
 <body>
 <div class="wrap">
   <header>
-    <h1>Weekly Tech News Research</h1>
+    <h1>Weekly Tech News Article List</h1>
     <p>Date range: {since} to {until} · Generated: {generated_at}</p>
   </header>
   <section class="summary">
-    <strong>Total visible articles:</strong> {visible_count} · <strong>Category counts:</strong> {category_counts}
+    <span class="pill">Range {since}–{until}</span> <span class="pill">Articles {visible_count}</span> <span class="pill">AI Agent {ai_agent_count}</span> <span class="pill">AI/GPT {ai_gpt_count}</span> <span class="pill">Global Big Tech {global_big_tech_count}</span> <span class="pill">Asia Big Tech {asia_big_tech_count}</span> <span class="pill">Social {social_count}</span> <span class="pill">Theme {theme_count}</span> <span class="pill" id="selected-pill">Selected 0</span>
   </section>
   <section class="controls">
     <button id="export" type="button">Export selections</button>
@@ -871,27 +851,18 @@ The embedded HTML below is illustrative only. If kept as a starting point, revis
   </section>
   <table aria-label="Article selection list">
     <thead>
-      <tr><th>Category</th><th>Master Query</th><th>Headline / Title</th><th>Checkbox</th><th>URL / Sources</th><th>Tier</th><th>Date</th></tr>
+      <tr><th>Select</th><th>Headline</th><th>Tier</th><th>Sources</th><th>Date</th></tr>
     </thead>
     <tbody>
-      <!-- Pre-render every Section 3b master query here in strict order: article rows when present, otherwise one visible n/a row. -->
-      <tr class="article-row" data-cluster-id="..." data-category="..." data-master-query="...">
-        <td class="category-cell">AI/GPT</td>
-        <td class="query-cell">ChatGPT</td>
-        <td class="headline-cell">[OpenAI] ... (2026.6.17)</td>
+      <!-- Pre-render category and master-query heading rows in strict order, then all visible article rows for each query. -->
+      <tr class="category-break"><td colspan="5">AI/GPT</td></tr>
+      <tr class="query-break"><td colspan="5">Gemini</td></tr>
+      <tr class="article-row" data-cluster-id="..." data-category="AI/GPT" data-master-query="Gemini">
         <td class="select-cell"><input type="checkbox" class="row-check" data-cluster-id="..." aria-label="Select article"></td>
-        <td class="source-cell"><a href="..." target="_blank" rel="noopener noreferrer">Source 1</a></td>
-        <td class="tier-cell">Tier 1</td>
-        <td class="date-cell">2026-06-17</td>
-      </tr>
-      <tr class="na-row" data-category="AI/GPT" data-master-query="Some Query">
-        <td class="category-cell">AI/GPT</td>
-        <td class="query-cell">Some Query</td>
-        <td class="headline-cell">n/a</td>
-        <td class="select-cell"></td>
-        <td class="source-cell"></td>
-        <td class="tier-cell"></td>
-        <td class="date-cell"></td>
+        <td class="headline-cell"><div class="headline-text">[Google] Gemini in Sheets language support 확대, spreadsheet 생성·편집 AI workflow의 다국어 접근성 강화 (2026.6.18)</div></td>
+        <td class="tier-cell"><span class="tier-badge tier-1">Tier 1</span></td>
+        <td class="source-cell"><a class="source-link" href="..." target="_blank" rel="noopener noreferrer">Source 1</a></td>
+        <td class="date-cell">2026-06-18</td>
       </tr>
     </tbody>
   </table>
@@ -901,7 +872,7 @@ The embedded HTML below is illustrative only. If kept as a starting point, revis
 const RUN={since:"{since}",until:"{until}"};
 const STORE_KEY=`selections:${RUN.since}_${RUN.until}`;
 function selectedIds(){return [...document.querySelectorAll('.row-check:checked')].map(cb=>cb.dataset.clusterId)}
-function save(){const ids=selectedIds();localStorage.setItem(STORE_KEY,JSON.stringify(ids));document.getElementById('selected-count').textContent=`${ids.length} selected`;}
+function save(){const ids=selectedIds();localStorage.setItem(STORE_KEY,JSON.stringify(ids));document.getElementById('selected-count').textContent=`${ids.length} selected`; const pill=document.getElementById('selected-pill'); if(pill) pill.textContent=`Selected ${ids.length}`;}
 function restore(){let ids=[];try{ids=JSON.parse(localStorage.getItem(STORE_KEY)||'[]')}catch{};const set=new Set(ids);document.querySelectorAll('.row-check').forEach(cb=>{cb.checked=set.has(cb.dataset.clusterId);cb.closest('tr').classList.toggle('selected',cb.checked);cb.addEventListener('change',()=>{cb.closest('tr').classList.toggle('selected',cb.checked);save();});});save();}
 function fullRecords(){try{return JSON.parse(document.getElementById('report-data').textContent).data||[]}catch{return []}}
 document.getElementById('export').addEventListener('click',()=>{const ids=new Set(selectedIds());const selected=fullRecords().filter(r=>ids.has(r.cluster_id));const blob=new Blob([JSON.stringify({since:RUN.since,until:RUN.until,count:selected.length,selections:selected},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`selections_${RUN.since}_${RUN.until}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);});
@@ -919,7 +890,7 @@ At the end of the run, the agent should report only:
 - HTML path
 - JSON path
 - total visible article count
-- visible n/a count
+- n/a audit count
 - whether strict query order passed
 - whether checkbox test passed
 - whether local static render test passed
