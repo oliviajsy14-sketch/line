@@ -49,12 +49,12 @@ Do NOT convert this runbook to HTML. Generate the report from collected news by 
   - `web_fetch` on the Phase 1 source pages (newsrooms, blogs, GitHub releases, changelogs) listed in Section 4.
   - `web_search` as the fallback, and for the Phase 2 secondary sites, using `site:` filters plus the date window in the query.
   - This is best-effort. Note what each query actually returned.
-- **Report and data I/O.** Write a Python script (run with bash) that builds the two output files in Section 1: the machine-readable `data_{since}_{until}.json` (one record per cluster) and the self-contained `report_{since}_{until}.html` rendered from it. No Excel, no `openpyxl`. The HTML is one file with inline CSS and JS, declares `<meta charset="utf-8">`, and uses a CJK-capable font stack so Korean and Japanese render. Build `report.html` from the Section 6 template by replacing only its `#report-data` JSON block; do not hand-write the page. The template inserts every value with `textContent`/`href` and reads data as JSON, so quotes, brackets, and `&` are handled for you.
+- **Report and data I/O.** Write a Python script (run with bash) that builds the two output files in Section 1 from the same final records: the full machine-readable `data_{since}_{until}.json` and the clean user-facing `report_{since}_{until}.html`. No Excel, no `openpyxl`. The HTML is one file with inline CSS and JS, declares `<meta charset="utf-8">`, uses a CJK-capable font stack so Korean and Japanese render, contains static pre-rendered article rows in the DOM at build time, and includes working checkbox controls. Validation data belongs in JSON unless explicitly requested in HTML.
 - **Filesystem.** Keep all working state in the project directory.
 
 ### Files and I/O contract
-- Deliverable: `./output/report_{since}_{until}.html`, one self-contained HTML file (Section 1a).
-- Data file: `./output/data_{since}_{until}.json`, one record per cluster (Section 1b). The report is rendered from this, and it is also the dedup memory.
+- Deliverable: `./output/report_{since}_{until}.html`, one self-contained HTML file (Section 1a): a clean article-selection list with only visible article rows by default, no verbose validation/audit tables by default, static pre-rendered HTML rows, and working checkbox controls.
+- Data file: `./output/data_{since}_{until}.json`, the full machine-readable data (Section 1b): kept clusters, hidden n/a rows, validation logs, source-check evidence, crawl manifest, and dedup memory. The report and data file are built from the same final records.
 - Archive: after the run, copy the data file to `./archive/data_{since}_{until}.json`.
 - Previous week: Phase 6 reads `previous_week.data_path` (Section 3a), the prior week's archived data file. If it does not exist, skip the repetition drop and note it.
 - Selections: the desk ticks rows in the report; ticks autosave in the browser, and an "Export selections" button downloads `selections_{since}_{until}.json` for a later step. No fixed schema yet (Section 1a).
@@ -74,24 +74,39 @@ Two files: the HTML report (the deliverable) and the JSON data file (machine-rea
 
 ### 1a. HTML report (the deliverable)
 
-One self-contained file, `./output/report_{since}_{until}.html`: inline CSS and JS, `<meta charset="utf-8">`, a CJK-capable font stack (for example `system-ui, "Apple SD Gothic Neo", "Noto Sans KR", "Noto Sans JP", sans-serif`), and no external requests. It is built from the ready-made template in Section 6: copy that template and replace only its `#report-data` JSON block with this run's records. Do not write the HTML from scratch each week.
+One self-contained file, `./output/report_{since}_{until}.html`: inline CSS and JS, `<meta charset="utf-8">`, a CJK-capable font stack (for example `system-ui, "Apple SD Gothic Neo", "Noto Sans KR", "Noto Sans JP", sans-serif`), and no external requests. The final HTML must be readable when opened locally as a `file://` file.
 
-Structure:
-- A header showing the week range (`since` to `until`) and the generated date.
-- The body is grouped by the six categories in run order (Section 4). Within a category, group by master query and show the label once. Within a master query, order rows by tier, Tier 1 first.
-- One row per cluster, showing: a clickable selection checkbox; the headline (Section 2 format, rendered as normal text, never as code); a tier badge (Tier 1, 2, or 3); up to three source links as real clickable `<a href>` that open in a new tab; and the date.
-- A master query with no surviving cluster shows a single `n/a` line (Phase 5), with no active checkbox.
+The HTML report is primarily an **article selection list**, not a validation dashboard. Default visible content should be:
+- Header with the run date range and generated date.
+- Compact summary counts, including total visible article count and category counts.
+- Article rows grouped by category and master query.
+- Selection checkboxes.
+- Up to three source links per row.
+
+Do **not** show large validation tables, source-completion manifests, n/a audit tables, or internal crawler logs in the HTML by default. Store validation, source-check evidence, crawl logs, n/a evidence, and site manifest in JSON/run log only, unless the user explicitly asks to display them in HTML. Validation data belongs in JSON unless explicitly requested in HTML.
+
+`n/a` rows must be preserved in JSON but hidden from the default HTML article list. The HTML may include a small optional toggle for “Show n/a rows,” but the default view must show article rows only. Hidden n/a rows must not have active checkboxes.
+
+Article rows must be rendered as static HTML first. JavaScript may enhance checkbox autosave/export, but if JavaScript fails, the article list must still be visible. Do not rely only on `JSON.parse()` rendering for the visible article list. The generated HTML must contain the rendered article rows in the DOM at build time.
+
+Keep the visual format clean and compact. Avoid oversized cards, long audit notes, excessive metadata, and validation-dashboard layouts.
+
+Minimal HTML, full JSON rule:
+- The HTML report is for human article selection. Keep it minimal.
+- Allowed in default HTML: title, date range, generated date, total article count, category counts, article table grouped by strict query order, checkbox controls, source links, and an optional small note section.
+- Not allowed in default HTML unless explicitly requested: full source-completion checklist, every-site crawl manifest, Google query logs, n/a audit table, Asia audit table, quality gate table, long crawler notes, or raw search result counts for every source.
+- These items must be saved to JSON under `validation`, `source_manifest`, `google_search_log`, and `na_audit`.
 
 Selection checkboxes:
-- Each row has a real `<input type="checkbox">` the desk ticks for final selection. The agent never pre-ticks it.
+- Each visible article row has a real `<input type="checkbox">` the desk ticks for final selection. The agent never pre-ticks it.
 - Each row carries its Cluster ID (for example a `data-cluster-id` attribute) so a tick maps back to one record.
-- Ticks autosave in the browser (localStorage, keyed by the run dates plus Cluster ID) so a reload does not lose them.
+- Ticks autosave in the browser (`localStorage`, keyed by the run dates plus Cluster ID) so a reload does not lose them.
 - An "Export selections" button downloads `selections_{since}_{until}.json`: the ticked rows as full records (id, category, master query, company, headline, tier, sources, date) plus the run dates. There is no fixed downstream schema yet; this is a placeholder a later agent step can read or be adapted to.
 
 Rendering rules:
 - One cluster = one row = one headline = up to three source links.
 - HTML-escape every dynamic value before injecting it: headlines contain `"` and `[ ]`, and source URLs contain `&`.
-- Rows read grouped by category, with category and master query shown as headings.
+- Rows read grouped by category and master query using the strict display order in Section 3b-1.
 - The `[Company]` tag in the headline is the owning company and may differ from the master query (master query `iOS` carries `[Apple]`; `WhatsApp` carries `[Meta]`). Sub-brands roll up to their parent: Facebook, Instagram, and WhatsApp carry `[Meta]`; YouTube, Gmail, and Android carry `[Google]`; Amazon Prime carries `[Amazon]`. Whole-market and multi-company stories carry `[Market]`.
 
 ### 1b. Data file (machine-readable record and dedup memory)
@@ -250,6 +265,33 @@ Notes:
 - NVIDIA was tagged `AI Agent SR` in the source sheet; it is folded into the AI Agent category here.
 - Some master queries carried alternate labels across the two source sheets (for example `Wrtn Crack`/`Crack (크랙)`, `Gemini`/`GeminI`). They are the same query; use the label above and treat the variant as an alias.
 
+### 3b-1. Strict display order
+
+The HTML report must follow the exact category and master query order listed in Section 3b. This order is mandatory and must not be changed by collection order, source order, article count, date, tier, or relevance score.
+
+Category order:
+
+1. AI Agent
+2. AI/GPT
+3. Global Big Tech
+4. Asia Big Tech
+5. Social
+6. Theme
+
+Within each category, master queries must appear exactly in the order listed in Section 3b.
+
+Implementation requirement:
+- Create explicit `CATEGORY_ORDER` and `MASTER_QUERY_ORDER` arrays in the report-building script.
+- Sort rendered rows using those arrays.
+- Do not sort categories alphabetically.
+- Do not sort master queries alphabetically.
+- Do not group by source domain.
+- Do not move “All Other ...” catch-all rows away from their defined position.
+- Within each master query, sort article clusters by:
+  1. tier ascending: Tier 1 → Tier 2 → Tier 3
+  2. date descending within the same tier
+  3. stable cluster id as final tiebreaker
+
 ### 3c. Inclusion criteria
 
 Collect a story if it matches at least one:
@@ -358,10 +400,14 @@ For each master query in the current category, open its **Primary sources** from
 ### Phase 2: Secondary sources
 For each master query, scan its **Secondary sources** from the source maps below, plus the `trusted_news_sites` (Section 3a) weighted by the current category, for in-window articles relevant to the query. Drop anything that is Tier 4 (Section 3d.4) as you go. For every remaining secondary article, apply the cluster rule (Section 3f): if it covers an event already clustered in Phase 1, add it to that cluster as an extra source up to the 3-source cap, and once a cluster holds 3 sources discard any further secondary source for it; if it covers a new event not seen in Phase 1, start a new cluster and write its headline under the headline rule. Run the `All Other ... News` and `Other Super Apps` catch-alls last, and route keyword or theme feeds to the owning master query when one exists.
 
+Secondary source sweep must be source-first before query routing. For major secondary sources, first sweep the site/date/category surface for the target week, then route each relevant article to the correct master query. Mandatory source-first sweeps: TechCrunch date/category/tag pages; Social Media Today social updates/topic pages; 9to5Google guide pages; 9to5Mac guide pages; The Verge AI/social/big tech pages; VentureBeat AI; The Decoder; MarkTechPost; SiliconAngle; ITmedia AI+; ASCII STARTUP latest/news page; Korean sources for Kakao/Coupang/Toss/Korea AI; Japanese sources for Rakuten/DeNA/Gree/Gunosy/TimeTree/Mercari/Japan AI; and Chinese sources for Tencent/WeChat/ByteDance/Alibaba/China AI. Do not only run a few hand-picked site searches. For sources with latest/news/archive pages, scan/paginate until articles before the start date appear, then stop.
+
 Weight the secondary outlets by category: Global English outlets (techcrunch.com through 9to5google.com, plus the-decoder.com, marktechpost.com, siliconangle.com) are the main surface for AI Agent, AI/GPT, Global Big Tech, and Social; Asia-focused English (restofworld.org, techinasia.com, kr-asia.com, scmp.com) for Asia Big Tech, super apps, and Theme; Korean (zdnet.co.kr, etnews.com, bloter.net, platum.kr, thebell.co.kr) for the Korean Asia Big Tech queries and Korea AI; Japanese (itmedia.co.jp, watch.impress.co.jp, ascii.jp, japan.cnet.com, asia.nikkei.com) for the Japanese queries; Chinese (technode.com, 36kr.com, caixinglobal.com) for the Chinese queries. Several of these paywall (bloomberg.com, reuters.com, theinformation.com, asia.nikkei.com, caixinglobal.com, scmp.com); treat a paywalled article as a lead and prefer an accessible source for the same event.
 
 ### Phase 3: Google News
 For each master query, search Google News across three editions: Google US (`US / en`), Google KR (`KR / ko`), and Google JP (`JP / ja`). On Claude Code you have no live browser, so use the Google News RSS endpoints and the `web_search` fallback from Section 0; apply the date window with `after:` / `before:` (`before:` is exclusive, pass `until + 1 day`), and do the date filtering and cross-edition dedup in code. For an Asian company, search both its English name in Google US and its local-language name in the local edition (for example Toss in Google US and `토스` in Google KR; Rakuten in Google US and `楽天` in Google JP). Pool the editions into one set and dedup the same event across them. Use the Phase 3 search-term overrides below for any query whose bare name is noisy.
+
+Google US / English search is mandatory for every master query before n/a is assigned. For Asia Big Tech, Google US search is mandatory; Google KR search is mandatory for Korean companies and Korean-language aliases; Google JP search is mandatory for Japanese companies and Japanese-language aliases; use local-language query variants listed in the search-term overrides; and do not mark any Asia Big Tech query as n/a unless local-language Google evidence exists. All Google queries must use `after:{since}` and `before:{until_plus_1}` (for example `Rakuten after:2026-06-17 before:2026-06-24`, `楽天 after:2026-06-17 before:2026-06-24`, `카카오 after:2026-06-17 before:2026-06-24`, and `토스 after:2026-06-17 before:2026-06-24`).
 
 Apply the **trigger cluster size rule** (Section 3f): if more than 50% of a query's Google results only repeat coverage already captured in Phases 1 and 2, re-run the search with the dominant repeated term negated (for example `Claude -Fable`) and read up to 100 results from that negated search. Apply the **cluster rule** the same way as Phase 2: add a Google source to an existing cluster up to the 3-source cap, or start a new cluster if the event is new, then write its headline under the headline rule. A Google News link is the basis for a cluster's headline only when the cluster has no primary or secondary source.
 
@@ -369,10 +415,10 @@ Apply the **trigger cluster size rule** (Section 3f): if more than 50% of a quer
 With the headlines and clusters from Phases 1 to 3 in hand, go through every master query in the category and assign each cluster a tier using Section 3d. First apply the content exclusion rules (Tier 4, Section 3d.4) and drop those clusters outright. Then classify each surviving cluster as Tier 1, 2, or 3 by the Section 3d order, reading the cluster's opened source where the headline alone is not enough to judge. Arrange each master query's clusters by tier, Tier 1 first, then Tier 2, then Tier 3, and store the tier on each cluster record in the data file. Nothing else is cut: every cluster that is not Tier 4 and not a last-week repeat is written.
 
 ### Phase 5: N/a establishment
-After Phases 1 to 3, any master query with no surviving cluster gets a single n/a entry, so the report shows coverage rather than a silent gap: Category and Master Query filled, Headline `n/a`, no active checkbox, no sources. A genuine "checked, nothing to report" is `n/a`; a fetch or access failure is not `n/a`, it goes to the run log.
+After Phases 1 to 3, any master query with no surviving cluster gets exactly one n/a record in JSON, so coverage gaps are preserved without cluttering the default HTML. Do not render n/a rows in the default HTML article list. A hidden n/a row may be shown only if a `Show n/a` toggle is enabled. n/a rows must never have active checkboxes. Before setting n/a, confirm Phase 1, Phase 2, and Phase 3 were completed for that master query. Save n/a evidence in JSON only, including: primary checked, secondary checked, Google US checked, Google KR/JP checked where applicable, representative query, and reason for n/a. A genuine "checked, nothing to report" is `n/a`; a fetch or access failure is not `n/a`, it goes to the run log.
 
 ### Phase 6: Repetition check
-Two passes. First, the across-week check: load last week's data file from `previous_week.data_path` and, for each cluster this week, decide whether it covers the **same news event** as any last-week cluster (compare on `article_texts`), even if the specific articles differ; set `dedup_status = drop` for genuine repeats (Tier 4 #6) and `keep` for real follow-on developments with new facts or escalation. Second, the within-week check: compare this week's clusters against each other and drop any duplicate, so the same event is not rendered twice across master queries. Save this week's data file to the archive path so next week's check can read it. Then build the deliverable: copy the template in Section 6 and put the kept records into its `#report-data` JSON block (`run` = the dates; `data` = each kept cluster's display fields). Save the filled file as `report_{since}_{until}.html`.
+Two passes. First, the across-week check: load last week's data file from `previous_week.data_path` and, for each cluster this week, decide whether it covers the **same news event** as any last-week cluster (compare on `article_texts`), even if the specific articles differ; set `dedup_status = drop` for genuine repeats (Tier 4 #6) and `keep` for real follow-on developments with new facts or escalation. Second, the within-week check: compare this week's clusters against each other and drop any duplicate, so the same event is not rendered twice across master queries. Save this week's data file to the archive path so next week's check can read it. Then build the deliverable: write both `data_{since}_{until}.json` and `report_{since}_{until}.html` from the same final records. The JSON contains full records, hidden n/a rows, validation logs, source-check evidence, and the crawl manifest. The HTML contains the clean user-facing article list with static pre-rendered rows, working checkboxes, and no verbose validation/audit tables by default.
 
 ### Per-category source maps (Phases 1 and 2)
 Each query lists its source URLs and, in parentheses, the handling rule. (`GH` = read GitHub releases; `changelog` / `release notes` = treat a notable release as the event.) Primary sources are read in Phase 1; Secondary sources in Phase 2.
@@ -678,26 +724,68 @@ Theme:
 
 ---
 
+### Final quality gate before writing files
+
+Before writing the final HTML, validate internally:
+- Category order matches Section 3b.
+- Master query order matches Section 3b.
+- Default HTML shows article rows only, not audit tables.
+- n/a rows are hidden by default.
+- Every visible article row has a working checkbox.
+- Every visible article row has at least one source link.
+- Source links are valid URLs.
+- No row is duplicated across master queries.
+- TechCrunch, Social Media Today, 9to5Google, and 9to5Mac were checked.
+- Google US was checked for every master query.
+- Google KR/JP were checked for Asia/local-language queries.
+- Asia Big Tech official newsroom/source pages were checked before n/a.
+- Static HTML render test passes with JavaScript disabled.
+
+If any gate fails, fix the data/report before finalizing. Do not show the full quality gate table in the default HTML. Save the gate results to JSON.
+
 ## 6. Report template (fill this and save as report.html)
 
-This is the deliverable's exact HTML. It is self-contained (inline CSS and JS, no external requests, `<meta charset="utf-8">`, a CJK font stack) and already implements Section 1a: rows grouped by category then master query with Tier 1 first, a tier badge, up to three clickable source links, real clickable checkboxes that autosave in the browser, and an Export button that downloads `selections_{since}_{until}.json`. Every value is inserted with `textContent`/`href`, so it is HTML-escaped automatically.
+The weekly report must be generated as static HTML with pre-rendered article rows. The JSON data may still be embedded for checkbox export, but the visible article list must not depend on runtime JSON parsing. Article rows must already exist in the DOM at build time so the report is readable with JavaScript disabled.
 
-To produce a week's report, copy the file below verbatim and replace only the JSON inside the `<script type="application/json" id="report-data">` block, then save it as `report_{since}_{until}.html`. Change nothing outside that JSON. Because the data is JSON, all quotes and ampersands are handled for you; just keep the JSON valid. (If any value could literally contain the text `</script>`, escape the `<` as `\u003c`.) The JSON shape:
+Generate the HTML from the same final records used for `data_{since}_{until}.json`. Save verbose validation, source manifests, Google query logs, crawl logs, and n/a audit evidence in JSON under `validation`, `source_manifest`, `google_search_log`, and `na_audit`; do not show those tables in the default HTML unless explicitly requested.
 
-```json
-{
-  "run": { "since": "2026-06-17", "until": "2026-06-23" },
-  "data": [
-    { "cluster_id": "c001", "category": "AI/GPT", "master_query": "ChatGPT", "company": "OpenAI",
-      "tier": 1, "date": "2026-06-17",
-      "headline": "[OpenAI] ChatGPT Projects 공유 기능 \"GA\" 공개 (2026.6.17)",
-      "sources": ["https://openai.com/index/projects", "https://techcrunch.com/2026/06/17/openai"] },
-    { "cluster_id": "c099", "category": "AI/GPT", "master_query": "Codex", "is_na": true, "headline": "n/a", "sources": [] }
-  ]
-}
+The generated HTML must include this row structure for each non-n/a cluster:
+
+```html
+<tr class="article-row" data-cluster-id="..." data-category="..." data-master-query="...">
+  <td class="select-cell">
+    <input type="checkbox" class="row-check" data-cluster-id="..." aria-label="Select article">
+  </td>
+  <td class="category-cell">AI/GPT</td>
+  <td class="query-cell">ChatGPT</td>
+  <td class="headline-cell">[OpenAI] ... (2026.6.17)</td>
+  <td class="tier-cell">Tier 1</td>
+  <td class="source-cell">
+    <a href="..." target="_blank" rel="noopener noreferrer">Source 1</a>
+    <a href="..." target="_blank" rel="noopener noreferrer">Source 2</a>
+    <a href="..." target="_blank" rel="noopener noreferrer">Source 3</a>
+  </td>
+  <td class="date-cell">2026-06-17</td>
+</tr>
 ```
 
-`data` is the display subset of the records you wrote to `data.json`: one object per kept cluster (order does not matter; the page groups and sorts). Use `"is_na": true` for a master query with no story this week (it renders with no checkbox). The embedded HTML:
+Checkbox requirements:
+- Checkbox must be a real `<input type="checkbox">`.
+- Do not wrap it in a fake button, custom div, or non-clickable element.
+- Do not pre-check any row.
+- n/a rows must not have an active checkbox.
+- Autosave selected cluster IDs in `localStorage`.
+- Export selections must download selected full records as JSON.
+
+Source link requirements:
+- Show up to 3 source links.
+- Use simple labels: `Source 1`, `Source 2`, `Source 3`.
+- Links must open in a new tab.
+- Preserve real publisher URLs where available.
+
+The HTML report is for human article selection. Keep it minimal. Allowed in default HTML: title, date range, generated date, total article count, category counts, article table grouped by strict query order, checkbox controls, source links, and an optional small note section. Not allowed in default HTML unless explicitly requested: full source-completion checklist, every-site crawl manifest, Google query logs, n/a audit table, Asia audit table, quality gate table, long crawler notes, or raw search result counts for every source.
+
+The embedded HTML below is illustrative only. If kept as a starting point, revise it so article rows are pre-rendered in `<table>`/`<tbody>` HTML rather than being created only from the JSON script block.
 
 ```html
 <!doctype html>
@@ -705,261 +793,81 @@ To produce a week's report, copy the file below verbatim and replace only the JS
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Weekly Tech Research · 2026.6.17–2026.6.23</title>
+<title>Weekly Tech Research · {since}–{until}</title>
 <style>
-  :root{
-    --ink:#15171c; --paper:#ffffff; --soft:#f5f6f8; --line:#e6e8ec; --muted:#6a7280;
-    --accent:#2f4cdd; --accent-soft:#eef1fe;
-    --t1:#3b3f8f; --t1-bg:#ecedfb; --t2:#9a5b00; --t2-bg:#fdf3e3; --t3:#566174; --t3-bg:#eef1f4;
-    --sel:#f0fff7; --sel-line:#9fe3c2;
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    margin:0; background:var(--soft); color:var(--ink);
-    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo","Noto Sans JP",Arial,sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:980px;margin:0 auto;padding:0 20px 96px}
-
-  /* sticky toolbar */
-  .bar{
-    position:sticky; top:0; z-index:20; background:rgba(255,255,255,.9); backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--line); margin:0 -20px 0; padding:14px 20px;
-    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-  }
-  .bar .lead{display:flex;flex-direction:column;line-height:1.2;margin-right:auto}
-  .bar .lead b{font-size:15px;letter-spacing:-.01em}
-  .bar .lead span{font-size:12.5px;color:var(--muted)}
-  .count{font-variant-numeric:tabular-nums;font-weight:700;color:var(--accent)}
-  .btn{
-    appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);
-    font:600 14px/1 inherit;padding:10px 14px;border-radius:9px;cursor:pointer;white-space:nowrap;
-  }
-  .btn:hover{border-color:#c9cdd4}
-  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-  .btn.primary:hover{background:#2740c4}
-  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-
-  header.page{padding:40px 0 8px}
-  .eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-  h1{margin:.25em 0 .15em;font-size:clamp(1.7rem,3.4vw,2.4rem);letter-spacing:-.02em}
-  .sub{margin:.2em 0 0;color:var(--muted);font-size:14.5px}
-  .sample{display:inline-block;margin-top:10px;font-size:12px;color:#9a5b00;background:var(--t2-bg);border:1px solid #f0dcb6;border-radius:999px;padding:3px 10px}
-
-  .cat{margin-top:40px}
-  .cat > h2{
-    display:flex;align-items:baseline;gap:10px;margin:0 0 4px;font-size:1.15rem;letter-spacing:-.01em;
-    padding-bottom:8px;border-bottom:2px solid var(--ink);
-  }
-  .cat > h2 .n{font-size:.8rem;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
-  .mq{margin:18px 0 0}
-  .mq > h3{margin:0 0 2px;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-
-  .row{
-    display:grid;grid-template-columns:26px 1fr;gap:14px;align-items:start;
-    padding:14px 12px;border:1px solid var(--line);border-radius:11px;background:var(--paper);margin-top:8px;
-  }
-  .row.sel{background:var(--sel);border-color:var(--sel-line)}
-  .row.na{background:var(--soft);border-style:dashed}
-  .cbx{margin-top:3px}
-  .cbx input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
-  .head{font-size:15.5px;line-height:1.5;letter-spacing:-.005em}
-  .row.na .head{color:var(--muted);font-style:italic}
-  .meta{margin-top:7px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
-  .tier{font-weight:700;font-size:11.5px;letter-spacing:.02em;padding:2px 8px;border-radius:999px;border:1px solid transparent}
-  .t1{color:var(--t1);background:var(--t1-bg);border-color:#d6d8f4}
-  .t2{color:var(--t2);background:var(--t2-bg);border-color:#f0dcb6}
-  .t3{color:var(--t3);background:var(--t3-bg);border-color:#dde2e8}
-  .date{font-variant-numeric:tabular-nums}
-  .srcs{display:flex;gap:8px;flex-wrap:wrap}
-  .srcs a{
-    color:var(--accent);text-decoration:none;font-size:12.5px;border:1px solid var(--accent-soft);
-    background:var(--accent-soft);padding:2px 8px;border-radius:7px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  }
-  .srcs a:hover{text-decoration:underline}
-  .dot{color:#cdd2da}
-
-  .toast{
-    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
-    background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;
-    opacity:0;pointer-events:none;transition:.25s;z-index:40;max-width:90vw;
-  }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  @media (max-width:560px){ .row{grid-template-columns:24px 1fr} .bar .lead{margin-right:0;width:100%} }
-  @media (prefers-reduced-motion:reduce){ *{transition:none!important;scroll-behavior:auto} }
+  body{margin:0;background:#f6f7f9;color:#15171c;font:14px/1.5 system-ui,"Apple SD Gothic Neo","Noto Sans KR","Noto Sans JP",sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px}
+  header,.summary,.controls{margin-bottom:14px}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e5e7eb}
+  th,td{padding:8px 10px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}
+  th{font-size:12px;background:#f1f3f5;color:#4b5563}
+  .select-cell{width:44px;text-align:center}.category-cell{width:120px}.query-cell{width:160px}.tier-cell{width:70px}.date-cell{width:105px}
+  .source-cell a{margin-right:8px;color:#2447d8;text-decoration:none}.source-cell a:hover{text-decoration:underline}
+  .category-break td{background:#eef1fe;font-weight:700}.query-break td{background:#fafafa;color:#4b5563;font-weight:600}
+  .na-row{display:none;color:#6b7280;font-style:italic}.show-na .na-row{display:table-row}.selected{background:#f0fff7}
 </style>
 </head>
 <body>
 <div class="wrap">
-
-  <div class="bar">
-    <div class="lead">
-      <b>주간 리서치 · 최종 선별</b>
-      <span id="range"></span>
-    </div>
-    <div><span class="count" id="count">0</span> selected</div>
-    <button class="btn" id="clear" type="button">Clear all</button>
-    <button class="btn primary" id="export" type="button">Export selections</button>
-  </div>
-
-  <header class="page">
-    <p class="eyebrow">Weekly Tech News Research</p>
-    <h1>Global IT · AI 주간 리서치</h1>
-    <p class="sub" id="subline"></p>
+  <header>
+    <h1>Weekly Tech News Research</h1>
+    <p>Date range: {since} to {until} · Generated: {generated_at}</p>
   </header>
-
-  <main id="report" aria-live="polite"></main>
+  <section class="summary">
+    <strong>Total visible articles:</strong> {visible_count} · <strong>Category counts:</strong> {category_counts}
+  </section>
+  <section class="controls">
+    <button id="export" type="button">Export selections</button>
+    <button id="clear" type="button">Clear all</button>
+    <label><input id="show-na" type="checkbox"> Show n/a rows</label>
+    <span id="selected-count">0 selected</span>
+  </section>
+  <table aria-label="Article selection list">
+    <thead>
+      <tr><th>Select</th><th>Category</th><th>Master query</th><th>Headline</th><th>Tier</th><th>Sources</th><th>Date</th></tr>
+    </thead>
+    <tbody>
+      <!-- Pre-render category/query separator rows and one article row per non-n/a cluster here, sorted by Section 3b-1. -->
+      <tr class="article-row" data-cluster-id="..." data-category="..." data-master-query="...">
+        <td class="select-cell"><input type="checkbox" class="row-check" data-cluster-id="..." aria-label="Select article"></td>
+        <td class="category-cell">AI/GPT</td>
+        <td class="query-cell">ChatGPT</td>
+        <td class="headline-cell">[OpenAI] ... (2026.6.17)</td>
+        <td class="tier-cell">Tier 1</td>
+        <td class="source-cell"><a href="..." target="_blank" rel="noopener noreferrer">Source 1</a></td>
+        <td class="date-cell">2026-06-17</td>
+      </tr>
+      <!-- Optional hidden n/a rows may be pre-rendered with class="na-row" and no checkbox/input. -->
+    </tbody>
+  </table>
 </div>
-
-<div class="toast" id="toast"></div>
-
-<!-- ====== AGENT-INJECTED DATA: replace the JSON below on every run ====== -->
-<script type="application/json" id="report-data">
-{ "run": { "since": "YYYY-MM-DD", "until": "YYYY-MM-DD" }, "data": [] }
-</script>
-
+<script type="application/json" id="report-data">{ "run": {"since":"{since}", "until":"{until}"}, "data": [] }</script>
 <script>
-/* CATEGORY_ORDER is fixed. RUN and DATA are read from the JSON in the
-   #report-data block below, which is the ONLY thing the agent replaces. */
-const CATEGORY_ORDER = ["AI Agent","AI/GPT","Global Big Tech","Asia Big Tech","Social","Theme"];
-let RUN = { since:"", until:"" }, DATA = [];
-try {
-  const _p = JSON.parse(document.getElementById("report-data").textContent);
-  RUN = _p.run || RUN;
-  DATA = Array.isArray(_p.data) ? _p.data : [];
-} catch (e) { console.error("report-data JSON failed to parse:", e); }
-
-/* ----- helpers ----- */
-const $ = (s,r=document)=>r.querySelector(s);
-const fmtDot = d => d.replaceAll("-",".").replace(/\.0?(\d)/g,(m,x,o)=> o===4? "."+x : m); // 2026-06-17 -> 2026.6.17
-function pretty(d){ const [y,m,da]=d.split("-"); return `${y}.${+m}.${+da}`; }
-const STORE_KEY = `selections:${RUN.since}_${RUN.until}`;
-
-function loadChecked(){
-  try { return new Set(JSON.parse(localStorage.getItem(STORE_KEY) || "[]")); }
-  catch { return new Set(); }
-}
-function saveChecked(){
-  const ids = [...document.querySelectorAll('input[data-cluster-id]:checked')].map(i=>i.dataset.clusterId);
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(ids)); } catch {}
-  $("#count").textContent = ids.length;
-}
-
-/* ----- render (textContent + href => auto-escaped) ----- */
-function render(){
-  const root = $("#report");
-  root.textContent = "";
-  const checked = loadChecked();
-  const byCat = {};
-  for(const r of DATA){ (byCat[r.category] ||= []).push(r); }
-
-  for(const cat of CATEGORY_ORDER){
-    const rows = byCat[cat]; if(!rows) continue;
-    const realCount = rows.filter(r=>!r.is_na).length;
-    const sec = document.createElement("section"); sec.className="cat";
-    const h2 = document.createElement("h2");
-    h2.append(cat);
-    const n = document.createElement("span"); n.className="n"; n.textContent = `${realCount} stor${realCount===1?"y":"ies"}`;
-    h2.append(n); sec.append(h2);
-
-    // group by master query, preserve first-seen order
-    const mqOrder = [...new Set(rows.map(r=>r.master_query))];
-    for(const mq of mqOrder){
-      const grp = document.createElement("div"); grp.className="mq";
-      const h3 = document.createElement("h3"); h3.textContent = mq; grp.append(h3);
-
-      rows.filter(r=>r.master_query===mq)
-          .sort((a,b)=>(a.tier??99)-(b.tier??99))
-          .forEach(r=>{
-        const row = document.createElement("div");
-        row.className = "row" + (r.is_na?" na":"");
-        // checkbox cell
-        const cbWrap = document.createElement("div"); cbWrap.className="cbx";
-        if(!r.is_na){
-          const cb = document.createElement("input");
-          cb.type="checkbox"; cb.dataset.clusterId=r.cluster_id;
-          cb.setAttribute("aria-label","select: "+r.headline);
-          cb.checked = checked.has(r.cluster_id);
-          cb.addEventListener("change",()=>{ row.classList.toggle("sel",cb.checked); saveChecked(); });
-          if(cb.checked) row.classList.add("sel");
-          cbWrap.append(cb);
-        }
-        row.append(cbWrap);
-        // content cell
-        const body = document.createElement("div");
-        const head = document.createElement("div"); head.className="head"; head.textContent=r.headline;
-        body.append(head);
-        if(!r.is_na){
-          const meta = document.createElement("div"); meta.className="meta";
-          const tier = document.createElement("span"); tier.className="tier t"+r.tier; tier.textContent="Tier "+r.tier;
-          const date = document.createElement("span"); date.className="date"; date.textContent=pretty(r.date);
-          meta.append(tier, date);
-          if(r.sources?.length){
-            const dot=document.createElement("span"); dot.className="dot"; dot.textContent="·"; meta.append(dot);
-            const srcs=document.createElement("span"); srcs.className="srcs";
-            r.sources.slice(0,3).forEach(u=>{
-              const a=document.createElement("a"); a.href=u; a.target="_blank"; a.rel="noopener noreferrer";
-              try{ a.textContent=new URL(u).hostname.replace(/^www\./,""); }catch{ a.textContent=u; }
-              srcs.append(a);
-            });
-            meta.append(srcs);
-          }
-          body.append(meta);
-        }
-        row.append(body);
-        grp.append(row);
-      });
-      sec.append(grp);
-    }
-    root.append(sec);
-  }
-  saveChecked(); // sync count
-}
-
-/* ----- export ----- */
-function buildSelectionsJSON(){
-  const ids = [...document.querySelectorAll('input[data-cluster-id]:checked')].map(i=>i.dataset.clusterId);
-  const set = new Set(ids);
-  const selected = DATA.filter(r=>set.has(r.cluster_id)).map(r=>({
-    cluster_id:r.cluster_id, category:r.category, master_query:r.master_query,
-    company:r.company, headline:r.headline, tier:r.tier, sources:r.sources, date:r.date
-  }));
-  return JSON.stringify({ since:RUN.since, until:RUN.until, generated:new Date().toISOString(),
-                          count:selected.length, selections:selected }, null, 2);
-}
-function download(json){
-  const blob = new Blob([json], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href=url; a.download=`selections_${RUN.since}_${RUN.until}.json`;
-  document.body.append(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url), 1000);
-}
-function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
-
-/* ----- wire up ----- */
-function init(){
-  $("#range").textContent = `${pretty(RUN.since)} – ${pretty(RUN.until)}`;
-  $("#subline").textContent = `${pretty(RUN.since)} – ${pretty(RUN.until)} · 6개 카테고리 · Tier 1 우선 정렬`;
-  render();
-  $("#export").addEventListener("click",()=>{
-    const json = buildSelectionsJSON();
-    const n = JSON.parse(json).count;
-    if(n===0){ toast("No rows selected yet. Tick the stories to keep, then export."); return; }
-    download(json); toast(`Exported ${n} selected row${n===1?"":"s"} to selections_${RUN.since}_${RUN.until}.json`);
-  });
-  $("#clear").addEventListener("click",()=>{
-    document.querySelectorAll('input[data-cluster-id]:checked').forEach(cb=>{ cb.checked=false; cb.closest(".row").classList.remove("sel"); });
-    saveChecked(); toast("Cleared all selections.");
-  });
-}
-if(typeof document!=="undefined" && document.readyState!=="loading") init();
-else if(typeof document!=="undefined") document.addEventListener("DOMContentLoaded", init);
-
-/* test hook (no effect in browser) */
-if(typeof window!=="undefined"){ window.__test = { buildSelectionsJSON, saveChecked, STORE_KEY, DATA, RUN }; }
+const RUN={since:"{since}",until:"{until}"};
+const STORE_KEY=`selections:${RUN.since}_${RUN.until}`;
+function selectedIds(){return [...document.querySelectorAll('.row-check:checked')].map(cb=>cb.dataset.clusterId)}
+function save(){const ids=selectedIds();localStorage.setItem(STORE_KEY,JSON.stringify(ids));document.getElementById('selected-count').textContent=`${ids.length} selected`;}
+function restore(){let ids=[];try{ids=JSON.parse(localStorage.getItem(STORE_KEY)||'[]')}catch{};const set=new Set(ids);document.querySelectorAll('.row-check').forEach(cb=>{cb.checked=set.has(cb.dataset.clusterId);cb.closest('tr').classList.toggle('selected',cb.checked);cb.addEventListener('change',()=>{cb.closest('tr').classList.toggle('selected',cb.checked);save();});});save();}
+function fullRecords(){try{return JSON.parse(document.getElementById('report-data').textContent).data||[]}catch{return []}}
+document.getElementById('export').addEventListener('click',()=>{const ids=new Set(selectedIds());const selected=fullRecords().filter(r=>ids.has(r.cluster_id));const blob=new Blob([JSON.stringify({since:RUN.since,until:RUN.until,count:selected.length,selections:selected},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`selections_${RUN.since}_${RUN.until}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);});
+document.getElementById('clear').addEventListener('click',()=>{document.querySelectorAll('.row-check').forEach(cb=>{cb.checked=false;cb.closest('tr').classList.remove('selected')});save();});
+document.getElementById('show-na').addEventListener('change',e=>document.body.classList.toggle('show-na',e.target.checked));
+restore();
 </script>
 </body>
 </html>
 ```
+
+
+### Final response requirements
+
+At the end of the run, the agent should report only:
+- HTML path
+- JSON path
+- total visible article count
+- hidden n/a count
+- whether strict query order passed
+- whether checkbox test passed
+- whether local static render test passed
+
+Do not include long explanations, audit tables, or caveats unless a quality gate failed.
