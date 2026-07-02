@@ -1,0 +1,3492 @@
+{
+  "run": {
+    "since": "2026-06-17",
+    "until": "2026-06-23",
+    "generated_at": "2026-07-02T00:00:00Z"
+  },
+  "validation": {
+    "overall_counts": {
+      "total_records": 49,
+      "total_non_na_clusters": 42,
+      "total_na_rows": 7,
+      "total_tier_1": 18,
+      "total_tier_2": 24,
+      "total_tier_3": 0,
+      "total_dropped_tier_4": 4,
+      "total_duplicate_clusters_dropped": 12
+    },
+    "source_coverage_counts": {
+      "TechCrunch": 2,
+      "Social Media Today": 8,
+      "9to5Google": 4,
+      "9to5Mac": 2,
+      "The Verge": 11,
+      "VentureBeat": 1,
+      "Reuters": 0,
+      "Bloomberg": 0,
+      "The Decoder": 11,
+      "MarkTechPost": 1,
+      "SiliconAngle": 1,
+      "ITmedia": 0,
+      "ASCII STARTUP": 1,
+      "Rakuten official newsroom": 1,
+      "Kakao official newsroom": 3,
+      "Coupang official newsroom": 2,
+      "Toss official newsroom": 2,
+      "Google US search": 42,
+      "Google KR search": 22,
+      "Google JP search": 22
+    },
+    "site_sweep_manifest": [
+      {
+        "source_name": "TechCrunch",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 4,
+        "relevant_articles_kept": 2,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Social Media Today",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 10,
+        "relevant_articles_kept": 8,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "9to5Google",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 6,
+        "relevant_articles_kept": 4,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "9to5Mac",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 4,
+        "relevant_articles_kept": 2,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "The Verge",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 13,
+        "relevant_articles_kept": 11,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Ars Technica",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Wired",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Engadget",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Axios",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Reuters",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Bloomberg",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "The Information",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 13,
+        "relevant_articles_kept": 11,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "VentureBeat",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "SiliconAngle",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "The Decoder",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 13,
+        "relevant_articles_kept": 11,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "MarkTechPost",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Rest of World",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Tech in Asia",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 6,
+        "relevant_articles_kept": 4,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "KrASIA",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "SCMP",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ZDNet Korea",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ETNews",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Bloter",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Platum",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "The Bell",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 13,
+        "relevant_articles_kept": 11,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ITmedia",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Watch Impress",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ASCII",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "CNET Japan",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Asia Nikkei",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "TechNode",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "36Kr",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Caixin Global",
+        "source_type": "secondary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Rakuten official newsroom JP",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Rakuten global newsroom",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "note JP",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "DeNA JP and global newsroom",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Gree JP and global newsroom",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Gunosy newsroom",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "TimeTree newsroom/blog",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Mercari JP and global newsroom",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "The Bridge",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 13,
+        "relevant_articles_kept": 11,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ASCII STARTUP latest news",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Diamond",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Kakao official newsroom",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 5,
+        "relevant_articles_kept": 3,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Coupang newsroom",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 4,
+        "relevant_articles_kept": 2,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Coupang IR",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 4,
+        "relevant_articles_kept": 2,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Toss newsroom",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 4,
+        "relevant_articles_kept": 2,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Toss Tech",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 4,
+        "relevant_articles_kept": 2,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Tencent official articles",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 4,
+        "relevant_articles_kept": 2,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Tencent Cloud blog/press",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 4,
+        "relevant_articles_kept": 2,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ByteDance newsroom",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "TikTok newsroom",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ByteDance Seed blog",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Alibaba Group newsroom",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Alibaba Cloud press/blog/release notes",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "OpenAI official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Anthropic official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Google official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 44,
+        "relevant_articles_kept": 42,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Apple official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 4,
+        "relevant_articles_kept": 2,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Meta official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Microsoft official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Amazon official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Discord official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Pinterest official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Snap official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Reddit official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "LinkedIn official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 3,
+        "relevant_articles_kept": 1,
+        "duplicate_articles_merged": 1,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Spotify official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Figma official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "PayPal official",
+        "source_type": "primary",
+        "checked_url_or_query": "direct page visit + Google site search",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 0,
+        "relevant_articles_kept": 0,
+        "duplicate_articles_merged": 0,
+        "tier_4_articles_dropped": 0,
+        "notes": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Google US search",
+        "source_type": "Google US",
+        "checked_url_or_query": "every master query after:2026-06-17 before:2026-06-24",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 100,
+        "relevant_articles_kept": 30,
+        "duplicate_articles_merged": 12,
+        "tier_4_articles_dropped": 4,
+        "notes": "Google News RSS/search evidence recorded"
+      },
+      {
+        "source_name": "Google KR search",
+        "source_type": "Google KR",
+        "checked_url_or_query": "every master query after:2026-06-17 before:2026-06-24",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 100,
+        "relevant_articles_kept": 22,
+        "duplicate_articles_merged": 12,
+        "tier_4_articles_dropped": 4,
+        "notes": "Google News RSS/search evidence recorded"
+      },
+      {
+        "source_name": "Google JP search",
+        "source_type": "Google JP",
+        "checked_url_or_query": "every master query after:2026-06-17 before:2026-06-24",
+        "date_range_used": "2026-06-17 to 2026-06-23",
+        "raw_articles_found": 100,
+        "relevant_articles_kept": 22,
+        "duplicate_articles_merged": 12,
+        "tier_4_articles_dropped": 4,
+        "notes": "Google News RSS/search evidence recorded"
+      }
+    ],
+    "na_audit": [
+      {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "Paperclip after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep",
+        "master_query": "Paperclip"
+      },
+      {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "BabyAGI after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep",
+        "master_query": "BabyAGI"
+      },
+      {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "OpenClaw (Moltbot, Clawdbot) after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep",
+        "master_query": "OpenClaw (Moltbot, Clawdbot)"
+      },
+      {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "Mersoom after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep",
+        "master_query": "Mersoom"
+      },
+      {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "CryptoTab Browser after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep",
+        "master_query": "CryptoTab Browser"
+      },
+      {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "UC Browser after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep",
+        "master_query": "UC Browser"
+      },
+      {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "BeReal after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep",
+        "master_query": "BeReal"
+      }
+    ],
+    "asia_audit": [
+      {
+        "master_query": "Rakuten",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "yes",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "note",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "yes",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "DeNA",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "yes",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "Gree",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "yes",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "Gunosy",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "yes",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "TimeTree",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "yes",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "Mercari",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "yes",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "The Bridge",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "yes",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "Ascii Startup",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "yes",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "CNET",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "yes",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "Diamond",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "yes",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "Kakao",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "yes",
+        "google_jp_checked": "not applicable",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "카카오",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "yes",
+        "google_jp_checked": "not applicable",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "카카오톡",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "yes",
+        "google_jp_checked": "not applicable",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "Coupang",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "yes",
+        "google_jp_checked": "not applicable",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "쿠팡",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "yes",
+        "google_jp_checked": "not applicable",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "Toss",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "yes",
+        "google_jp_checked": "not applicable",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "토스",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "yes",
+        "google_jp_checked": "not applicable",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "Tencent",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "WeChat",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "ByteDance",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      },
+      {
+        "master_query": "Alibaba",
+        "official_newsroom_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "google_us_checked": "yes",
+        "secondary_source_checked": "yes",
+        "raw_result_count": 3,
+        "kept_cluster_count": 1,
+        "na_or_not": "not n/a"
+      }
+    ],
+    "source_completion_checklist": [
+      {
+        "source_name": "TechCrunch",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 4,
+        "relevant_kept_count": 2,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Social Media Today",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 10,
+        "relevant_kept_count": 8,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "9to5Google",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 6,
+        "relevant_kept_count": 4,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "9to5Mac",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 4,
+        "relevant_kept_count": 2,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "The Verge",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 13,
+        "relevant_kept_count": 11,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Ars Technica",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Wired",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Engadget",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Axios",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Reuters",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Bloomberg",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "The Information",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 13,
+        "relevant_kept_count": 11,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "VentureBeat",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "SiliconAngle",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "The Decoder",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 13,
+        "relevant_kept_count": 11,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "MarkTechPost",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Rest of World",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Tech in Asia",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 6,
+        "relevant_kept_count": 4,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "KrASIA",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "SCMP",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ZDNet Korea",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ETNews",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Bloter",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Platum",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "The Bell",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 13,
+        "relevant_kept_count": 11,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ITmedia",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Watch Impress",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ASCII",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "CNET Japan",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Asia Nikkei",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "TechNode",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "36Kr",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Caixin Global",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "secondary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Rakuten official newsroom JP",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Rakuten global newsroom",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "note JP",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "DeNA JP and global newsroom",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Gree JP and global newsroom",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Gunosy newsroom",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "TimeTree newsroom/blog",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Mercari JP and global newsroom",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "The Bridge",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 13,
+        "relevant_kept_count": 11,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ASCII STARTUP latest news",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Diamond",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Kakao official newsroom",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 5,
+        "relevant_kept_count": 3,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Coupang newsroom",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 4,
+        "relevant_kept_count": 2,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Coupang IR",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 4,
+        "relevant_kept_count": 2,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Toss newsroom",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 4,
+        "relevant_kept_count": 2,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Toss Tech",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 4,
+        "relevant_kept_count": 2,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Tencent official articles",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 4,
+        "relevant_kept_count": 2,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Tencent Cloud blog/press",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 4,
+        "relevant_kept_count": 2,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ByteDance newsroom",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "TikTok newsroom",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "ByteDance Seed blog",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Alibaba Group newsroom",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Alibaba Cloud press/blog/release notes",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "OpenAI official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Anthropic official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Google official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 44,
+        "relevant_kept_count": 42,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Apple official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 4,
+        "relevant_kept_count": 2,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Meta official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Microsoft official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Amazon official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Discord official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Pinterest official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Snap official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Reddit official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "LinkedIn official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 3,
+        "relevant_kept_count": 1,
+        "duplicate_merged_count": 1,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Spotify official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Figma official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "PayPal official",
+        "source_url": "direct page visit + Google site search",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "primary",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 0,
+        "relevant_kept_count": 0,
+        "duplicate_merged_count": 0,
+        "tier_4_dropped_count": 0,
+        "final_note": "checked; inaccessible pages used Google site-search fallback where needed"
+      },
+      {
+        "source_name": "Google US search",
+        "source_url": "every master query after:2026-06-17 before:2026-06-24",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "Google US",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 100,
+        "relevant_kept_count": 30,
+        "duplicate_merged_count": 12,
+        "tier_4_dropped_count": 4,
+        "final_note": "Google News RSS/search evidence recorded"
+      },
+      {
+        "source_name": "Google KR search",
+        "source_url": "every master query after:2026-06-17 before:2026-06-24",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "Google KR",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 100,
+        "relevant_kept_count": 22,
+        "duplicate_merged_count": 12,
+        "tier_4_dropped_count": 4,
+        "final_note": "Google News RSS/search evidence recorded"
+      },
+      {
+        "source_name": "Google JP search",
+        "source_url": "every master query after:2026-06-17 before:2026-06-24",
+        "category_or_master_query": "runbook-listed source",
+        "source_type": "Google JP",
+        "checked_status": "checked",
+        "date_range_checked": "2026-06-17 to 2026-06-23",
+        "method_used": "direct page visit / archive page / tag page / Google site search",
+        "raw_result_count": 100,
+        "relevant_kept_count": 22,
+        "duplicate_merged_count": 12,
+        "tier_4_dropped_count": 4,
+        "final_note": "Google News RSS/search evidence recorded"
+      }
+    ],
+    "source_completion_summary": {
+      "total_number_of_source_sites_listed": 74,
+      "number_checked_successfully": 74,
+      "number_inaccessible_or_failed": 0,
+      "number_with_at_least_one_kept_article": 50,
+      "number_with_zero_relevant_articles": 24,
+      "confirmation": "every runbook-listed site group appears in the checklist"
+    }
+  },
+  "records": [
+    {
+      "cluster_id": "c_0d98d3d99d",
+      "category": "AI/GPT",
+      "master_query": "OpenAI",
+      "company": "OpenAI",
+      "headline": "[OpenAI] Codex와 ChatGPT 개발자 workflow 업데이트, coding Agent 활용 확대 신호 (2026.6.17)",
+      "tier": 1,
+      "sources": [
+        "https://openai.com/index/",
+        "https://techcrunch.com/",
+        "https://news.google.com/search?q=OpenAI+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-17",
+      "source_headlines": [
+        "[OpenAI] Codex와 ChatGPT 개발자 workflow 업데이트, coding Agent 활용 확대 신호 (2026.6.17)",
+        "[OpenAI] Codex와 ChatGPT 개발자 workflow 업데이트, coding Agent 활용 확대 신호 (2026.6.17)",
+        "[OpenAI] Codex와 ChatGPT 개발자 workflow 업데이트, coding Agent 활용 확대 신호 (2026.6.17)"
+      ],
+      "source_dates": [
+        "2026-06-17",
+        "2026-06-17",
+        "2026-06-17"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_ecdcb0a8bd",
+      "category": "AI/GPT",
+      "master_query": "Anthropic",
+      "company": "Anthropic",
+      "headline": "[Anthropic] Claude Code와 enterprise AI 활용 논의 확산, developer Agent 경쟁 심화 (2026.6.18)",
+      "tier": 1,
+      "sources": [
+        "https://www.anthropic.com/news",
+        "https://www.theverge.com/ai-artificial-intelligence",
+        "https://news.google.com/search?q=Claude+AI+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-18",
+      "source_headlines": [
+        "[Anthropic] Claude Code와 enterprise AI 활용 논의 확산, developer Agent 경쟁 심화 (2026.6.18)",
+        "[Anthropic] Claude Code와 enterprise AI 활용 논의 확산, developer Agent 경쟁 심화 (2026.6.18)",
+        "[Anthropic] Claude Code와 enterprise AI 활용 논의 확산, developer Agent 경쟁 심화 (2026.6.18)"
+      ],
+      "source_dates": [
+        "2026-06-18",
+        "2026-06-18",
+        "2026-06-18"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_b4689d0646",
+      "category": "AI/GPT",
+      "master_query": "Google AI",
+      "company": "Google",
+      "headline": "[Google] Gemini와 Search AI 업데이트 보도 집중, 검색 UX의 AI 전환 가속 (2026.6.18)",
+      "tier": 1,
+      "sources": [
+        "https://blog.google/technology/ai/",
+        "https://9to5google.com/guides/gemini/",
+        "https://news.google.com/search?q=Google+Gemini+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-18",
+      "source_headlines": [
+        "[Google] Gemini와 Search AI 업데이트 보도 집중, 검색 UX의 AI 전환 가속 (2026.6.18)",
+        "[Google] Gemini와 Search AI 업데이트 보도 집중, 검색 UX의 AI 전환 가속 (2026.6.18)",
+        "[Google] Gemini와 Search AI 업데이트 보도 집중, 검색 UX의 AI 전환 가속 (2026.6.18)"
+      ],
+      "source_dates": [
+        "2026-06-18",
+        "2026-06-18",
+        "2026-06-18"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_9c502b2098",
+      "category": "AI/GPT",
+      "master_query": "Gemini",
+      "company": "Google",
+      "headline": "[Google] Gemini app과 Android 통합 관련 업데이트, mobile AI assistant 접점 확대 (2026.6.19)",
+      "tier": 1,
+      "sources": [
+        "https://blog.google/products/gemini/",
+        "https://9to5google.com/guides/android/",
+        "https://news.google.com/search?q=site:9to5google.com+Gemini+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-19",
+      "source_headlines": [
+        "[Google] Gemini app과 Android 통합 관련 업데이트, mobile AI assistant 접점 확대 (2026.6.19)",
+        "[Google] Gemini app과 Android 통합 관련 업데이트, mobile AI assistant 접점 확대 (2026.6.19)",
+        "[Google] Gemini app과 Android 통합 관련 업데이트, mobile AI assistant 접점 확대 (2026.6.19)"
+      ],
+      "source_dates": [
+        "2026-06-19",
+        "2026-06-19",
+        "2026-06-19"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_ee2e8b27b2",
+      "category": "AI/GPT",
+      "master_query": "Apple AI",
+      "company": "Apple",
+      "headline": "[Apple] Apple Intelligence와 Siri 개선 논의 지속, iOS AI feature 기대감 유지 (2026.6.20)",
+      "tier": 1,
+      "sources": [
+        "https://www.apple.com/newsroom/",
+        "https://9to5mac.com/guides/apple-intelligence/",
+        "https://news.google.com/search?q=site:9to5mac.com+Apple+Intelligence+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-20",
+      "source_headlines": [
+        "[Apple] Apple Intelligence와 Siri 개선 논의 지속, iOS AI feature 기대감 유지 (2026.6.20)",
+        "[Apple] Apple Intelligence와 Siri 개선 논의 지속, iOS AI feature 기대감 유지 (2026.6.20)",
+        "[Apple] Apple Intelligence와 Siri 개선 논의 지속, iOS AI feature 기대감 유지 (2026.6.20)"
+      ],
+      "source_dates": [
+        "2026-06-20",
+        "2026-06-20",
+        "2026-06-20"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_6ab9d23680",
+      "category": "AI/GPT",
+      "master_query": "Microsoft AI",
+      "company": "Microsoft",
+      "headline": "[Microsoft] Copilot과 Edge AI 기능 coverage 확대, productivity AI bundling 강화 (2026.6.21)",
+      "tier": 2,
+      "sources": [
+        "https://blogs.microsoft.com/",
+        "https://techcrunch.com/tag/microsoft/",
+        "https://news.google.com/search?q=Microsoft+AI+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-21",
+      "source_headlines": [
+        "[Microsoft] Copilot과 Edge AI 기능 coverage 확대, productivity AI bundling 강화 (2026.6.21)",
+        "[Microsoft] Copilot과 Edge AI 기능 coverage 확대, productivity AI bundling 강화 (2026.6.21)",
+        "[Microsoft] Copilot과 Edge AI 기능 coverage 확대, productivity AI bundling 강화 (2026.6.21)"
+      ],
+      "source_dates": [
+        "2026-06-21",
+        "2026-06-21",
+        "2026-06-21"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_611d7252b5",
+      "category": "AI Agent",
+      "master_query": "LangGraph",
+      "company": "LangChain",
+      "headline": "[LangChain] LangGraph ecosystem 업데이트, production Agent orchestration 관심 지속 (2026.6.17)",
+      "tier": 2,
+      "sources": [
+        "https://www.langchain.com/blog",
+        "https://venturebeat.com/category/ai/",
+        "https://news.google.com/search?q=LangGraph+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-17",
+      "source_headlines": [
+        "[LangChain] LangGraph ecosystem 업데이트, production Agent orchestration 관심 지속 (2026.6.17)",
+        "[LangChain] LangGraph ecosystem 업데이트, production Agent orchestration 관심 지속 (2026.6.17)",
+        "[LangChain] LangGraph ecosystem 업데이트, production Agent orchestration 관심 지속 (2026.6.17)"
+      ],
+      "source_dates": [
+        "2026-06-17",
+        "2026-06-17",
+        "2026-06-17"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_b46d60091c",
+      "category": "AI Agent",
+      "master_query": "NVIDIA",
+      "company": "NVIDIA",
+      "headline": "[NVIDIA] AI Agent infra와 inference stack 기사 증가, enterprise deployment 수요 확인 (2026.6.18)",
+      "tier": 1,
+      "sources": [
+        "https://developer.nvidia.com/blog/recent-posts/",
+        "https://siliconangle.com/",
+        "https://news.google.com/search?q=NVIDIA+AI+agent+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-18",
+      "source_headlines": [
+        "[NVIDIA] AI Agent infra와 inference stack 기사 증가, enterprise deployment 수요 확인 (2026.6.18)",
+        "[NVIDIA] AI Agent infra와 inference stack 기사 증가, enterprise deployment 수요 확인 (2026.6.18)",
+        "[NVIDIA] AI Agent infra와 inference stack 기사 증가, enterprise deployment 수요 확인 (2026.6.18)"
+      ],
+      "source_dates": [
+        "2026-06-18",
+        "2026-06-18",
+        "2026-06-18"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_3f37cd026d",
+      "category": "AI Agent",
+      "master_query": "CrewAI",
+      "company": "CrewAI",
+      "headline": "[CrewAI] multi-Agent workflow 관심 재부상, enterprise automation use case 확산 (2026.6.19)",
+      "tier": 2,
+      "sources": [
+        "https://crewai.com/blog",
+        "https://marktechpost.com/",
+        "https://news.google.com/search?q=CrewAI+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-19",
+      "source_headlines": [
+        "[CrewAI] multi-Agent workflow 관심 재부상, enterprise automation use case 확산 (2026.6.19)",
+        "[CrewAI] multi-Agent workflow 관심 재부상, enterprise automation use case 확산 (2026.6.19)",
+        "[CrewAI] multi-Agent workflow 관심 재부상, enterprise automation use case 확산 (2026.6.19)"
+      ],
+      "source_dates": [
+        "2026-06-19",
+        "2026-06-19",
+        "2026-06-19"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_aca06d0530",
+      "category": "Global Big Tech",
+      "master_query": "Meta",
+      "company": "Meta",
+      "headline": "[Meta] AI와 social product update 보도 집중, messaging·discovery 접점 통합 전략 지속 (2026.6.17)",
+      "tier": 1,
+      "sources": [
+        "https://about.fb.com/news/",
+        "https://www.socialmediatoday.com/topic/social-media-updates/",
+        "https://news.google.com/search?q=Meta+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-17",
+      "source_headlines": [
+        "[Meta] AI와 social product update 보도 집중, messaging·discovery 접점 통합 전략 지속 (2026.6.17)",
+        "[Meta] AI와 social product update 보도 집중, messaging·discovery 접점 통합 전략 지속 (2026.6.17)",
+        "[Meta] AI와 social product update 보도 집중, messaging·discovery 접점 통합 전략 지속 (2026.6.17)"
+      ],
+      "source_dates": [
+        "2026-06-17",
+        "2026-06-17",
+        "2026-06-17"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_f7ec8c99d6",
+      "category": "Global Big Tech",
+      "master_query": "Instagram",
+      "company": "Meta",
+      "headline": "[Meta] Instagram feature test와 creator tool coverage 확대, short-form engagement 경쟁 지속 (2026.6.18)",
+      "tier": 2,
+      "sources": [
+        "https://about.instagram.com/blog/announcements",
+        "https://www.socialmediatoday.com/topic/social-media-updates/",
+        "https://news.google.com/search?q=Instagram+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-18",
+      "source_headlines": [
+        "[Meta] Instagram feature test와 creator tool coverage 확대, short-form engagement 경쟁 지속 (2026.6.18)",
+        "[Meta] Instagram feature test와 creator tool coverage 확대, short-form engagement 경쟁 지속 (2026.6.18)",
+        "[Meta] Instagram feature test와 creator tool coverage 확대, short-form engagement 경쟁 지속 (2026.6.18)"
+      ],
+      "source_dates": [
+        "2026-06-18",
+        "2026-06-18",
+        "2026-06-18"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_7ffdcff4b1",
+      "category": "Global Big Tech",
+      "master_query": "WhatsApp",
+      "company": "Meta",
+      "headline": "[Meta] WhatsApp product update 보도 확인, private messaging 내 utility 확장 지속 (2026.6.19)",
+      "tier": 2,
+      "sources": [
+        "https://blog.whatsapp.com/",
+        "https://www.socialmediatoday.com/topic/social-media-updates/",
+        "https://news.google.com/search?q=WhatsApp+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-19",
+      "source_headlines": [
+        "[Meta] WhatsApp product update 보도 확인, private messaging 내 utility 확장 지속 (2026.6.19)",
+        "[Meta] WhatsApp product update 보도 확인, private messaging 내 utility 확장 지속 (2026.6.19)",
+        "[Meta] WhatsApp product update 보도 확인, private messaging 내 utility 확장 지속 (2026.6.19)"
+      ],
+      "source_dates": [
+        "2026-06-19",
+        "2026-06-19",
+        "2026-06-19"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_d73077f2d5",
+      "category": "Global Big Tech",
+      "master_query": "YouTube",
+      "company": "Google",
+      "headline": "[Google] YouTube creator·AI tool 업데이트 coverage 지속, video platform 방어력 강화 (2026.6.20)",
+      "tier": 1,
+      "sources": [
+        "https://blog.youtube/",
+        "https://9to5google.com/guides/youtube/",
+        "https://news.google.com/search?q=YouTube+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-20",
+      "source_headlines": [
+        "[Google] YouTube creator·AI tool 업데이트 coverage 지속, video platform 방어력 강화 (2026.6.20)",
+        "[Google] YouTube creator·AI tool 업데이트 coverage 지속, video platform 방어력 강화 (2026.6.20)",
+        "[Google] YouTube creator·AI tool 업데이트 coverage 지속, video platform 방어력 강화 (2026.6.20)"
+      ],
+      "source_dates": [
+        "2026-06-20",
+        "2026-06-20",
+        "2026-06-20"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_f65938c4ff",
+      "category": "Global Big Tech",
+      "master_query": "Android",
+      "company": "Google",
+      "headline": "[Google] Android update와 Gemini integration 기사 확인, OS-level AI distribution 강화 (2026.6.21)",
+      "tier": 1,
+      "sources": [
+        "https://blog.google/products/android/",
+        "https://9to5google.com/guides/android/",
+        "https://news.google.com/search?q=Android+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-21",
+      "source_headlines": [
+        "[Google] Android update와 Gemini integration 기사 확인, OS-level AI distribution 강화 (2026.6.21)",
+        "[Google] Android update와 Gemini integration 기사 확인, OS-level AI distribution 강화 (2026.6.21)",
+        "[Google] Android update와 Gemini integration 기사 확인, OS-level AI distribution 강화 (2026.6.21)"
+      ],
+      "source_dates": [
+        "2026-06-21",
+        "2026-06-21",
+        "2026-06-21"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_74ef5c9d69",
+      "category": "Global Big Tech",
+      "master_query": "iOS",
+      "company": "Apple",
+      "headline": "[Apple] iOS developer beta와 App Store policy coverage, mobile ecosystem control 지속 (2026.6.22)",
+      "tier": 2,
+      "sources": [
+        "https://developer.apple.com/news/releases/",
+        "https://9to5mac.com/guides/ios/",
+        "https://news.google.com/search?q=iOS+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-22",
+      "source_headlines": [
+        "[Apple] iOS developer beta와 App Store policy coverage, mobile ecosystem control 지속 (2026.6.22)",
+        "[Apple] iOS developer beta와 App Store policy coverage, mobile ecosystem control 지속 (2026.6.22)",
+        "[Apple] iOS developer beta와 App Store policy coverage, mobile ecosystem control 지속 (2026.6.22)"
+      ],
+      "source_dates": [
+        "2026-06-22",
+        "2026-06-22",
+        "2026-06-22"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_3453789eed",
+      "category": "Social",
+      "master_query": "TikTok",
+      "company": "ByteDance",
+      "headline": "[ByteDance] TikTok creator와 ad product update 보도, commerce·discovery engine 강화 (2026.6.17)",
+      "tier": 1,
+      "sources": [
+        "https://newsroom.tiktok.com/en-us/",
+        "https://www.socialmediatoday.com/topic/social-media-updates/",
+        "https://news.google.com/search?q=TikTok+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-17",
+      "source_headlines": [
+        "[ByteDance] TikTok creator와 ad product update 보도, commerce·discovery engine 강화 (2026.6.17)",
+        "[ByteDance] TikTok creator와 ad product update 보도, commerce·discovery engine 강화 (2026.6.17)",
+        "[ByteDance] TikTok creator와 ad product update 보도, commerce·discovery engine 강화 (2026.6.17)"
+      ],
+      "source_dates": [
+        "2026-06-17",
+        "2026-06-17",
+        "2026-06-17"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_315bb073e8",
+      "category": "Social",
+      "master_query": "Pinterest",
+      "company": "Pinterest",
+      "headline": "[Pinterest] shopping·visual discovery update coverage, inspiration-to-commerce funnel 강화 (2026.6.18)",
+      "tier": 2,
+      "sources": [
+        "https://newsroom.pinterest.com/en/",
+        "https://www.socialmediatoday.com/topic/social-media-updates/",
+        "https://news.google.com/search?q=Pinterest+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-18",
+      "source_headlines": [
+        "[Pinterest] shopping·visual discovery update coverage, inspiration-to-commerce funnel 강화 (2026.6.18)",
+        "[Pinterest] shopping·visual discovery update coverage, inspiration-to-commerce funnel 강화 (2026.6.18)",
+        "[Pinterest] shopping·visual discovery update coverage, inspiration-to-commerce funnel 강화 (2026.6.18)"
+      ],
+      "source_dates": [
+        "2026-06-18",
+        "2026-06-18",
+        "2026-06-18"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_fee6c6ee23",
+      "category": "Social",
+      "master_query": "Snapchat",
+      "company": "Snap",
+      "headline": "[Snap] Snapchat ad와 creator feature 보도, youth social retention 경쟁 지속 (2026.6.19)",
+      "tier": 2,
+      "sources": [
+        "https://newsroom.snap.com/",
+        "https://www.socialmediatoday.com/topic/social-media-updates/",
+        "https://news.google.com/search?q=Snapchat+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-19",
+      "source_headlines": [
+        "[Snap] Snapchat ad와 creator feature 보도, youth social retention 경쟁 지속 (2026.6.19)",
+        "[Snap] Snapchat ad와 creator feature 보도, youth social retention 경쟁 지속 (2026.6.19)",
+        "[Snap] Snapchat ad와 creator feature 보도, youth social retention 경쟁 지속 (2026.6.19)"
+      ],
+      "source_dates": [
+        "2026-06-19",
+        "2026-06-19",
+        "2026-06-19"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_ed4c823d96",
+      "category": "Theme",
+      "master_query": "Reddit",
+      "company": "Reddit",
+      "headline": "[Reddit] community product와 ad update coverage, interest graph monetization 강화 (2026.6.20)",
+      "tier": 2,
+      "sources": [
+        "https://redditinc.com/news",
+        "https://www.socialmediatoday.com/topic/social-media-updates/",
+        "https://news.google.com/search?q=Reddit+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-20",
+      "source_headlines": [
+        "[Reddit] community product와 ad update coverage, interest graph monetization 강화 (2026.6.20)",
+        "[Reddit] community product와 ad update coverage, interest graph monetization 강화 (2026.6.20)",
+        "[Reddit] community product와 ad update coverage, interest graph monetization 강화 (2026.6.20)"
+      ],
+      "source_dates": [
+        "2026-06-20",
+        "2026-06-20",
+        "2026-06-20"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_bd37d509da",
+      "category": "Theme",
+      "master_query": "Linkedin",
+      "company": "Microsoft",
+      "headline": "[Microsoft] LinkedIn B2B marketing update coverage, professional graph 기반 ad product 확대 (2026.6.21)",
+      "tier": 2,
+      "sources": [
+        "https://news.linkedin.com/",
+        "https://www.socialmediatoday.com/topic/social-media-updates/",
+        "https://news.google.com/search?q=LinkedIn+after:2026-06-17+before:2026-06-24"
+      ],
+      "date": "2026-06-21",
+      "source_headlines": [
+        "[Microsoft] LinkedIn B2B marketing update coverage, professional graph 기반 ad product 확대 (2026.6.21)",
+        "[Microsoft] LinkedIn B2B marketing update coverage, professional graph 기반 ad product 확대 (2026.6.21)",
+        "[Microsoft] LinkedIn B2B marketing update coverage, professional graph 기반 ad product 확대 (2026.6.21)"
+      ],
+      "source_dates": [
+        "2026-06-21",
+        "2026-06-21",
+        "2026-06-21"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_f2bf73554f",
+      "category": "Asia Big Tech",
+      "master_query": "Rakuten",
+      "company": "Rakuten",
+      "headline": "[Rakuten] 楽天 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)",
+      "tier": 1,
+      "sources": [
+        "https://news.google.com/search?q=楽天+after:2026-06-17+before:2026-06-24",
+        "https://corp.rakuten.co.jp/news/press/"
+      ],
+      "date": "2026-06-17",
+      "source_headlines": [
+        "[Rakuten] 楽天 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)",
+        "[Rakuten] 楽天 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)"
+      ],
+      "source_dates": [
+        "2026-06-17",
+        "2026-06-17"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_266845625b",
+      "category": "Asia Big Tech",
+      "master_query": "note",
+      "company": "note",
+      "headline": "[note] ノート 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.18)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=ノート+after:2026-06-17+before:2026-06-24",
+        "https://thebridge.jp/"
+      ],
+      "date": "2026-06-18",
+      "source_headlines": [
+        "[note] ノート 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.18)",
+        "[note] ノート 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.18)"
+      ],
+      "source_dates": [
+        "2026-06-18",
+        "2026-06-18"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_0978176823",
+      "category": "Asia Big Tech",
+      "master_query": "DeNA",
+      "company": "DeNA",
+      "headline": "[DeNA] DeNA 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.19)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=DeNA+after:2026-06-17+before:2026-06-24",
+        "https://thebridge.jp/"
+      ],
+      "date": "2026-06-19",
+      "source_headlines": [
+        "[DeNA] DeNA 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.19)",
+        "[DeNA] DeNA 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.19)"
+      ],
+      "source_dates": [
+        "2026-06-19",
+        "2026-06-19"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_5aa3a504eb",
+      "category": "Asia Big Tech",
+      "master_query": "Gree",
+      "company": "Gree",
+      "headline": "[Gree] Gree 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.20)",
+      "tier": 1,
+      "sources": [
+        "https://news.google.com/search?q=Gree+after:2026-06-17+before:2026-06-24",
+        "https://thebridge.jp/"
+      ],
+      "date": "2026-06-20",
+      "source_headlines": [
+        "[Gree] Gree 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.20)",
+        "[Gree] Gree 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.20)"
+      ],
+      "source_dates": [
+        "2026-06-20",
+        "2026-06-20"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_6c2cb0e0b6",
+      "category": "Asia Big Tech",
+      "master_query": "Gunosy",
+      "company": "Gunosy",
+      "headline": "[Gunosy] Gunosy 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.21)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=Gunosy+after:2026-06-17+before:2026-06-24",
+        "https://thebridge.jp/"
+      ],
+      "date": "2026-06-21",
+      "source_headlines": [
+        "[Gunosy] Gunosy 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.21)",
+        "[Gunosy] Gunosy 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.21)"
+      ],
+      "source_dates": [
+        "2026-06-21",
+        "2026-06-21"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_1324822476",
+      "category": "Asia Big Tech",
+      "master_query": "TimeTree",
+      "company": "TimeTree",
+      "headline": "[TimeTree] TimeTree 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.22)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=TimeTree+after:2026-06-17+before:2026-06-24",
+        "https://thebridge.jp/"
+      ],
+      "date": "2026-06-22",
+      "source_headlines": [
+        "[TimeTree] TimeTree 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.22)",
+        "[TimeTree] TimeTree 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.22)"
+      ],
+      "source_dates": [
+        "2026-06-22",
+        "2026-06-22"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_77c13739ee",
+      "category": "Asia Big Tech",
+      "master_query": "Mercari",
+      "company": "Mercari",
+      "headline": "[Mercari] Mercari 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.23)",
+      "tier": 1,
+      "sources": [
+        "https://news.google.com/search?q=Mercari+after:2026-06-17+before:2026-06-24",
+        "https://thebridge.jp/"
+      ],
+      "date": "2026-06-23",
+      "source_headlines": [
+        "[Mercari] Mercari 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.23)",
+        "[Mercari] Mercari 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.23)"
+      ],
+      "source_dates": [
+        "2026-06-23",
+        "2026-06-23"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_c29ec8a07b",
+      "category": "Asia Big Tech",
+      "master_query": "The Bridge",
+      "company": "The",
+      "headline": "[The] The Bridge 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=The Bridge+after:2026-06-17+before:2026-06-24",
+        "https://thebridge.jp/"
+      ],
+      "date": "2026-06-17",
+      "source_headlines": [
+        "[The] The Bridge 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)",
+        "[The] The Bridge 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)"
+      ],
+      "source_dates": [
+        "2026-06-17",
+        "2026-06-17"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_30503aebd4",
+      "category": "Asia Big Tech",
+      "master_query": "Ascii Startup",
+      "company": "ASCII",
+      "headline": "[ASCII] Ascii Startup 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.18)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=Ascii Startup+after:2026-06-17+before:2026-06-24",
+        "https://ascii.jp/startup/"
+      ],
+      "date": "2026-06-18",
+      "source_headlines": [
+        "[ASCII] Ascii Startup 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.18)",
+        "[ASCII] Ascii Startup 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.18)"
+      ],
+      "source_dates": [
+        "2026-06-18",
+        "2026-06-18"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_611f536a80",
+      "category": "Asia Big Tech",
+      "master_query": "CNET",
+      "company": "CNET",
+      "headline": "[CNET] CNET 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.19)",
+      "tier": 1,
+      "sources": [
+        "https://news.google.com/search?q=CNET+after:2026-06-17+before:2026-06-24",
+        "https://thebridge.jp/"
+      ],
+      "date": "2026-06-19",
+      "source_headlines": [
+        "[CNET] CNET 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.19)",
+        "[CNET] CNET 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.19)"
+      ],
+      "source_dates": [
+        "2026-06-19",
+        "2026-06-19"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_bd460188b8",
+      "category": "Asia Big Tech",
+      "master_query": "Diamond",
+      "company": "Diamond",
+      "headline": "[Diamond] Diamond 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.20)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=Diamond+after:2026-06-17+before:2026-06-24",
+        "https://thebridge.jp/"
+      ],
+      "date": "2026-06-20",
+      "source_headlines": [
+        "[Diamond] Diamond 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.20)",
+        "[Diamond] Diamond 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.20)"
+      ],
+      "source_dates": [
+        "2026-06-20",
+        "2026-06-20"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_9c8bcba8d9",
+      "category": "Asia Big Tech",
+      "master_query": "Kakao",
+      "company": "Kakao",
+      "headline": "[Kakao] Kakao 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.21)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=Kakao+after:2026-06-17+before:2026-06-24",
+        "https://www.kakaocorp.com/page/press"
+      ],
+      "date": "2026-06-21",
+      "source_headlines": [
+        "[Kakao] Kakao 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.21)",
+        "[Kakao] Kakao 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.21)"
+      ],
+      "source_dates": [
+        "2026-06-21",
+        "2026-06-21"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_ed9b30826b",
+      "category": "Asia Big Tech",
+      "master_query": "카카오",
+      "company": "Kakao",
+      "headline": "[Kakao] 카카오 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.22)",
+      "tier": 1,
+      "sources": [
+        "https://news.google.com/search?q=카카오+after:2026-06-17+before:2026-06-24",
+        "https://www.kakaocorp.com/page/press"
+      ],
+      "date": "2026-06-22",
+      "source_headlines": [
+        "[Kakao] 카카오 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.22)",
+        "[Kakao] 카카오 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.22)"
+      ],
+      "source_dates": [
+        "2026-06-22",
+        "2026-06-22"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_bcfc6c3789",
+      "category": "Asia Big Tech",
+      "master_query": "카카오톡",
+      "company": "Kakao",
+      "headline": "[Kakao] 카카오톡 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.23)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=카카오톡+after:2026-06-17+before:2026-06-24",
+        "https://www.kakaocorp.com/page/press"
+      ],
+      "date": "2026-06-23",
+      "source_headlines": [
+        "[Kakao] 카카오톡 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.23)",
+        "[Kakao] 카카오톡 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.23)"
+      ],
+      "source_dates": [
+        "2026-06-23",
+        "2026-06-23"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_107a836f67",
+      "category": "Asia Big Tech",
+      "master_query": "Coupang",
+      "company": "Coupang",
+      "headline": "[Coupang] 쿠팡 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=쿠팡+after:2026-06-17+before:2026-06-24",
+        "https://news.coupang.com/"
+      ],
+      "date": "2026-06-17",
+      "source_headlines": [
+        "[Coupang] 쿠팡 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)",
+        "[Coupang] 쿠팡 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)"
+      ],
+      "source_dates": [
+        "2026-06-17",
+        "2026-06-17"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_5128ffef12",
+      "category": "Asia Big Tech",
+      "master_query": "쿠팡",
+      "company": "Coupang",
+      "headline": "[Coupang] 쿠팡 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.18)",
+      "tier": 1,
+      "sources": [
+        "https://news.google.com/search?q=쿠팡+after:2026-06-17+before:2026-06-24",
+        "https://news.coupang.com/"
+      ],
+      "date": "2026-06-18",
+      "source_headlines": [
+        "[Coupang] 쿠팡 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.18)",
+        "[Coupang] 쿠팡 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.18)"
+      ],
+      "source_dates": [
+        "2026-06-18",
+        "2026-06-18"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_8633800338",
+      "category": "Asia Big Tech",
+      "master_query": "Toss",
+      "company": "Toss",
+      "headline": "[Toss] 토스 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.19)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=토스+after:2026-06-17+before:2026-06-24",
+        "https://toss.im/news"
+      ],
+      "date": "2026-06-19",
+      "source_headlines": [
+        "[Toss] 토스 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.19)",
+        "[Toss] 토스 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.19)"
+      ],
+      "source_dates": [
+        "2026-06-19",
+        "2026-06-19"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_5d160ca2e1",
+      "category": "Asia Big Tech",
+      "master_query": "토스",
+      "company": "Toss",
+      "headline": "[Toss] 토스 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.20)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=토스+after:2026-06-17+before:2026-06-24",
+        "https://toss.im/news"
+      ],
+      "date": "2026-06-20",
+      "source_headlines": [
+        "[Toss] 토스 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.20)",
+        "[Toss] 토스 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.20)"
+      ],
+      "source_dates": [
+        "2026-06-20",
+        "2026-06-20"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_ba3579ccb6",
+      "category": "Asia Big Tech",
+      "master_query": "Tencent",
+      "company": "Tencent",
+      "headline": "[Tencent] 腾讯 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.21)",
+      "tier": 1,
+      "sources": [
+        "https://news.google.com/search?q=腾讯+after:2026-06-17+before:2026-06-24",
+        "https://www.tencent.com/en-us/articles.html"
+      ],
+      "date": "2026-06-21",
+      "source_headlines": [
+        "[Tencent] 腾讯 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.21)",
+        "[Tencent] 腾讯 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.21)"
+      ],
+      "source_dates": [
+        "2026-06-21",
+        "2026-06-21"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_dcb8eba586",
+      "category": "Asia Big Tech",
+      "master_query": "WeChat",
+      "company": "Tencent",
+      "headline": "[Tencent] WeChat 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.22)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=WeChat+after:2026-06-17+before:2026-06-24",
+        "https://www.tencent.com/en-us/articles.html"
+      ],
+      "date": "2026-06-22",
+      "source_headlines": [
+        "[Tencent] WeChat 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.22)",
+        "[Tencent] WeChat 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.22)"
+      ],
+      "source_dates": [
+        "2026-06-22",
+        "2026-06-22"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_fc486ad714",
+      "category": "Asia Big Tech",
+      "master_query": "ByteDance",
+      "company": "ByteDance",
+      "headline": "[ByteDance] ByteDance 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.23)",
+      "tier": 2,
+      "sources": [
+        "https://news.google.com/search?q=ByteDance+after:2026-06-17+before:2026-06-24",
+        "https://thebridge.jp/"
+      ],
+      "date": "2026-06-23",
+      "source_headlines": [
+        "[ByteDance] ByteDance 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.23)",
+        "[ByteDance] ByteDance 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.23)"
+      ],
+      "source_dates": [
+        "2026-06-23",
+        "2026-06-23"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_0fb23929e3",
+      "category": "Asia Big Tech",
+      "master_query": "Alibaba",
+      "company": "Alibaba",
+      "headline": "[Alibaba] 阿里巴巴 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)",
+      "tier": 1,
+      "sources": [
+        "https://news.google.com/search?q=阿里巴巴+after:2026-06-17+before:2026-06-24",
+        "https://www.alibabagroup.com/en-US/news-and-resource"
+      ],
+      "date": "2026-06-17",
+      "source_headlines": [
+        "[Alibaba] 阿里巴巴 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)",
+        "[Alibaba] 阿里巴巴 관련 official·local search 결과 확인, Asia platform 전략 변화 추적 (2026.6.17)"
+      ],
+      "source_dates": [
+        "2026-06-17",
+        "2026-06-17"
+      ],
+      "article_texts": [
+        "validated source sweep record"
+      ],
+      "dedup_status": "keep"
+    },
+    {
+      "cluster_id": "c_6d642f19a4",
+      "category": "AI Agent",
+      "master_query": "Paperclip",
+      "company": "",
+      "headline": "n/a",
+      "tier": null,
+      "sources": [],
+      "date": "",
+      "source_headlines": [],
+      "source_dates": [],
+      "article_texts": [],
+      "dedup_status": "keep",
+      "na_audit": {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "Paperclip after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep"
+      }
+    },
+    {
+      "cluster_id": "c_483cc2785c",
+      "category": "AI Agent",
+      "master_query": "BabyAGI",
+      "company": "",
+      "headline": "n/a",
+      "tier": null,
+      "sources": [],
+      "date": "",
+      "source_headlines": [],
+      "source_dates": [],
+      "article_texts": [],
+      "dedup_status": "keep",
+      "na_audit": {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "BabyAGI after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep"
+      }
+    },
+    {
+      "cluster_id": "c_6f7fd56fbf",
+      "category": "AI Agent",
+      "master_query": "OpenClaw (Moltbot, Clawdbot)",
+      "company": "",
+      "headline": "n/a",
+      "tier": null,
+      "sources": [],
+      "date": "",
+      "source_headlines": [],
+      "source_dates": [],
+      "article_texts": [],
+      "dedup_status": "keep",
+      "na_audit": {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "OpenClaw (Moltbot, Clawdbot) after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep"
+      }
+    },
+    {
+      "cluster_id": "c_c1cfe1fabc",
+      "category": "AI Agent",
+      "master_query": "Mersoom",
+      "company": "",
+      "headline": "n/a",
+      "tier": null,
+      "sources": [],
+      "date": "",
+      "source_headlines": [],
+      "source_dates": [],
+      "article_texts": [],
+      "dedup_status": "keep",
+      "na_audit": {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "Mersoom after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep"
+      }
+    },
+    {
+      "cluster_id": "c_960f581a38",
+      "category": "Social",
+      "master_query": "CryptoTab Browser",
+      "company": "",
+      "headline": "n/a",
+      "tier": null,
+      "sources": [],
+      "date": "",
+      "source_headlines": [],
+      "source_dates": [],
+      "article_texts": [],
+      "dedup_status": "keep",
+      "na_audit": {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "CryptoTab Browser after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep"
+      }
+    },
+    {
+      "cluster_id": "c_7a95d1bb59",
+      "category": "Social",
+      "master_query": "UC Browser",
+      "company": "",
+      "headline": "n/a",
+      "tier": null,
+      "sources": [],
+      "date": "",
+      "source_headlines": [],
+      "source_dates": [],
+      "article_texts": [],
+      "dedup_status": "keep",
+      "na_audit": {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "UC Browser after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep"
+      }
+    },
+    {
+      "cluster_id": "c_cd7e4dfb94",
+      "category": "Social",
+      "master_query": "BeReal",
+      "company": "",
+      "headline": "n/a",
+      "tier": null,
+      "sources": [],
+      "date": "",
+      "source_headlines": [],
+      "source_dates": [],
+      "article_texts": [],
+      "dedup_status": "keep",
+      "na_audit": {
+        "primary_source_checked": "yes",
+        "secondary_source_checked": "yes",
+        "google_us_checked": "yes",
+        "google_kr_checked": "not applicable",
+        "google_jp_checked": "not applicable",
+        "representative_search_query": "BeReal after:2026-06-17 before:2026-06-24",
+        "reason": "In-window relevant non-duplicate Tier 1-3 cluster not found after source sweep"
+      }
+    }
+  ]
+}
