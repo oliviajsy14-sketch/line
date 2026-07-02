@@ -1,0 +1,1248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Tech News Research Agent: Combined Runbook</title>
+<style>
+:root{color-scheme:light;--bg:#f6f8fb;--paper:#fff;--ink:#172033;--muted:#5f6b7a;--line:#d9e1ec;--accent:#2563eb;--code:#0f172a}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#eef4ff 0,#f8fafc 260px);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}.page{max-width:1100px;margin:0 auto;padding:32px 18px 64px}.document{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 50px rgba(15,23,42,.08);padding:clamp(24px,5vw,56px)}.eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.08;margin:.25rem 0 1rem}h2{border-top:1px solid var(--line);padding-top:1.4rem;margin-top:2.4rem}h3{margin-top:1.8rem}h4,h5,h6{margin-top:1.4rem}p{margin:1rem 0}a{color:var(--accent);text-decoration-thickness:.08em;text-underline-offset:.18em}blockquote{margin:1.4rem 0;padding:1rem 1.2rem;border-left:4px solid var(--accent);background:#f1f6ff;border-radius:0 12px 12px 0;color:#243449}code{background:#eef2f7;border:1px solid #dbe3ee;border-radius:6px;padding:.12rem .35rem;font-size:.92em}pre{overflow:auto;background:var(--code);color:#e5edf8;border-radius:14px;padding:1rem 1.1rem;line-height:1.5}pre code{background:transparent;border:0;color:inherit;padding:0}ul,ol{padding-left:1.5rem}li{margin:.35rem 0}hr{border:0;border-top:1px solid var(--line);margin:2rem 0}.table-wrap{overflow-x:auto;margin:1.4rem 0}table{width:100%;border-collapse:collapse;min-width:640px}th,td{border:1px solid var(--line);padding:.75rem;text-align:left;vertical-align:top}th{background:#f3f7fc}img{max-width:100%;height:auto;border-radius:12px}.meta{color:var(--muted);margin-bottom:2rem}@media(max-width:700px){.page{padding:14px 10px 40px}.document{border-radius:14px;padding:20px 16px}body{font-size:15px}pre{margin-left:-4px;margin-right:-4px}table{min-width:560px}}@media print{body{background:#fff}.page{max-width:none;padding:0}.document{box-shadow:none;border:0;border-radius:0}a{color:#000}}
+</style>
+</head><body><main class="page"><article class="document"><div class="eyebrow">Rendered Markdown</div><div class="meta">Source: weekly_news_research_agent_RUNBOOK (1).md</div><h1 id="weekly-tech-news-research-agent-combined-runbook">Weekly Tech News Research Agent: Combined Runbook</h1>
+<p>You are the executing agent. When you are asked to run the weekly pipeline for a date range, follow this runbook end to end: collect that week's real news and write the two output files in Section 1 (the HTML report and the JSON data file). This file is your instructions, not the report itself. Section 0 says exactly what a run does.</p>
+<p><strong>Purpose.</strong> In one run, for a fixed list of master queries grouped into six categories over a given week, collect news article links from primary sources, Google News, and secondary sources (trusted news sites); group links covering the same event into clusters; render each cluster as one row (category, master query, a formatted headline, a clickable selection checkbox, and up to three source links) in a self-contained HTML report; and remove any story already covered last week.</p>
+<p>The pipeline runs in seven phases (0 to 6): set up the run, collect and headline from primary sources, then secondary sources, then Google News, arrange each master query's stories by tier, mark empty queries n/a, and drop repeats. Headlines are written during collection, one per cluster. Collection uses the <code>web_search</code> and <code>web_fetch</code> tools. The deliverable is one self-contained <code>report_{since}_{until}.html</code>, rendered from a machine-readable <code>data_{since}_{until}.json</code> that also serves as next week's dedup memory; both are written by Python. See Section 0 for how to run it on Claude Code.</p>
+<blockquote><p>This runbook merges two prior specs into one. The master query list comes from the canonical runbook; the per-query source maps in Section 4 are the union of both specs' links (deduped). The procedure has since been rearranged into the seven-phase flow in Section 4, and Section 3d defines the four-tier classification. There is one Query List, one HTML report, and one JSON data file. Weekly and Global are <strong>not</strong> split.</p></blockquote>
+<hr>
+<h2 id="0-how-to-run-on-claude-code">0. How to run on Claude Code</h2>
+<h3 id="what-a-run-produces-read-this-first">What a run produces (read this first)</h3>
+<p>Running this runbook is an action, not a document conversion. When you are asked to run it for a date range, you collect that week's real news with <code>web_search</code> and <code>web_fetch</code>, follow Phases 0 to 6, and write two files:</p>
+<ul>
+<li><code>./output/report_{since}_{until}.html</code>: the deliverable the desk reads. You build it by filling the ready-made template in Section 6 with this week's stories.
+</li>
+<li><code>./output/data_{since}_{until}.json</code>: the machine-readable records, and next week's dedup memory.
+</li></ul>
+<p>Do not convert this runbook itself into HTML. This file is the instructions; the report is generated from collected news. If you find yourself turning these section titles (<code>0. How to run</code>, <code>1. Output</code>, <code>2. Headline format</code>, and so on) into a web page, stop, that is the wrong output.</p>
+<h3 id="invocation">Invocation</h3>
+<ol>
+<li>Put this file and its helper folders in one project directory, then start Claude Code in that directory.
+</li>
+<li>Run it one of two ways:
+<ul>
+<li>Slash command: <code>/weekly-news &lt;since&gt; &lt;until&gt;</code> (for example <code>/weekly-news 2026-06-17 2026-06-23</code>). The command file is at <code>.claude/commands/weekly-news.md</code>.
+</li>
+<li>Or just tell Claude Code: "Execute this runbook for &lt;since&gt; to &lt;until&gt;."
+</li></ul>
+</li>
+<li>If you pass no dates, use the <code>time_period</code> in Section 3a. Dates are inclusive.
+</li>
+<li>Date input: ISO <code>YYYY-MM-DD</code> is canonical. A human may also type the range as <code>yyyy.m.d~yyyy.m.d</code> (no zero-padding, no slashes, for example <code>2026.6.17~2026.6.23</code>); normalize it to ISO before use. Inclusive both ends; do not extend past the end date.
+</li>
+<li>Optional: rename this file to <code>CLAUDE.md</code> so Claude Code auto-loads it as context every session.
+</li></ol>
+<h3 id="weekly-run-command">Weekly run command</h3>
+<p>For a one-line weekly run, create <code>.claude/commands/weekly-news.md</code> with the text below, then each week run <code>/weekly-news 2026-06-17 2026-06-23</code> with your dates.</p>
+<pre><code class="language-text">Execute the runbook in this project (the Weekly Tech News Research Agent) for the dates: $ARGUMENTS.
+Treat $ARGUMENTS as &quot;&lt;since&gt; &lt;until&gt;&quot; in ISO YYYY-MM-DD, inclusive of both ends.
+Collect that week&#x27;s news, follow Phases 0 to 6, and write ./output/report_&lt;since&gt;_&lt;until&gt;.html and ./output/data_&lt;since&gt;_&lt;until&gt;.json.
+Do NOT convert this runbook to HTML. Generate the report from collected news by filling the Section 6 template.</code></pre>
+<h3 id="tools-you-use">Tools you use</h3>
+<ul>
+<li><strong>Collection (no live browser).</strong> Use <code>web_search</code> and <code>web_fetch</code>. You cannot drive Google News in a real browser, so map the browser steps to:
+<ul>
+<li>Google News RSS per edition (date-filterable, returns clean article lists). Fetch each with <code>web_fetch</code>:
+<ul>
+<li>US / en: <code>https://news.google.com/rss/search?q={QUERY}+after:{since}+before:{until_plus_1}&amp;hl=en-US&amp;gl=US&amp;ceid=US:en</code>
+</li>
+<li>KR / ko: same URL with <code>hl=ko&amp;gl=KR&amp;ceid=KR:ko</code>
+</li>
+<li>JP / ja: same URL with <code>hl=ja&amp;gl=JP&amp;ceid=JP:ja</code>
+</li>
+<li><code>before:</code> is exclusive, so pass <code>until + 1 day</code>. URL-encode the query (Korean and Japanese names included).
+</li>
+<li>RSS items are Google redirect links. <strong>Efficiency: do not resolve every redirect.</strong> Cluster and dedup on the RSS titles/snippets first, then resolve to the real publisher URL only for the links you actually keep, so the URL cells hold real article links.
+</li></ul>
+</li>
+<li><code>web_fetch</code> on the Phase 1 source pages (newsrooms, blogs, GitHub releases, changelogs) listed in Section 4.
+</li>
+<li><code>web_search</code> as the fallback, and for the Phase 2 secondary sites, using <code>site:</code> filters plus the date window in the query.
+</li>
+<li>This is best-effort. Note what each query actually returned.
+</li></ul>
+</li>
+<li><strong>Report and data I/O.</strong> Write a Python script (run with bash) that builds the two output files in Section 1: the machine-readable <code>data_{since}_{until}.json</code> (one record per cluster) and the self-contained <code>report_{since}_{until}.html</code> rendered from it. No Excel, no <code>openpyxl</code>. The HTML is one file with inline CSS and JS, declares <code>&lt;meta charset="utf-8"&gt;</code>, and uses a CJK-capable font stack so Korean and Japanese render. Build <code>report.html</code> from the Section 6 template by replacing only its <code>#report-data</code> JSON block; do not hand-write the page. The template inserts every value with <code>textContent</code>/<code>href</code> and reads data as JSON, so quotes, brackets, and <code>&amp;</code> are handled for you.
+</li>
+<li><strong>Filesystem.</strong> Keep all working state in the project directory.
+</li></ul>
+<h3 id="files-and-i-o-contract">Files and I/O contract</h3>
+<ul>
+<li>Deliverable: <code>./output/report_{since}_{until}.html</code>, one self-contained HTML file (Section 1a).
+</li>
+<li>Data file: <code>./output/data_{since}_{until}.json</code>, one record per cluster (Section 1b). The report is rendered from this, and it is also the dedup memory.
+</li>
+<li>Archive: after the run, copy the data file to <code>./archive/data_{since}_{until}.json</code>.
+</li>
+<li>Previous week: Phase 6 reads <code>previous_week.data_path</code> (Section 3a), the prior week's archived data file. If it does not exist, skip the repetition drop and note it.
+</li>
+<li>Selections: the desk ticks rows in the report; ticks autosave in the browser, and an "Export selections" button downloads <code>selections_{since}_{until}.json</code> for a later step. No fixed schema yet (Section 1a).
+</li>
+<li>Create <code>./output/</code> and <code>./archive/</code> if missing.
+</li></ul>
+<h3 id="execution-loop">Execution loop</h3>
+<ul>
+<li>Process one category at a time, fully through Phases 0 to 6, before the next. Order: AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme.
+</li>
+<li>After each category, append its cluster records to <code>data_{since}_{until}.json</code>, so a crash is recoverable. Render the HTML report once at the end from the full data file.
+</li>
+<li>Do not fabricate URLs, dates, or headlines. A paywalled article is a lead only; prefer an accessible source for the same event.
+</li>
+<li>Apply the house-style rules in Section 2 to every headline.
+</li></ul>
+<hr>
+<h2 id="1-output">1. Output</h2>
+<p>Two files: the HTML report (the deliverable) and the JSON data file (machine-readable record and dedup memory).</p>
+<h3 id="1a-html-report-the-deliverable">1a. HTML report (the deliverable)</h3>
+<p>One self-contained file, <code>./output/report_{since}_{until}.html</code>: inline CSS and JS, <code>&lt;meta charset="utf-8"&gt;</code>, a CJK-capable font stack (for example <code>system-ui, "Apple SD Gothic Neo", "Noto Sans KR", "Noto Sans JP", sans-serif</code>), and no external requests. It is built from the ready-made template in Section 6: copy that template and replace only its <code>#report-data</code> JSON block with this run's records. Do not write the HTML from scratch each week.</p>
+<p>Structure:</p>
+<ul>
+<li>A header showing the week range (<code>since</code> to <code>until</code>) and the generated date.
+</li>
+<li>The body is grouped by the six categories in run order (Section 4). Within a category, group by master query and show the label once. Within a master query, order rows by tier, Tier 1 first.
+</li>
+<li>One row per cluster, showing: a clickable selection checkbox; the headline (Section 2 format, rendered as normal text, never as code); a tier badge (Tier 1, 2, or 3); up to three source links as real clickable <code>&lt;a href&gt;</code> that open in a new tab; and the date.
+</li>
+<li>A master query with no surviving cluster shows a single <code>n/a</code> line (Phase 5), with no active checkbox.
+</li></ul>
+<p>Selection checkboxes:</p>
+<ul>
+<li>Each row has a real <code>&lt;input type="checkbox"&gt;</code> the desk ticks for final selection. The agent never pre-ticks it.
+</li>
+<li>Each row carries its Cluster ID (for example a <code>data-cluster-id</code> attribute) so a tick maps back to one record.
+</li>
+<li>Ticks autosave in the browser (localStorage, keyed by the run dates plus Cluster ID) so a reload does not lose them.
+</li>
+<li>An "Export selections" button downloads <code>selections_{since}_{until}.json</code>: the ticked rows as full records (id, category, master query, company, headline, tier, sources, date) plus the run dates. There is no fixed downstream schema yet; this is a placeholder a later agent step can read or be adapted to.
+</li></ul>
+<p>Rendering rules:</p>
+<ul>
+<li>One cluster = one row = one headline = up to three source links.
+</li>
+<li>HTML-escape every dynamic value before injecting it: headlines contain <code>"</code> and <code>[ ]</code>, and source URLs contain <code>&amp;</code>.
+</li>
+<li>Rows read grouped by category, with category and master query shown as headings.
+</li>
+<li>The <code>[Company]</code> tag in the headline is the owning company and may differ from the master query (master query <code>iOS</code> carries <code>[Apple]</code>; <code>WhatsApp</code> carries <code>[Meta]</code>). Sub-brands roll up to their parent: Facebook, Instagram, and WhatsApp carry <code>[Meta]</code>; YouTube, Gmail, and Android carry <code>[Google]</code>; Amazon Prime carries <code>[Amazon]</code>. Whole-market and multi-company stories carry <code>[Market]</code>.
+</li></ul>
+<h3 id="1b-data-file-machine-readable-record-and-dedup-memory">1b. Data file (machine-readable record and dedup memory)</h3>
+<p><code>./output/data_{since}_{until}.json</code>: the full record the report is rendered from, and the file next week's repetition check (Phase 6) reads. Not shown to readers. Saved every week to the archive path.</p>
+<p>One record per cluster, with at least these fields:</p>
+<ul>
+<li><code>cluster_id</code>: stable unique id for the cluster.
+</li>
+<li><code>category</code>: one of the six categories.
+</li>
+<li><code>master_query</code>: the owning master query.
+</li>
+<li><code>company</code>: the owning company tag (the parent for sub-brands), or <code>Market</code>.
+</li>
+<li><code>headline</code>: the Section 2 headline string.
+</li>
+<li><code>tier</code>: 1, 2, or 3.
+</li>
+<li><code>sources</code>: the up-to-three source URLs, ordered primary, then secondary, then Google News.
+</li>
+<li><code>date</code>: the cluster date, <code>YYYY-MM-DD</code>.
+</li>
+<li><code>source_headlines</code>, <code>source_dates</code>: per-source titles and publish dates.
+</li>
+<li><code>article_texts</code>: the opened article text, used only for the Phase 6 same-event comparison.
+</li>
+<li><code>dedup_status</code>: <code>keep</code> or <code>drop</code> (set in Phase 6).
+</li></ul>
+<hr>
+<h2 id="2-headline-format">2. Headline format</h2>
+<p>Pattern: <code>[Company] {one-line summary} (YYYY.M.D)</code></p>
+<ul>
+<li>Bracket tag = owning company, in English (<code>[Meta]</code>, <code>[Apple]</code>, <code>[Netflix]</code>), or <code>[Market]</code> for market-level stories.
+</li>
+<li>Code-switched style: keep product names, feature names, company names, and technical or industry terms in English; use Korean for the grammatical glue and framing (as in <code>cohosting으로 공동 event planning과 party management 지원</code>).
+</li>
+<li>One dense line, comma-separated clauses, no terminal period.
+</li>
+<li>Capture the single most important and relevant point of the cluster, judged against LINE's strategic interests.
+</li>
+<li>Date in parentheses at the end, format <code>YYYY.M.D</code> (no zero-padding).
+</li>
+<li>House style: never use 에이전트 or 에이전틱, always English capitalized <code>Agent</code> / <code>Agentic</code>; replace the multiplier 배 with <code>x</code> (2.1배 -&gt; 2.1x, 10배 -&gt; 10x); KMBT for large numbers; YoY format; no em dashes.
+</li>
+<li>New feature/service names get double quotes when shipped (GA, public beta, or officially announced/upcoming). Do <strong>not</strong> quote internal/closed tests, rumors, updates or expansions of existing features, or button names.
+</li>
+<li>Target length: 120 Korean characters or fewer per headline.
+</li>
+<li>For the writing process (when to write, which source to base each headline on, clustering and dedup), follow the headline rule in Section 3f.
+</li></ul>
+<p>Examples (the one and only output format, used for all six categories):</p>
+<ul>
+<li><code>[Anthropic] Claude Tag의 "Agent Identity" 공개, 팀 단위 AI Agent 접근 권한 모델 제시 (2026.6.24)</code>
+</li>
+<li><code>[Meta] WhatsApp, Chats 탭 상단에 Status 캐러셀 통합 테스트하며 메시징 내 콘텐츠 소비 확장 추진 (2026.4.9)</code>
+</li>
+<li><code>[Google] AI Edge Gallery, Apple App Store 생산성 앱 Top10 진입하며 On-device AI 수요 확대 신호 확인 (2026.4.6)</code>
+</li></ul>
+<hr>
+<h2 id="3-configuration-and-selection-rules">3. Configuration and selection rules</h2>
+<h3 id="3a-run-settings">3a. Run settings</h3>
+<pre><code class="language-yaml">time_period:
+  since: &quot;2026-06-17&quot;     # inclusive (ISO; accept yyyy.m.d~yyyy.m.d human input and normalize)
+  until: &quot;2026-06-23&quot;     # inclusive
+  cadence: weekly
+
+ranking:                    # within each master query: arrange by tier (Section 3d)
+  scope: per_master_query
+  method: tiers             # Tier 1 highest, then Tier 2, then Tier 3
+  drop: tier_4_only         # Tier 4 dropped; Tiers 1-3 written, ordered by tier
+
+google_news:                       # Phase 3; see the trigger cluster size rule (Section 3f)
+  editions: [&quot;US / en&quot;, &quot;KR / ko&quot;, &quot;JP / ja&quot;]   # search all three; Asian queries also search the local-language name
+  sort: relevance
+  max_results: 100                 # about 100 results per query
+  trigger_cluster_size:
+    threshold: 0.50                # if &gt;50% of a query&#x27;s Google hits only repeat Phase 1-2 coverage
+    action: boolean_negate         # re-search with the dominant repeated term negated (e.g. Claude -Fable)
+    max_results: 100
+
+# Secondary sources: original-reporting outlets, across four languages so coverage
+# matches the categories. See Phase 2 for which outlets to weight per category.
+trusted_news_sites:
+  # Global English: AI Agent, AI/GPT, Global Big Tech, Social, business
+  - techcrunch.com
+  - theverge.com
+  - arstechnica.com
+  - wired.com
+  - engadget.com
+  - axios.com
+  - reuters.com
+  - bloomberg.com
+  - theinformation.com
+  - venturebeat.com
+  - siliconangle.com
+  - the-decoder.com
+  - marktechpost.com
+  - socialmediatoday.com
+  - 9to5mac.com
+  - 9to5google.com
+  # Asia-focused English: Asia Big Tech, super apps, Theme
+  - restofworld.org
+  - techinasia.com
+  - kr-asia.com
+  - scmp.com
+  # Korean: Asia Big Tech (Kakao, Coupang, Toss), Korea AI
+  - zdnet.co.kr
+  - etnews.com
+  - bloter.net
+  - platum.kr
+  - thebell.co.kr
+  # Japanese: Asia Big Tech (Rakuten, DeNA, Mercari, Gree)
+  - itmedia.co.jp
+  - watch.impress.co.jp
+  - ascii.jp
+  - japan.cnet.com
+  - asia.nikkei.com
+  # Chinese: Asia Big Tech (Tencent, ByteDance, Alibaba)
+  - technode.com
+  - 36kr.com
+  - caixinglobal.com
+
+# Excluded everywhere: press-release wires and pure aggregators with no original reporting.
+site_denylist:
+  - prnewswire.com
+  - businesswire.com
+  - globenewswire.com
+  - newswire.com
+
+# Geographic scope. A story outside the priority markets is Tier 2 unless it signals a
+# cross-market trend, in which case Tier 1 (Section 3d). There is no hard geography drop.
+priority_markets: [Japan, Taiwan, Thailand, Indonesia, Korea, United States, Europe, China]
+
+output:
+  report_path: &quot;./output/report_{since}_{until}.html&quot;          # self-contained HTML deliverable (Section 1a)
+  data_path: &quot;./output/data_{since}_{until}.json&quot;              # machine-readable record + dedup memory (Section 1b)
+  selections_path: &quot;./output/selections_{since}_{until}.json&quot;  # written by the report&#x27;s Export button; no fixed schema yet
+  archive_data_path: &quot;./archive/data_{since}_{until}.json&quot;     # copy of the data file kept each week
+
+previous_week:
+  # prior week&#x27;s archived data file; Phase 6 reads it. Skip the dedup drop if it is missing.
+  data_path: &quot;./archive/data_prev_week.json&quot;</code></pre>
+<h3 id="3b-categories-and-master-queries">3b. Categories and master queries</h3>
+<p>Master queries are grouped into six categories. The run processes them in this order, one full category before the next. Per-query Primary and Secondary sources are listed in the source maps in Section 4.</p>
+<h4 id="1-ai-agent">1. AI Agent</h4>
+<p>All Other AI Agent News, OpenClaw (Moltbot, Clawdbot), Paperclip, BabyAGI, Microsoft AutoGen, AutoGPT, AgentGPT, Claude Cowork, A.(에이닷), KIRA, Wrtn Crack, Rinna, Cotomo, CrewAI, AutoGen, LangGraph, Chai, Nomi, Kindroid, Paradot, Replika, Poketomo, Hume AI, Mersoom, Bot Madang, NVIDIA</p>
+<h4 id="2-ai-gpt">2. AI/GPT</h4>
+<p>All Other AI/GPT News, Lovable, Generative AI, OpenAI, ChatGPT, Codex, Sora, Meta AI, Scale AI, Google AI, Gemini, Veo, NotebookLM, Google Chrome, Amazon AI, Nova AI, Trainium, Anthropic, Claude, Claude Code, Microsoft AI, Microsoft Edge, Bing, Copilot, Apple AI, Safari, Databricks, Thinking Machines Lab, Perplexity AI, Comet, Stability AI, Anysphere (Cursor), ElevenLabs, Speak AI, Writer AI, Ayar Labs, Physical Intelligence, Inflection AI, Moonshot AI, Canva AI, Le Chat, Leonardo AI, Cohere, Skywalker.ai, Kling AI, Seedance, Arc Browser, Dia Browser, Brave Browser, Opera One, Sigma Browser (SigmaOS), Zen Browser, Wavebox, Vivaldi Browser, Sidekick Browser, Shift Browser, Orion Browser, Maxthon Browser, Firefox, Samsung Internet, UC Browser, CryptoTab Browser, AI Startup, Stable Diffusion, DALL-E, Content Generator, Craiyon, Midjourney, MyHeritage, Voice Synthesis, Dream Fusion, AI Bot, AI Healthcare, Image AI, AI Assistant, AI Plugin, Sam Altman, LLM, Inflection AI (Pi), Chatbot, Adobe AI, Adobe Firefly, character.ai, Zeta, MDM, yandex, Kakao Brain, Kakao AI, Japan AI, Korea AI, China AI, US AI, AI Character, Copyright Shield</p>
+<h4 id="3-global-big-tech">3. Global Big Tech</h4>
+<p>Meta, Facebook, Instagram, WhatsApp, Amazon, Amazon Prime, Apple, iOS, Netflix, Google, YouTube, Android, Gmail, Microsoft, Grab</p>
+<h4 id="4-asia-big-tech">4. Asia Big Tech</h4>
+<p>Rakuten (楽天市場), note（ノート), DeNA, Gree (グリー), Gunosy (グノシー), Time Tree (タイムツリ), Mercari(メルカリ), The Bridge, Ascii Startup, CNET, Diamond, Kakao, 카카오, 카카오톡, Coupang, 쿠팡, Toss, 토스, Tencent, WeChat (微信), ByteDance, Alibaba</p>
+<h4 id="5-social">5. Social</h4>
+<p>TikTok, Douyin, Snapchat, Telegram, Pinterest, X, XChat, BlueSky, Twitch, BeReal, Discord</p>
+<h4 id="6-theme">6. Theme</h4>
+<p>Other Super Apps, Spotify, Linkedin, Figma, Paypal, Reddit, VSCO, locket, MZ Gen, Gen Z, 1020 trend, Social app, Tech Crunch Startup</p>
+<p>Notes:</p>
+<ul>
+<li>The <code>All Other ...</code> entries (and <code>Other Super Apps</code>) are catch-all queries for category-relevant stories not matched by a more specific query in that category.
+</li>
+<li>Sub-brand rollups for tagging: Facebook, Instagram, and WhatsApp roll up to Meta; YouTube, Gmail, and Android roll up to Google; Amazon Prime rolls up to Amazon. A sub-brand story is filed once under its own master query but tagged with the parent company (see the routing rule).
+</li>
+<li>NVIDIA was tagged <code>AI Agent SR</code> in the source sheet; it is folded into the AI Agent category here.
+</li>
+<li>Some master queries carried alternate labels across the two source sheets (for example <code>Wrtn Crack</code>/<code>Crack (크랙)</code>, <code>Gemini</code>/<code>GeminI</code>). They are the same query; use the label above and treat the variant as an alias.
+</li></ul>
+<h3 id="3c-inclusion-criteria">3c. Inclusion criteria</h3>
+<p>Collect a story if it matches at least one:</p>
+<ul>
+<li>New service launched, planned, or in testing.
+</li>
+<li>Feature added, planned, or in testing.
+</li>
+<li>Fintech feature or service, or a feature that affects fintech.
+</li>
+<li>Merger, acquisition, investment, or partnership.
+</li>
+<li>Quarterly user metrics or revenue results.
+</li>
+<li>Multi-company strategy comparison or industry-trend article.
+</li>
+<li>Market or economic article from a public or government institution (for example a <code>[Market]</code> item summarizing digital banking account growth alongside broader economic conditions).
+</li>
+<li>Any other story relevant to LINE's services or strategy.
+</li></ul>
+<p>Use this list to judge what counts as a relevant, collectible story, especially when scanning secondary feeds and Google results. Tiering in Phase 4 (Section 3d) then sets how each surviving story ranks.</p>
+<h3 id="3d-tiers-classification-and-ranking">3d. Tiers (classification and ranking)</h3>
+<p>Every story gets exactly one tier. <strong>Tier 4 is dropped.</strong> Tiers 1 to 3 are all kept and written; the tier sets the order within each master query (Tier 1 first) and how much summary each story earns downstream (Tier 1 the most). Phase 4 assigns the tier from the headline and the opened source.</p>
+<p>To assign a tier, evaluate in this order and take the first that matches:</p>
+<ol>
+<li><strong>Tier 4</strong> (any condition in 3d.4): drop the story.
+</li>
+<li><strong>Tier 3</strong> (any condition in 3d.3): the story is Tier 3.
+</li>
+<li><strong>Tier 2</strong> (any condition in 3d.2): the story is Tier 2.
+</li>
+<li>Otherwise: the story is <strong>Tier 1</strong>.
+</li></ol>
+<p>Inline exceptions can override this order: a cross-market trend lifts an out-of-market story to Tier 1, and a transportation story under an AI, AI Agent, or Global Big Tech query becomes Tier 3 instead of being dropped.</p>
+<h4 id="3d-1-tier-1-default-keep-highest-rank">3d.1 Tier 1 (default keep, highest rank)</h4>
+<p>Any primary- or secondary-source story that matches no Tier 2, 3, or 4 condition is Tier 1. These are the core competitor and market moves: a launch, a shipped or tested feature, a partnership, funding, a quarterly metric, or a market or generational trend on a surface LINE has or wants. Tier 1 stories earn the extended summary downstream.</p>
+<h4 id="3d-2-tier-2-kept-mid-rank">3d.2 Tier 2 (kept, mid rank)</h4>
+<p>A story is Tier 2 when any of these hold and no Tier 3 or Tier 4 condition applies:</p>
+<ol>
+<li><strong>HR / personnel news</strong> from a secondary source, or <strong>AI-related</strong> HR news (an AI hire, team, or org change).
+</li>
+<li><strong>Outside LINE's service-map domains:</strong> the story is not about Messaging, Social feed, Ads, Content, Fintech, Platform or mini-app, Commerce, Stickers or avatars, or AI.
+</li>
+<li><strong>Outside LINE's priority markets:</strong> the market is not one of Japan, Taiwan, Thailand, Indonesia, Korea, United States, Europe, or China. Exception: if it signals a cross-market trend, raise it to Tier 1.
+</li></ol>
+<h4 id="3d-3-tier-3-kept-lowest-rank">3d.3 Tier 3 (kept, lowest rank)</h4>
+<p>A story is Tier 3 when any of these hold and no Tier 4 condition applies:</p>
+<ol>
+<li><strong>Hardware-focused</strong> stories, except AI-related hardware (AI chips, memory, semiconductors), VR or AR products, and AI speakers, which skip this rule and are ranked by the Tier 1 and Tier 2 rules.
+</li>
+<li><strong>Weak promotional PR</strong> with little service, market, or strategic meaning.
+</li>
+<li><strong>Security incidents</strong> such as a hack or breach.
+</li>
+<li><strong>Other HR news:</strong> HR news that is neither from a secondary source nor AI-related, when the company is one of the master queries.
+</li>
+<li><strong>Transportation under an AI, AI Agent, or Global Big Tech query:</strong> the Tier 4 transportation drop is downgraded to Tier 3 here (see 3d.4 #10).
+</li></ol>
+<h4 id="3d-4-tier-4-hard-exclusions-dropped">3d.4 Tier 4 (hard exclusions, dropped)</h4>
+<p>Drop the story if any of these hold:</p>
+<ol>
+<li>Any site in <code>site_denylist</code> (press-release wires, pure aggregators).
+</li>
+<li>Gossip about celebrities, influencers, or personal social-media activity (for example what a celebrity posted on Instagram).
+</li>
+<li>Review articles (for example the pros and cons of a phone).
+</li>
+<li>How-to and what-is articles (for example "How to change your name on Snap", "What is Imagine AI", "How to use Imagine AI").
+</li>
+<li>Overly speculative articles with weak evidence, including opinion and op-ed pieces by journalists.
+</li>
+<li>Stories already covered last week. Enforced in Phase 6; cross-check the Weekly Trend email that goes out each week.
+</li>
+<li>Business sectors unrelated to LINE: autonomous driving, space, cloud infrastructure. This list grows over time.
+</li>
+<li><strong>Naver / LINE / LY Corporation single-company stories.</strong> A story whose subject is Naver, LINE, or LY Corporation on its own is our own coverage and is dropped. Exception: when one of them is named as just one of several companies in a market-level story (a market shift, industry trend, or competitor comparison), keep it as a <code>[Market]</code> item only, never as a standalone Naver/LINE update. Kakao, Coupang, Toss, Rakuten, DeNA, Mercari, Tencent, ByteDance, and Alibaba are reviewed normally as competitors.
+</li>
+<li>Simple stock-price-movement articles (for example "Square stock rose X%"), unless the move is tied to a strategic event.
+</li>
+<li><strong>Transportation</strong> stories, except when the master query is an AI, AI Agent, or Global Big Tech query, in which case the story is Tier 3 (see 3d.3 #5) rather than dropped.
+</li></ol>
+<h3 id="3e-multi-company-routing-rule-one-destination-per-story">3e. Multi-company routing rule (one destination per story)</h3>
+<p>A story is placed in exactly one master query and never duplicated. Destinations:</p>
+<ul>
+<li>Single primary actor: the master query whose company is the <strong>primary actor</strong> of the news (the one taking the action, launching the product, or most directly affected), tagged with that company.
+</li>
+<li>Whole-market, multi-company, or public-institution economic story: file under the <code>[Market]</code> destination and tag it <code>[Market]</code>.
+</li>
+<li>Same-parent multi-product story (for example one Meta change spanning Instagram and WhatsApp): file once under the parent's master query, not once per product.
+</li></ul>
+<p>Tie-break order when more than one company could be primary: highest LINE-strategic relevance, then the company the headline leads with.</p>
+<p>AI-angle tie-break: a company can appear in an AI category (AI Agent or AI/GPT) and in a non-AI category (Global Big Tech, Asia Big Tech, or Social). When a story could fit both, file it by its substance. An AI-substance story (a model, an Agent, or an AI feature) goes to the AI category; a product, market, or business story goes to the big tech or social category. This keeps one story-event in one place while letting a company's AI news and product news land in their right categories.</p>
+<h3 id="3f-operating-rules">3f. Operating rules</h3>
+<p>Three named rules are referenced by the phases in Section 4.</p>
+<h4 id="headline-rule">Headline rule</h4>
+<p>Write headlines during collection, one source at a time as you review it, not in a batch at the end. For each story:</p>
+<ul>
+<li>Base the headline on the best available source: a primary source first, then a trustworthy secondary source.
+</li>
+<li>Cluster articles that cover the same announcement, feature, product update, partnership, funding, or market event, and write only one headline per cluster (see the cluster rule).
+</li>
+<li>Skip a duplicate article unless it adds materially different information; if it does, either fold the new fact into the existing headline or, if it is really a distinct event, start a new cluster.
+</li>
+<li>Before finalizing a cluster's headline, confirm a primary source was used whenever one was available.
+</li>
+<li>Write the headline itself in the format and house style of Section 2.
+</li></ul>
+<h4 id="cluster-rule">Cluster rule</h4>
+<ul>
+<li>A cluster holds up to 3 sources, no more.
+</li>
+<li>The first source is the basis for the headline and is normally a primary source. If the cluster has no primary source, base it on a secondary source; if it has neither, base it on a Google News source.
+</li>
+<li>Order a cluster's sources primary, then secondary, then Google News. Once a cluster holds 3 sources, drop any further source for that story.
+</li>
+<li>The cluster's date is the publish date of its primary source if it has one, otherwise the earliest publish date among its sources.
+</li>
+<li>Umbrella vs detail: a broad announcement and the deeper sub-stories under it are separate events, so cluster them separately (a model-suite launch is one cluster; each individually detailed model in the suite is its own cluster).
+</li></ul>
+<h4 id="trigger-cluster-size-rule">Trigger cluster size rule</h4>
+<p>This runs in Phase 3 (Google News), per master query. If more than 50% of a query's Google results only repeat coverage already captured in Phases 1 and 2 (for example a week where searching <code>Claude</code> returns almost only Fable-launch stories already sourced), run a boolean negated search to surface fresh results, for example <code>Claude -Fable</code>, and read up to 100 results from that negated search. Use the most frequent repeated term as the one to negate.</p>
+<hr>
+<h2 id="4-procedure">4. Procedure</h2>
+<p>The run is organized into the six categories from Section 3b. Process one category completely, through Phases 0 to 6, before starting the next, so each delivered block is internally consistent. Category order: AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme.</p>
+<p>All six categories use the same method and produce one combined deliverable: one HTML report, one headline format (Section 2), and one JSON data file that next week's repetition check compares against. There is no separate AI report and no second headline format. Headlines are written during collection (Phases 1 to 3) under the headline rule (Section 3f), one per cluster.</p>
+<p><strong>Routing (one destination per cluster).</strong> As you collect, assign each cluster to exactly one owning master query using the multi-company routing rule in Section 3e: the primary actor's query, <code>[Market]</code> for market-level stories, sub-brands filed under their own query but tagged to the parent, and the AI-angle tie-break for AI-versus-product stories. This is also the cross-query dedup step: when the same event is caught under more than one master query, merge it into one cluster filed once.</p>
+<h3 id="phase-0-setup">Phase 0: Setup</h3>
+<p>Create <code>./output/</code> and <code>./archive/</code> if missing. Set <code>time_period</code> from the run dates, inclusive of both ends, normalizing any <code>yyyy.m.d~yyyy.m.d</code> input to ISO first (Section 0). Initialize an empty <code>data_{since}_{until}.json</code> (the per-cluster record store from Section 1b); the HTML report is rendered from it at the end of the run. Take the report and data paths from the <code>output</code> block in Section 3a. The report itself is produced at the end of the run by filling the Section 6 template (see Phase 6).</p>
+<h3 id="phase-1-primary-sources">Phase 1: Primary sources</h3>
+<p>For each master query in the current category, open its <strong>Primary sources</strong> from the source maps below and collect every article published inside <code>time_period</code>. Write a headline for every primary-source link under the headline rule (Section 3f). When two primary-source links cover the same event, cluster them into one row and write a single headline (cluster rule, Section 3f). Apply each query's handling note from the source map (filter a broad newsroom for the product, treat a notable GitHub or changelog release as the event, check more than one official page, treat in-app or Discord posts as the update channel, or verify the URL or path first). Primary sources set the cluster's date.</p>
+<h3 id="phase-2-secondary-sources">Phase 2: Secondary sources</h3>
+<p>For each master query, scan its <strong>Secondary sources</strong> from the source maps below, plus the <code>trusted_news_sites</code> (Section 3a) weighted by the current category, for in-window articles relevant to the query. Drop anything that is Tier 4 (Section 3d.4) as you go. For every remaining secondary article, apply the cluster rule (Section 3f): if it covers an event already clustered in Phase 1, add it to that cluster as an extra source up to the 3-source cap, and once a cluster holds 3 sources discard any further secondary source for it; if it covers a new event not seen in Phase 1, start a new cluster and write its headline under the headline rule. Run the <code>All Other ... News</code> and <code>Other Super Apps</code> catch-alls last, and route keyword or theme feeds to the owning master query when one exists.</p>
+<p>Weight the secondary outlets by category: Global English outlets (techcrunch.com through 9to5google.com, plus the-decoder.com, marktechpost.com, siliconangle.com) are the main surface for AI Agent, AI/GPT, Global Big Tech, and Social; Asia-focused English (restofworld.org, techinasia.com, kr-asia.com, scmp.com) for Asia Big Tech, super apps, and Theme; Korean (zdnet.co.kr, etnews.com, bloter.net, platum.kr, thebell.co.kr) for the Korean Asia Big Tech queries and Korea AI; Japanese (itmedia.co.jp, watch.impress.co.jp, ascii.jp, japan.cnet.com, asia.nikkei.com) for the Japanese queries; Chinese (technode.com, 36kr.com, caixinglobal.com) for the Chinese queries. Several of these paywall (bloomberg.com, reuters.com, theinformation.com, asia.nikkei.com, caixinglobal.com, scmp.com); treat a paywalled article as a lead and prefer an accessible source for the same event.</p>
+<h3 id="phase-3-google-news">Phase 3: Google News</h3>
+<p>For each master query, search Google News across three editions: Google US (<code>US / en</code>), Google KR (<code>KR / ko</code>), and Google JP (<code>JP / ja</code>). On Claude Code you have no live browser, so use the Google News RSS endpoints and the <code>web_search</code> fallback from Section 0; apply the date window with <code>after:</code> / <code>before:</code> (<code>before:</code> is exclusive, pass <code>until + 1 day</code>), and do the date filtering and cross-edition dedup in code. For an Asian company, search both its English name in Google US and its local-language name in the local edition (for example Toss in Google US and <code>토스</code> in Google KR; Rakuten in Google US and <code>楽天</code> in Google JP). Pool the editions into one set and dedup the same event across them. Use the Phase 3 search-term overrides below for any query whose bare name is noisy.</p>
+<p>Apply the <strong>trigger cluster size rule</strong> (Section 3f): if more than 50% of a query's Google results only repeat coverage already captured in Phases 1 and 2, re-run the search with the dominant repeated term negated (for example <code>Claude -Fable</code>) and read up to 100 results from that negated search. Apply the <strong>cluster rule</strong> the same way as Phase 2: add a Google source to an existing cluster up to the 3-source cap, or start a new cluster if the event is new, then write its headline under the headline rule. A Google News link is the basis for a cluster's headline only when the cluster has no primary or secondary source.</p>
+<h3 id="phase-4-tier-arrangement">Phase 4: Tier arrangement</h3>
+<p>With the headlines and clusters from Phases 1 to 3 in hand, go through every master query in the category and assign each cluster a tier using Section 3d. First apply the content exclusion rules (Tier 4, Section 3d.4) and drop those clusters outright. Then classify each surviving cluster as Tier 1, 2, or 3 by the Section 3d order, reading the cluster's opened source where the headline alone is not enough to judge. Arrange each master query's clusters by tier, Tier 1 first, then Tier 2, then Tier 3, and store the tier on each cluster record in the data file. Nothing else is cut: every cluster that is not Tier 4 and not a last-week repeat is written.</p>
+<h3 id="phase-5-n-a-establishment">Phase 5: N/a establishment</h3>
+<p>After Phases 1 to 3, any master query with no surviving cluster gets a single n/a entry, so the report shows coverage rather than a silent gap: Category and Master Query filled, Headline <code>n/a</code>, no active checkbox, no sources. A genuine "checked, nothing to report" is <code>n/a</code>; a fetch or access failure is not <code>n/a</code>, it goes to the run log.</p>
+<h3 id="phase-6-repetition-check">Phase 6: Repetition check</h3>
+<p>Two passes. First, the across-week check: load last week's data file from <code>previous_week.data_path</code> and, for each cluster this week, decide whether it covers the <strong>same news event</strong> as any last-week cluster (compare on <code>article_texts</code>), even if the specific articles differ; set <code>dedup_status = drop</code> for genuine repeats (Tier 4 #6) and <code>keep</code> for real follow-on developments with new facts or escalation. Second, the within-week check: compare this week's clusters against each other and drop any duplicate, so the same event is not rendered twice across master queries. Save this week's data file to the archive path so next week's check can read it. Then build the deliverable: copy the template in Section 6 and put the kept records into its <code>#report-data</code> JSON block (<code>run</code> = the dates; <code>data</code> = each kept cluster's display fields). Save the filled file as <code>report_{since}_{until}.html</code>.</p>
+<h3 id="per-category-source-maps-phases-1-and-2">Per-category source maps (Phases 1 and 2)</h3>
+<p>Each query lists its source URLs and, in parentheses, the handling rule. (<code>GH</code> = read GitHub releases; <code>changelog</code> / <code>release notes</code> = treat a notable release as the event.) Primary sources are read in Phase 1; Secondary sources in Phase 2.</p>
+<p>The <strong>common Tech / AI / Social feeds</strong> below back every category as secondary-source sweep surfaces; weight them by the current category:</p>
+<ul>
+<li>TechCrunch tag pages: <code>https://techcrunch.com/tag/ai/</code>, <code>/tag/openai/</code>, <code>/tag/anthropic/</code>, <code>/tag/google/</code>, <code>/tag/apple/</code>, <code>/tag/meta/</code>, <code>/tag/microsoft/</code>, <code>/tag/amazon/</code>, plus <code>/category/artificial-intelligence/</code> and <code>/category/startups/</code>
+</li>
+<li>9to5Google guides: <code>https://9to5google.com/guides/gemini/</code>, <code>/guides/google-search/</code>, <code>/guides/android/</code>, <code>/guides/youtube/</code>, <code>/guides/chrome/</code>
+</li>
+<li>9to5Mac guides: <code>https://9to5mac.com/guides/apple-intelligence/</code>, <code>/guides/ios/</code>, <code>/guides/siri/</code>, <code>/guides/app-store/</code>
+</li>
+<li>Social Media Today: <code>https://www.socialmediatoday.com/topic/social-media-updates/</code>
+</li>
+<li>AI trade press: <code>https://the-decoder.com/</code>, <code>https://www.marktechpost.com/</code>, <code>https://venturebeat.com/category/ai/</code>, <code>https://siliconangle.com/</code>, <code>https://aibusiness.com/</code>
+</li></ul>
+<h4 id="ai-agent">AI Agent</h4>
+<p><strong>Primary sources</strong> (the query's official channel; apply any per-query handling note shown in parentheses):</p>
+<ul>
+<li><strong>AutoGPT</strong>: <a href="https://agpt.co/,">https://agpt.co/,</a> <a href="https://github.com/Significant-Gravitas/AutoGPT/releases">https://github.com/Significant-Gravitas/AutoGPT/releases</a> (homepage + GH), legacy <a href="https://autogpt.net/category/autogpt/">https://autogpt.net/category/autogpt/</a>
+</li>
+<li><strong>A.(에이닷)</strong>: <a href="https://news.sktelecom.com/">https://news.sktelecom.com/</a> (SKT newsroom, 에이닷 tag), <a href="https://www.sktelecom.com/">https://www.sktelecom.com/</a>
+</li>
+<li><strong>Wrtn Crack</strong>: <a href="https://crack.wrtn.ai/announcement,">https://crack.wrtn.ai/announcement,</a> <a href="https://wrtn.io/">https://wrtn.io/</a>
+</li>
+<li><strong>Cotomo</strong>: <a href="https://cotomo.ai/,">https://cotomo.ai/,</a> <a href="https://cotomo.ai/posts,">https://cotomo.ai/posts,</a> <a href="https://cotomo.ai/app-posts">https://cotomo.ai/app-posts</a>
+</li>
+<li><strong>Replika</strong>: <a href="https://replika.com/,">https://replika.com/,</a> <a href="https://blog.replika.com/">https://blog.replika.com/</a>
+</li>
+<li><strong>Poketomo</strong>: <a href="https://poketomo.com/,">https://poketomo.com/,</a> <a href="https://poketomo.com/news/">https://poketomo.com/news/</a>
+</li>
+<li><strong>Hume AI</strong>: <a href="https://www.hume.ai/blog,">https://www.hume.ai/blog,</a> <a href="https://www.hume.ai/news,">https://www.hume.ai/news,</a> <a href="https://dev.hume.ai/docs">https://dev.hume.ai/docs</a>
+</li>
+<li><strong>OpenClaw (Moltbot, Clawdbot)</strong>: <a href="https://openclaw.ai/blog,">https://openclaw.ai/blog,</a> <a href="https://github.com/openclaw/openclaw/releases">https://github.com/openclaw/openclaw/releases</a> (blog + GH; Moltbot/Clawdbot have no own source -&gt; Google Query)
+</li>
+<li><strong>Paperclip</strong>: <a href="https://github.com/paperclipai/paperclip/releases">https://github.com/paperclipai/paperclip/releases</a> (GH)
+</li>
+<li><strong>BabyAGI</strong>: <a href="https://github.com/yoheinakajima/babyagi/releases">https://github.com/yoheinakajima/babyagi/releases</a> (GH)
+</li>
+<li><strong>Microsoft AutoGen</strong>: <a href="https://github.com/microsoft/autogen/releases,">https://github.com/microsoft/autogen/releases,</a> <a href="https://microsoft.github.io/autogen/,">https://microsoft.github.io/autogen/,</a> <a href="https://devblogs.microsoft.com/">https://devblogs.microsoft.com/</a> (GH + docs + devblog)
+</li>
+<li><strong>AgentGPT</strong>: <a href="https://agentgpt.reworkd.ai/,">https://agentgpt.reworkd.ai/,</a> <a href="https://github.com/reworkd/AgentGPT/releases">https://github.com/reworkd/AgentGPT/releases</a> (site + GH)
+</li>
+<li><strong>Claude Cowork</strong>: <a href="https://claude.com/blog,">https://claude.com/blog,</a> <a href="https://www.anthropic.com/news,">https://www.anthropic.com/news,</a> <a href="https://www.anthropic.com/engineering,">https://www.anthropic.com/engineering,</a> <a href="https://docs.anthropic.com/">https://docs.anthropic.com/</a> (filter for Claude Cowork)
+</li>
+<li><strong>KIRA</strong>: <a href="https://kira.krafton-ai.com/,">https://kira.krafton-ai.com/,</a> <a href="https://github.com/krafton-ai/KIRA/releases,">https://github.com/krafton-ai/KIRA/releases,</a> <a href="https://www.krafton.ai/,">https://www.krafton.ai/,</a> <a href="https://www.krafton.com/news/press/">https://www.krafton.com/news/press/</a> (site + GH + Krafton press)
+</li>
+<li><strong>Rinna</strong>: <a href="https://rinna.co.jp/news/,">https://rinna.co.jp/news/,</a> <a href="https://rinna.co.jp/">https://rinna.co.jp/</a>
+</li>
+<li><strong>CrewAI</strong>: <a href="https://crewai.com/blog,">https://crewai.com/blog,</a> <a href="https://docs.crewai.com/,">https://docs.crewai.com/,</a> <a href="https://github.com/crewAIInc/crewAI/releases">https://github.com/crewAIInc/crewAI/releases</a> (blog + docs + GH)
+</li>
+<li><strong>AutoGen</strong>: <a href="https://github.com/microsoft/autogen/releases">https://github.com/microsoft/autogen/releases</a> (GH; same project as Microsoft AutoGen)
+</li>
+<li><strong>LangGraph</strong>: <a href="https://www.langchain.com/blog,">https://www.langchain.com/blog,</a> <a href="https://docs.langchain.com/,">https://docs.langchain.com/,</a> <a href="https://github.com/langchain-ai/langgraph/releases,">https://github.com/langchain-ai/langgraph/releases,</a> <a href="https://langchain-ai.github.io/langgraph/">https://langchain-ai.github.io/langgraph/</a> (blog + docs + GH; blog covers many products, filter for LangGraph)
+</li>
+<li><strong>Chai</strong>: <a href="https://www.chai-research.com/blog,">https://www.chai-research.com/blog,</a> <a href="https://www.chai-research.com/news">https://www.chai-research.com/news</a> (updates also ship via in-app Discord)
+</li>
+<li><strong>Nomi</strong>: <a href="https://nomi.ai/updates/">https://nomi.ai/updates/</a> (updates ship via app; community on Discord + r/NomiAI)
+</li>
+<li><strong>Kindroid</strong>: <a href="https://kindroid.ai/blog/,">https://kindroid.ai/blog/,</a> <a href="https://kindroid.ai/docs/article/update-log/,">https://kindroid.ai/docs/article/update-log/,</a> <a href="https://discord.gg/kindroid">https://discord.gg/kindroid</a> (blog + update log; also r/KindroidAI)
+</li>
+<li><strong>Paradot</strong>: <a href="https://www.paradot.ai/">https://www.paradot.ai/</a> (updates via app/Discord; Google Query backup)
+</li>
+<li><strong>Bot Madang</strong>: <a href="https://github.com/hunkim/botmadang/releases">https://github.com/hunkim/botmadang/releases</a> (GH; if dry, Google Query)
+</li>
+<li><strong>NVIDIA</strong>: <a href="https://developer.nvidia.com/blog/recent-posts/">https://developer.nvidia.com/blog/recent-posts/</a> (broad developer blog, filter for AI/Agent relevance; sheet labels this <code>AI Agent SR</code>)
+</li></ul>
+<p><strong>Secondary sources</strong> (defined news outlets and catch-all/keyword feeds):</p>
+<ul>
+<li><strong>All Other AI Agent News</strong> (catch-all): <a href="https://techcrunch.com/category/artificial-intelligence/,">https://techcrunch.com/category/artificial-intelligence/,</a> <a href="https://venturebeat.com/category/ai/,">https://venturebeat.com/category/ai/,</a> <a href="https://the-decoder.com/">https://the-decoder.com/</a> (run last; sweep for agent stories not caught by a specific query; dedupe; add net-new)
+</li>
+<li><strong>Mersoom</strong> (unresolved): no confirmed source; Google Query + flag for manual lookup
+</li></ul>
+<h4 id="ai-gpt">AI/GPT</h4>
+<p><strong>Primary sources</strong> (the query's official channel; apply any per-query handling note shown in parentheses):</p>
+<ul>
+<li><strong>Lovable</strong>: <a href="https://lovable.dev/blog">https://lovable.dev/blog</a>
+</li>
+<li><strong>OpenAI</strong>: <a href="https://openai.com/news/,">https://openai.com/news/,</a> <a href="https://openai.com/index/,">https://openai.com/index/,</a> <a href="https://openai.com/research/,">https://openai.com/research/,</a> <a href="https://platform.openai.com/docs/changelog,">https://platform.openai.com/docs/changelog,</a> <a href="https://help.openai.com/en/articles/6825453-chatgpt-release-notes,">https://help.openai.com/en/articles/6825453-chatgpt-release-notes,</a> <a href="https://developers.openai.com/codex/changelog">https://developers.openai.com/codex/changelog</a> (multiple official OpenAI surfaces)
+</li>
+<li><strong>Scale AI</strong>: <a href="https://scale.com/blog,">https://scale.com/blog,</a> <a href="https://scale.com/press">https://scale.com/press</a>
+</li>
+<li><strong>NotebookLM</strong>: <a href="https://blog.google/products/notebooklm/">https://blog.google/products/notebooklm/</a>
+</li>
+<li><strong>Google Chrome</strong>: <a href="https://blog.google/products/chrome/,">https://blog.google/products/chrome/,</a> <a href="https://developer.chrome.com/blog/,">https://developer.chrome.com/blog/,</a> <a href="https://chromereleases.googleblog.com/">https://chromereleases.googleblog.com/</a> (blog + dev blog + release log)
+</li>
+<li><strong>Anthropic</strong>: <a href="https://www.anthropic.com/news,">https://www.anthropic.com/news,</a> <a href="https://www.anthropic.com/research,">https://www.anthropic.com/research,</a> <a href="https://www.anthropic.com/engineering,">https://www.anthropic.com/engineering,</a> <a href="https://docs.anthropic.com/">https://docs.anthropic.com/</a>
+</li>
+<li><strong>Claude</strong>: <a href="https://claude.com/blog,">https://claude.com/blog,</a> <a href="https://www.anthropic.com/news">https://www.anthropic.com/news</a>
+</li>
+<li><strong>Microsoft Edge</strong>: <a href="https://blogs.windows.com/msedgedev/,">https://blogs.windows.com/msedgedev/,</a> <a href="https://blogs.bing.com/search/">https://blogs.bing.com/search/</a>
+</li>
+<li><strong>Bing</strong>: <a href="https://blogs.bing.com/search/">https://blogs.bing.com/search/</a>
+</li>
+<li><strong>Copilot</strong>: <a href="https://www.microsoft.com/en-us/microsoft-copilot/blog/,">https://www.microsoft.com/en-us/microsoft-copilot/blog/,</a> <a href="https://devblogs.microsoft.com/microsoft365dev/">https://devblogs.microsoft.com/microsoft365dev/</a>
+</li>
+<li><strong>Databricks</strong>: <a href="https://www.databricks.com/blog,">https://www.databricks.com/blog,</a> <a href="https://www.databricks.com/company/newsroom,">https://www.databricks.com/company/newsroom,</a> <a href="https://docs.databricks.com/release-notes/index.html">https://docs.databricks.com/release-notes/index.html</a>
+</li>
+<li><strong>Thinking Machines Lab</strong>: <a href="https://thinkingmachines.ai/news/">https://thinkingmachines.ai/news/</a>
+</li>
+<li><strong>Perplexity AI</strong>: <a href="https://www.perplexity.ai/hub/blog,">https://www.perplexity.ai/hub/blog,</a> <a href="https://www.perplexity.ai/hub/news">https://www.perplexity.ai/hub/news</a>
+</li>
+<li><strong>Stability AI</strong>: <a href="https://stability.ai/news,">https://stability.ai/news,</a> <a href="https://stability.ai/blog,">https://stability.ai/blog,</a> <a href="https://github.com/Stability-AI">https://github.com/Stability-AI</a> (news + blog + GH)
+</li>
+<li><strong>ElevenLabs</strong>: <a href="https://elevenlabs.io/blog,">https://elevenlabs.io/blog,</a> <a href="https://elevenlabs.io/docs/changelog">https://elevenlabs.io/docs/changelog</a>
+</li>
+<li><strong>Writer AI</strong>: <a href="https://writer.com/blog/,">https://writer.com/blog/,</a> <a href="https://writer.com/newsroom/,">https://writer.com/newsroom/,</a> <a href="https://writer.com/product-updates/">https://writer.com/product-updates/</a>
+</li>
+<li><strong>Ayar Labs</strong>: <a href="https://ayarlabs.com/newsroom/,">https://ayarlabs.com/newsroom/,</a> <a href="https://ayarlabs.com/blog/">https://ayarlabs.com/blog/</a>
+</li>
+<li><strong>Physical Intelligence</strong>: <a href="https://www.physicalintelligence.company/blog,">https://www.physicalintelligence.company/blog,</a> <a href="https://www.physicalintelligence.company/news">https://www.physicalintelligence.company/news</a>
+</li>
+<li><strong>Inflection AI</strong>: <a href="https://inflection.ai/news,">https://inflection.ai/news,</a> <a href="https://inflection.ai/blog">https://inflection.ai/blog</a>
+</li>
+<li><strong>Moonshot AI</strong>: <a href="https://www.moonshot.cn/,">https://www.moonshot.cn/,</a> <a href="https://kimi.moonshot.cn/">https://kimi.moonshot.cn/</a> (backup <a href="https://pandaily.com/)">https://pandaily.com/)</a>
+</li>
+<li><strong>Cohere</strong>: <a href="https://cohere.com/blog,">https://cohere.com/blog,</a> <a href="https://cohere.com/newsroom,">https://cohere.com/newsroom,</a> <a href="https://docs.cohere.com/changelog">https://docs.cohere.com/changelog</a>
+</li>
+<li><strong>Brave Browser</strong>: <a href="https://brave.com/blog/,">https://brave.com/blog/,</a> <a href="https://github.com/brave/brave-browser/releases">https://github.com/brave/brave-browser/releases</a>
+</li>
+<li><strong>Sigma Browser (SigmaOS)</strong>: <a href="https://sigmaos.com/blog">https://sigmaos.com/blog</a> (Google Query backup)
+</li>
+<li><strong>Vivaldi Browser</strong>: <a href="https://vivaldi.com/blog/,">https://vivaldi.com/blog/,</a> <a href="https://vivaldi.com/changelog/">https://vivaldi.com/changelog/</a>
+</li>
+<li><strong>Maxthon Browser</strong>: <a href="https://www.maxthon.com/blog/">https://www.maxthon.com/blog/</a> (Google Query backup)
+</li>
+<li><strong>MyHeritage</strong>: <a href="https://blog.myheritage.com/,">https://blog.myheritage.com/,</a> <a href="https://www.myheritage.com/ai">https://www.myheritage.com/ai</a>
+</li>
+<li><strong>Inflection AI (Pi)</strong>: <a href="https://pi.ai/,">https://pi.ai/,</a> <a href="https://inflection.ai/news">https://inflection.ai/news</a>
+</li>
+<li><strong>character.ai</strong>: <a href="https://blog.character.ai/">https://blog.character.ai/</a>
+</li>
+<li><strong>ChatGPT</strong>: <a href="https://help.openai.com/en/articles/6825453-chatgpt-release-notes,">https://help.openai.com/en/articles/6825453-chatgpt-release-notes,</a> <a href="https://openai.com/index/">https://openai.com/index/</a> (release notes + news; filter for ChatGPT)
+</li>
+<li><strong>Codex</strong>: <a href="https://developers.openai.com/codex/changelog,">https://developers.openai.com/codex/changelog,</a> <a href="https://openai.com/index/">https://openai.com/index/</a> (changelog; filter news for Codex)
+</li>
+<li><strong>Sora</strong>: <a href="https://openai.com/sora/,">https://openai.com/sora/,</a> <a href="https://openai.com/index/">https://openai.com/index/</a> (filter for Sora)
+</li>
+<li><strong>Meta AI</strong>: <a href="https://ai.meta.com/blog/,">https://ai.meta.com/blog/,</a> <a href="https://about.fb.com/news/,">https://about.fb.com/news/,</a> <a href="https://engineering.fb.com/">https://engineering.fb.com/</a> (filter for AI)
+</li>
+<li><strong>Google AI</strong>: <a href="https://blog.google/technology/ai/,">https://blog.google/technology/ai/,</a> <a href="https://blog.google/innovation-and-ai/,">https://blog.google/innovation-and-ai/,</a> <a href="https://developers.googleblog.com/,">https://developers.googleblog.com/,</a> <a href="https://research.google/blog/,">https://research.google/blog/,</a> <a href="https://deepmind.google/blog/">https://deepmind.google/blog/</a> (filter for AI)
+</li>
+<li><strong>Gemini</strong>: <a href="https://blog.google/products/gemini/,">https://blog.google/products/gemini/,</a> <a href="https://gemini.google/release-notes/,">https://gemini.google/release-notes/,</a> <a href="https://ai.google.dev/gemini-api/docs/changelog,">https://ai.google.dev/gemini-api/docs/changelog,</a> <a href="https://deepmind.google/blog/">https://deepmind.google/blog/</a> (product page + release notes + api changelog + DeepMind)
+</li>
+<li><strong>Veo</strong>: <a href="https://deepmind.google/technologies/veo/,">https://deepmind.google/technologies/veo/,</a> <a href="https://blog.google/technology/ai/">https://blog.google/technology/ai/</a> (filter for Veo)
+</li>
+<li><strong>Amazon AI</strong>: <a href="https://aws.amazon.com/blogs/machine-learning/,">https://aws.amazon.com/blogs/machine-learning/,</a> <a href="https://aws.amazon.com/blogs/aws/,">https://aws.amazon.com/blogs/aws/,</a> <a href="https://www.aboutamazon.com/news/aws,">https://www.aboutamazon.com/news/aws,</a> <a href="https://aws.amazon.com/about-aws/whats-new/machine-learning/">https://aws.amazon.com/about-aws/whats-new/machine-learning/</a> (filter for AI)
+</li>
+<li><strong>Nova AI</strong>: <a href="https://aws.amazon.com/ai/generative-ai/nova/,">https://aws.amazon.com/ai/generative-ai/nova/,</a> <a href="https://www.aboutamazon.com/news/aws">https://www.aboutamazon.com/news/aws</a> (filter for Amazon Nova)
+</li>
+<li><strong>Trainium</strong>: <a href="https://aws.amazon.com/machine-learning/trainium/,">https://aws.amazon.com/machine-learning/trainium/,</a> <a href="https://www.aboutamazon.com/news/aws">https://www.aboutamazon.com/news/aws</a> (filter for Trainium)
+</li>
+<li><strong>Claude Code</strong>: <a href="https://claude.com/blog,">https://claude.com/blog,</a> <a href="https://docs.anthropic.com/en/docs/claude-code,">https://docs.anthropic.com/en/docs/claude-code,</a> <a href="https://www.anthropic.com/engineering">https://www.anthropic.com/engineering</a> (filter for Claude Code)
+</li>
+<li><strong>Microsoft AI</strong>: <a href="https://blogs.microsoft.com/,">https://blogs.microsoft.com/,</a> <a href="https://news.microsoft.com/source/,">https://news.microsoft.com/source/,</a> <a href="https://www.microsoft.com/en-us/microsoft-365/blog/,">https://www.microsoft.com/en-us/microsoft-365/blog/,</a> <a href="https://devblogs.microsoft.com/,">https://devblogs.microsoft.com/,</a> <a href="https://www.microsoft.com/en-us/research/blog/">https://www.microsoft.com/en-us/research/blog/</a> (filter Microsoft surfaces for AI: Copilot, Azure AI, Microsoft AI)
+</li>
+<li><strong>Apple AI</strong>: <a href="https://www.apple.com/newsroom/,">https://www.apple.com/newsroom/,</a> <a href="https://developer.apple.com/news/,">https://developer.apple.com/news/,</a> <a href="https://developer.apple.com/documentation/appleintelligence">https://developer.apple.com/documentation/appleintelligence</a> (filter for Apple Intelligence)
+</li>
+<li><strong>Safari</strong>: <a href="https://developer.apple.com/documentation/safari-release-notes,">https://developer.apple.com/documentation/safari-release-notes,</a> <a href="https://developer.apple.com/news/,">https://developer.apple.com/news/,</a> <a href="https://webkit.org/blog/">https://webkit.org/blog/</a> (filter for Safari releases)
+</li>
+<li><strong>Comet</strong>: <a href="https://www.perplexity.ai/hub/blog,">https://www.perplexity.ai/hub/blog,</a> <a href="https://www.perplexity.ai/hub/news">https://www.perplexity.ai/hub/news</a> (verify; ambiguous name vs Comet ML)
+</li>
+<li><strong>Anysphere (Cursor)</strong>: <a href="https://cursor.com/blog,">https://cursor.com/blog,</a> <a href="https://cursor.com/changelog,">https://cursor.com/changelog,</a> <a href="https://docs.cursor.com/">https://docs.cursor.com/</a> (blog + changelog + docs)
+</li>
+<li><strong>Speak AI</strong>: <a href="https://www.speak.com/,">https://www.speak.com/,</a> <a href="https://www.speak.com/blog">https://www.speak.com/blog</a> (was unresolved; concrete blog now)
+</li>
+<li><strong>Canva AI</strong>: <a href="https://www.canva.com/newsroom/news/">https://www.canva.com/newsroom/news/</a> (filter for Canva AI / Magic Studio)
+</li>
+<li><strong>Le Chat</strong>: <a href="https://mistral.ai/news/,">https://mistral.ai/news/,</a> <a href="https://docs.mistral.ai/,">https://docs.mistral.ai/,</a> <a href="https://github.com/mistralai">https://github.com/mistralai</a> (filter for Le Chat)
+</li>
+<li><strong>Leonardo AI</strong>: <a href="https://leonardo.ai/news,">https://leonardo.ai/news,</a> <a href="https://leonardo.ai/blog">https://leonardo.ai/blog</a>
+</li>
+<li><strong>Kling AI</strong>: <a href="https://klingai.com/">https://klingai.com/</a> (backup <a href="https://www.kuaishou.com/en)">https://www.kuaishou.com/en)</a>
+</li>
+<li><strong>Seedance</strong>: <a href="https://seed.bytedance.com/en/,">https://seed.bytedance.com/en/,</a> <a href="https://seed.bytedance.com/en/blog">https://seed.bytedance.com/en/blog</a> (filter for Seedance)
+</li>
+<li><strong>Arc Browser</strong>: <a href="https://browsercompany.com/blog/,">https://browsercompany.com/blog/,</a> <a href="https://arc.net/">https://arc.net/</a> (release notes via resources.arc.net; Google Query backup)
+</li>
+<li><strong>Dia Browser</strong>: <a href="https://www.diabrowser.com/release-notes/latest">https://www.diabrowser.com/release-notes/latest</a> (read release notes)
+</li>
+<li><strong>Opera One</strong>: <a href="https://blogs.opera.com/news/,">https://blogs.opera.com/news/,</a> <a href="https://blogs.opera.com/desktop/">https://blogs.opera.com/desktop/</a> (filter for Opera One)
+</li>
+<li><strong>Zen Browser</strong>: <a href="https://zen-browser.app/,">https://zen-browser.app/,</a> <a href="https://github.com/zen-browser/desktop/releases">https://github.com/zen-browser/desktop/releases</a> (site + GH release notes)
+</li>
+<li><strong>Wavebox</strong>: <a href="https://wavebox.io/blog/,">https://wavebox.io/blog/,</a> <a href="https://hub.wavebox.io/">https://hub.wavebox.io/</a>
+</li>
+<li><strong>Shift Browser</strong>: <a href="https://shift.com/blog/">https://shift.com/blog/</a> (Google Query backup)
+</li>
+<li><strong>Orion Browser</strong>: <a href="https://browser.kagi.com/,">https://browser.kagi.com/,</a> <a href="https://browser.kagi.com/updates.html">https://browser.kagi.com/updates.html</a> (read updates)
+</li>
+<li><strong>Firefox</strong>: <a href="https://blog.mozilla.org/en/firefox/,">https://blog.mozilla.org/en/firefox/,</a> <a href="https://www.mozilla.org/en-US/firefox/releases/,">https://www.mozilla.org/en-US/firefox/releases/,</a> <a href="https://github.com/mozilla">https://github.com/mozilla</a> (news + release notes)
+</li>
+<li><strong>Samsung Internet</strong>: <a href="https://news.samsung.com/global/,">https://news.samsung.com/global/,</a> <a href="https://developer.samsung.com/internet">https://developer.samsung.com/internet</a> (Google Query backup)
+</li>
+<li><strong>Stable Diffusion</strong>: <a href="https://stability.ai/news,">https://stability.ai/news,</a> <a href="https://stability.ai/blog,">https://stability.ai/blog,</a> <a href="https://github.com/Stability-AI">https://github.com/Stability-AI</a> (filter for Stable Diffusion)
+</li>
+<li><strong>DALL-E</strong>: <a href="https://openai.com/index/,">https://openai.com/index/,</a> <a href="https://platform.openai.com/docs/changelog">https://platform.openai.com/docs/changelog</a> (filter for DALL-E)
+</li>
+<li><strong>Craiyon</strong>: <a href="https://www.craiyon.com/">https://www.craiyon.com/</a> (Google Query backup)
+</li>
+<li><strong>Midjourney</strong>: <a href="https://www.midjourney.com/updates,">https://www.midjourney.com/updates,</a> <a href="https://docs.midjourney.com/">https://docs.midjourney.com/</a> (announcements also via official Discord)
+</li>
+<li><strong>Adobe AI</strong>: <a href="https://news.adobe.com/,">https://news.adobe.com/,</a> <a href="https://blog.adobe.com/,">https://blog.adobe.com/,</a> <a href="https://developer.adobe.com/">https://developer.adobe.com/</a> (filter for AI / Firefly / Sensei)
+</li>
+<li><strong>Adobe Firefly</strong>: <a href="https://firefly.adobe.com/,">https://firefly.adobe.com/,</a> <a href="https://blog.adobe.com/">https://blog.adobe.com/</a> (filter for Firefly)
+</li>
+<li><strong>yandex</strong>: <a href="https://yandex.com/company/press_releases/,">https://yandex.com/company/press_releases/,</a> <a href="https://yandex.com/blog/,">https://yandex.com/blog/,</a> <a href="https://yandex.com/dev/">https://yandex.com/dev/</a>
+</li>
+<li><strong>Kakao Brain / Kakao AI</strong>: <a href="https://www.kakaocorp.com/page/,">https://www.kakaocorp.com/page/,</a> <a href="https://www.kakaocorp.com/page/press">https://www.kakaocorp.com/page/press</a> (filter for AI / Kanana; Kakao Brain merged into Kakao/Kanana)
+</li></ul>
+<p><strong>Secondary sources</strong> (defined news outlets and catch-all/keyword feeds):</p>
+<ul>
+<li><strong>All Other AI/GPT News</strong> (catch-all): <a href="https://techcrunch.com/category/artificial-intelligence/,">https://techcrunch.com/category/artificial-intelligence/,</a> <a href="https://www.theverge.com/ai-artificial-intelligence,">https://www.theverge.com/ai-artificial-intelligence,</a> <a href="https://the-decoder.com/">https://the-decoder.com/</a> (run last; sweep)
+</li>
+<li><strong>Generative AI / AI Startup / Content Generator / Voice Synthesis / AI Bot / Image AI / AI Assistant / AI Plugin / LLM / Chatbot / AI Character</strong> (keyword feeds): <a href="https://techcrunch.com/category/artificial-intelligence/,">https://techcrunch.com/category/artificial-intelligence/,</a> <a href="https://venturebeat.com/category/ai/,">https://venturebeat.com/category/ai/,</a> <a href="https://www.theverge.com/ai-artificial-intelligence,">https://www.theverge.com/ai-artificial-intelligence,</a> <a href="https://the-decoder.com/">https://the-decoder.com/</a> (topical feeds; route to the owning company's master query when one applies)
+</li>
+<li><strong>AI Healthcare</strong> (keyword): <a href="https://www.mobihealthnews.com/,">https://www.mobihealthnews.com/,</a> <a href="https://techcrunch.com/category/artificial-intelligence/">https://techcrunch.com/category/artificial-intelligence/</a>
+</li>
+<li><strong>Japan AI</strong> (region keyword): <a href="https://www.itmedia.co.jp/aiplus/,">https://www.itmedia.co.jp/aiplus/,</a> <a href="https://asia.nikkei.com/Business/Technology">https://asia.nikkei.com/Business/Technology</a>
+</li>
+<li><strong>Korea AI</strong> (region keyword): <a href="https://news.daum.net/ai-tech,">https://news.daum.net/ai-tech,</a> <a href="https://zdnet.co.kr/">https://zdnet.co.kr/</a> (filter for AI)
+</li>
+<li><strong>China AI</strong> (region keyword): <a href="https://technode.com/,">https://technode.com/,</a> <a href="https://www.scmp.com/tech">https://www.scmp.com/tech</a>
+</li>
+<li><strong>US AI</strong> (region keyword): <a href="https://techcrunch.com/category/artificial-intelligence/,">https://techcrunch.com/category/artificial-intelligence/,</a> <a href="https://www.theverge.com/ai-artificial-intelligence">https://www.theverge.com/ai-artificial-intelligence</a>
+</li>
+<li><strong>Sam Altman</strong> (person): <a href="https://techcrunch.com/tag/sam-altman/,">https://techcrunch.com/tag/sam-altman/,</a> <a href="https://www.businessinsider.com/">https://www.businessinsider.com/</a>
+</li>
+<li><strong>Copyright Shield</strong> (program): <a href="https://openai.com/index/,">https://openai.com/index/,</a> <a href="https://www.theverge.com/ai-artificial-intelligence">https://www.theverge.com/ai-artificial-intelligence</a>
+</li>
+<li><strong>Skywalker.ai / Dream Fusion / MDM</strong> (unresolved): no confirmed source; Google Query + flag
+</li>
+<li><strong>Sidekick Browser</strong>: <a href="https://www.meetsidekick.com/blog">https://www.meetsidekick.com/blog</a> (homepage/blog only; Google Query + verify; may be inactive)
+</li>
+<li><strong>UC Browser</strong>: <a href="https://www.ucweb.com/">https://www.ucweb.com/</a> (no English newsroom; App Store/Play listings + Google Query)
+</li>
+<li><strong>CryptoTab Browser</strong>: <a href="https://cryptobrowser.site/en/news/">https://cryptobrowser.site/en/news/</a> (news page + Google Query)
+</li>
+<li><strong>Zeta (제타)</strong>: Google Query only, using the Phase 2 search overrides (제타 AI character, Zeta Scatter Lab); Scatter Lab's Korean character-chat app, not the fintech Zeta
+</li></ul>
+<h4 id="global-big-tech">Global Big Tech</h4>
+<p><strong>Primary sources</strong> (the query's official channel; apply any per-query handling note shown in parentheses):</p>
+<ul>
+<li><strong>Meta</strong>: <a href="https://about.fb.com/news/,">https://about.fb.com/news/,</a> <a href="https://ai.meta.com/blog/,">https://ai.meta.com/blog/,</a> <a href="https://engineering.fb.com/,">https://engineering.fb.com/,</a> <a href="https://investor.fb.com/investor-news/default.aspx">https://investor.fb.com/investor-news/default.aspx</a>
+</li>
+<li><strong>Instagram</strong>: <a href="https://about.instagram.com/blog/announcements,">https://about.instagram.com/blog/announcements,</a> <a href="https://about.fb.com/news/">https://about.fb.com/news/</a>
+</li>
+<li><strong>Amazon</strong>: <a href="https://www.aboutamazon.com/news,">https://www.aboutamazon.com/news,</a> <a href="https://www.aboutamazon.com/news/aws,">https://www.aboutamazon.com/news/aws,</a> <a href="https://www.aboutamazon.com/news/devices,">https://www.aboutamazon.com/news/devices,</a> <a href="https://www.aboutamazon.com/news/retail">https://www.aboutamazon.com/news/retail</a>
+</li>
+<li><strong>Apple</strong>: <a href="https://www.apple.com/newsroom/,">https://www.apple.com/newsroom/,</a> <a href="https://developer.apple.com/news/,">https://developer.apple.com/news/,</a> <a href="https://developer.apple.com/news/releases/">https://developer.apple.com/news/releases/</a>
+</li>
+<li><strong>Netflix</strong>: <a href="https://about.netflix.com/en/newsroom">https://about.netflix.com/en/newsroom</a>
+</li>
+<li><strong>Google</strong>: <a href="https://blog.google/,">https://blog.google/,</a> <a href="https://blog.google/products/,">https://blog.google/products/,</a> <a href="https://blog.google/technology/ai/,">https://blog.google/technology/ai/,</a> <a href="https://developers.googleblog.com/,">https://developers.googleblog.com/,</a> <a href="https://cloud.google.com/blog/">https://cloud.google.com/blog/</a> (company-level query)
+</li>
+<li><strong>YouTube</strong>: <a href="https://blog.youtube/,">https://blog.youtube/,</a> <a href="https://blog.youtube/news-and-events/">https://blog.youtube/news-and-events/</a>
+</li>
+<li><strong>Android</strong>: <a href="https://blog.google/products/android/,">https://blog.google/products/android/,</a> <a href="https://android-developers.googleblog.com/,">https://android-developers.googleblog.com/,</a> <a href="https://developer.android.com/about/versions">https://developer.android.com/about/versions</a>
+</li>
+<li><strong>Microsoft</strong>: <a href="https://news.microsoft.com/source/,">https://news.microsoft.com/source/,</a> <a href="https://blogs.microsoft.com/,">https://blogs.microsoft.com/,</a> <a href="https://blogs.windows.com/">https://blogs.windows.com/</a>
+</li>
+<li><strong>Facebook</strong>: <a href="https://about.fb.com/news/,">https://about.fb.com/news/,</a> <a href="https://engineering.fb.com/">https://engineering.fb.com/</a> (filter for Facebook)
+</li>
+<li><strong>WhatsApp</strong>: <a href="https://blog.whatsapp.com/,">https://blog.whatsapp.com/,</a> <a href="https://about.fb.com/news/">https://about.fb.com/news/</a> (WhatsApp blog + Meta newsroom filtered for WhatsApp)
+</li>
+<li><strong>Amazon Prime</strong>: <a href="https://www.aboutamazon.com/news/prime,">https://www.aboutamazon.com/news/prime,</a> <a href="https://www.aboutamazon.com/news/entertainment,">https://www.aboutamazon.com/news/entertainment,</a> <a href="https://www.aboutamazon.com/news/retail">https://www.aboutamazon.com/news/retail</a> (filter for Prime)
+</li>
+<li><strong>iOS</strong>: <a href="https://www.apple.com/newsroom/,">https://www.apple.com/newsroom/,</a> <a href="https://developer.apple.com/news/releases/,">https://developer.apple.com/news/releases/,</a> <a href="https://developer.apple.com/documentation/ios-ipados-release-notes">https://developer.apple.com/documentation/ios-ipados-release-notes</a> (filter for iOS/software)
+</li>
+<li><strong>Gmail</strong>: <a href="https://blog.google/products/gmail/,">https://blog.google/products/gmail/,</a> <a href="https://workspaceupdates.googleblog.com/">https://workspaceupdates.googleblog.com/</a> (Gmail blog + Workspace Updates filtered for Gmail)
+</li>
+<li><strong>Grab</strong>: <a href="https://www.grab.com/sg/press/,">https://www.grab.com/sg/press/,</a> <a href="https://www.grab.com/sg/blog/,">https://www.grab.com/sg/blog/,</a> <a href="https://www.grab.com/sg/newsroom/">https://www.grab.com/sg/newsroom/</a> (verify region path)
+</li></ul>
+<p><strong>Secondary sources</strong> (defined news outlets and catch-all/keyword feeds): None (this category has no catch-all or keyword rows).</p>
+<h4 id="asia-big-tech">Asia Big Tech</h4>
+<p><strong>Primary sources</strong> (the query's official channel; apply any per-query handling note shown in parentheses):</p>
+<ul>
+<li><strong>Rakuten (楽天市場)</strong>: <a href="https://corp.rakuten.co.jp/news/press/,">https://corp.rakuten.co.jp/news/press/,</a> <a href="https://global.rakuten.com/corp/news/press/,">https://global.rakuten.com/corp/news/press/,</a> <a href="https://global.rakuten.com/corp/innovation/">https://global.rakuten.com/corp/innovation/</a>
+</li>
+<li><strong>note（ノート)</strong>: <a href="https://note.jp/">https://note.jp/</a> (Google Query backup)
+</li>
+<li><strong>DeNA</strong>: <a href="https://dena.com/intl/news/,">https://dena.com/intl/news/,</a> <a href="https://dena.com/jp/news/">https://dena.com/jp/news/</a>
+</li>
+<li><strong>Gree (グリー)</strong>: <a href="https://corp.gree.net/jp/ja/news/,">https://corp.gree.net/jp/ja/news/,</a> <a href="https://corp.gree.net/en/news/">https://corp.gree.net/en/news/</a>
+</li>
+<li><strong>Time Tree (タイムツリ)</strong>: <a href="https://timetreeapp.com/intl/newsroom,">https://timetreeapp.com/intl/newsroom,</a> <a href="https://timetreeapp.com/intl/blog">https://timetreeapp.com/intl/blog</a>
+</li>
+<li><strong>Mercari(メルカリ)</strong>: <a href="https://about.mercari.com/press/news/,">https://about.mercari.com/press/news/,</a> <a href="https://about.mercari.com/en/press/news/,">https://about.mercari.com/en/press/news/,</a> <a href="https://jp-news.mercari.com/">https://jp-news.mercari.com/</a>
+</li>
+<li><strong>Kakao / 카카오</strong>: <a href="https://www.kakaocorp.com/page/,">https://www.kakaocorp.com/page/,</a> <a href="https://www.kakaocorp.com/page/press">https://www.kakaocorp.com/page/press</a>
+</li>
+<li><strong>Tencent</strong>: <a href="https://www.tencent.com/en-us/articles.html,">https://www.tencent.com/en-us/articles.html,</a> <a href="https://www.tencentcloud.com/blog,">https://www.tencentcloud.com/blog,</a> <a href="https://www.tencentcloud.com/press-release">https://www.tencentcloud.com/press-release</a>
+</li>
+<li><strong>Alibaba</strong>: <a href="https://www.alibabagroup.com/en-US/news-and-resource,">https://www.alibabagroup.com/en-US/news-and-resource,</a> <a href="https://www.alibabacloud.com/en/press-room,">https://www.alibabacloud.com/en/press-room,</a> <a href="https://www.alibabacloud.com/blog,">https://www.alibabacloud.com/blog,</a> <a href="https://www.alibabacloud.com/help/en/releasenotes/">https://www.alibabacloud.com/help/en/releasenotes/</a>
+</li>
+<li><strong>Gunosy (グノシー)</strong>: <a href="https://gunosy.co.jp/news/">https://gunosy.co.jp/news/</a> (verify path; gunosy.co.jp/en for English; Google Query backup)
+</li>
+<li><strong>카카오톡</strong>: <a href="https://www.kakaocorp.com/page/press">https://www.kakaocorp.com/page/press</a> (filter for KakaoTalk)
+</li>
+<li><strong>Coupang / 쿠팡</strong>: <a href="https://news.coupang.com/,">https://news.coupang.com/,</a> <a href="https://ir.aboutcoupang.com/news-events/news/default.aspx">https://ir.aboutcoupang.com/news-events/news/default.aspx</a> (newsroom + IR)
+</li>
+<li><strong>Toss / 토스</strong>: <a href="https://toss.im/news,">https://toss.im/news,</a> <a href="https://toss.tech/">https://toss.tech/</a> (newsroom + tech blog)
+</li>
+<li><strong>WeChat (微信)</strong>: <a href="https://www.tencent.com/en-us/articles.html">https://www.tencent.com/en-us/articles.html</a> (Tencent media; filter for WeChat)
+</li>
+<li><strong>ByteDance</strong>: <a href="https://www.bytedance.com/en/news,">https://www.bytedance.com/en/news,</a> <a href="https://newsroom.tiktok.com/,">https://newsroom.tiktok.com/,</a> <a href="https://seed.bytedance.com/en/blog">https://seed.bytedance.com/en/blog</a> (news + TikTok newsroom + Seed blog)
+</li></ul>
+<p><strong>Secondary sources</strong> (defined news outlets and catch-all/keyword feeds):</p>
+<ul>
+<li><strong>The Bridge</strong> (media outlet): <a href="https://thebridge.jp/">https://thebridge.jp/</a> (browse as a source, not a company)
+</li>
+<li><strong>Ascii Startup</strong> (media outlet): <a href="https://ascii.jp/startup/">https://ascii.jp/startup/</a> (browse as a source; verify path)
+</li>
+<li><strong>CNET</strong> (media outlet): <a href="https://www.cnet.com/news/">https://www.cnet.com/news/</a> (browse as a source)
+</li>
+<li><strong>Diamond</strong> (media outlet): <a href="https://diamond.jp/">https://diamond.jp/</a> (browse as a source)
+</li></ul>
+<h4 id="social">Social</h4>
+<p><strong>Primary sources</strong> (the query's official channel; apply any per-query handling note shown in parentheses):</p>
+<ul>
+<li><strong>TikTok</strong>: <a href="https://newsroom.tiktok.com/en-us/,">https://newsroom.tiktok.com/en-us/,</a> <a href="https://www.tiktok.com/business/en/blog,">https://www.tiktok.com/business/en/blog,</a> <a href="https://developers.tiktok.com/doc/changelog">https://developers.tiktok.com/doc/changelog</a> (newsroom + business blog + changelog)
+</li>
+<li><strong>Snapchat</strong>: <a href="https://newsroom.snap.com/,">https://newsroom.snap.com/,</a> <a href="https://forbusiness.snapchat.com/blog,">https://forbusiness.snapchat.com/blog,</a> <a href="https://eng.snap.com/blog">https://eng.snap.com/blog</a>
+</li>
+<li><strong>Telegram</strong>: <a href="https://telegram.org/blog,">https://telegram.org/blog,</a> <a href="https://core.telegram.org/api#recent-changes">https://core.telegram.org/api#recent-changes</a> (blog + api change log)
+</li>
+<li><strong>Pinterest</strong>: <a href="https://newsroom.pinterest.com/en/,">https://newsroom.pinterest.com/en/,</a> <a href="https://business.pinterest.com/en/blog/">https://business.pinterest.com/en/blog/</a>
+</li>
+<li><strong>BlueSky</strong>: <a href="https://bsky.social/about/blog,">https://bsky.social/about/blog,</a> <a href="https://github.com/bluesky-social/atproto">https://github.com/bluesky-social/atproto</a> (blog + GH)
+</li>
+<li><strong>Twitch</strong>: <a href="https://blog.twitch.tv/en/,">https://blog.twitch.tv/en/,</a> <a href="https://dev.twitch.tv/docs/change-log/">https://dev.twitch.tv/docs/change-log/</a>
+</li>
+<li><strong>Discord</strong>: <a href="https://discord.com/blog,">https://discord.com/blog,</a> <a href="https://discord.com/newsroom,">https://discord.com/newsroom,</a> <a href="https://discord.com/developers/docs/change-log">https://discord.com/developers/docs/change-log</a> (blog + newsroom + dev change log)
+</li>
+<li><strong>X</strong>: <a href="https://blog.x.com/,">https://blog.x.com/,</a> <a href="https://business.x.com/en/blog,">https://business.x.com/en/blog,</a> <a href="https://docs.x.com/x-api/changelog">https://docs.x.com/x-api/changelog</a> (blog + business + api changelog)
+</li>
+<li><strong>XChat</strong>: <a href="https://blog.x.com/">https://blog.x.com/</a> (filter X blog for XChat; Google Query backup)
+</li></ul>
+<p><strong>Secondary sources</strong> (defined news outlets and catch-all/keyword feeds):</p>
+<ul>
+<li><strong>Douyin</strong> (secondary-source-only): <a href="https://www.techinasia.com/,">https://www.techinasia.com/,</a> <a href="https://technode.com/">https://technode.com/</a> (no English newsroom; scan secondary China-tech sources, filter for Douyin)
+</li>
+<li><strong>BeReal</strong> (no usable official feed): Google Query
+</li></ul>
+<h4 id="theme">Theme</h4>
+<p><strong>Primary sources</strong> (the query's official channel; apply any per-query handling note shown in parentheses):</p>
+<ul>
+<li><strong>Spotify</strong>: <a href="https://newsroom.spotify.com/,">https://newsroom.spotify.com/,</a> <a href="https://engineering.atspotify.com/">https://engineering.atspotify.com/</a>
+</li>
+<li><strong>Linkedin</strong>: <a href="https://news.linkedin.com/,">https://news.linkedin.com/,</a> <a href="https://www.linkedin.com/business/marketing/blog">https://www.linkedin.com/business/marketing/blog</a> (backup socialmediatoday.com)
+</li>
+<li><strong>Reddit</strong>: <a href="https://redditinc.com/news,">https://redditinc.com/news,</a> <a href="https://redditinc.com/blog">https://redditinc.com/blog</a>
+</li>
+<li><strong>VSCO</strong>: <a href="https://vsco.co/vsco/journal">https://vsco.co/vsco/journal</a> (Google Query backup)
+</li>
+<li><strong>Figma</strong>: <a href="https://www.figma.com/blog/,">https://www.figma.com/blog/,</a> <a href="https://www.figma.com/release-notes/">https://www.figma.com/release-notes/</a> (blog + release notes)
+</li>
+<li><strong>Paypal</strong>: <a href="https://newsroom.paypal-corp.com/,">https://newsroom.paypal-corp.com/,</a> <a href="https://www.paypal.com/us/brc/article/">https://www.paypal.com/us/brc/article/</a> (verify)
+</li>
+<li><strong>locket</strong>: <a href="https://apps.apple.com/us/app/locket-widget/id1600525061,">https://apps.apple.com/us/app/locket-widget/id1600525061,</a> <a href="https://locket.camera/">https://locket.camera/</a> (read App Store "What's New"; no newsroom)
+</li></ul>
+<p><strong>Secondary sources</strong> (defined news outlets and catch-all/keyword feeds):</p>
+<ul>
+<li><strong>Other Super Apps</strong> (catch-all): <a href="https://www.techinasia.com/,">https://www.techinasia.com/,</a> <a href="https://www.businessofapps.com/news/">https://www.businessofapps.com/news/</a> (run last; sweep super-app coverage)
+</li>
+<li><strong>MZ Gen</strong> (keyword): <a href="https://www.emarketer.com/,">https://www.emarketer.com/,</a> <a href="https://www.businessofapps.com/news/">https://www.businessofapps.com/news/</a>
+</li>
+<li><strong>Gen Z</strong> (keyword): <a href="https://www.emarketer.com/,">https://www.emarketer.com/,</a> <a href="https://www.socialmediatoday.com/">https://www.socialmediatoday.com/</a>
+</li>
+<li><strong>1020 trend</strong> (keyword): <a href="https://www.careet.net/,">https://www.careet.net/,</a> <a href="https://news.daum.net/ai-tech">https://news.daum.net/ai-tech</a> (verify Careet)
+</li>
+<li><strong>Social app</strong> (keyword): <a href="https://www.businessofapps.com/news/,">https://www.businessofapps.com/news/,</a> <a href="https://www.socialmediatoday.com/">https://www.socialmediatoday.com/</a>
+</li>
+<li><strong>Tech Crunch Startup</strong> (media outlet): <a href="https://techcrunch.com/category/startups/">https://techcrunch.com/category/startups/</a> (browse as a source)
+</li></ul>
+<h3 id="phase-3-search-term-overrides-disambiguation">Phase 3 search-term overrides (disambiguation)</h3>
+<p>Many master queries are common words or names that return junk when searched bare. Use the search string(s) listed here instead. A query not listed uses its exact name; add the parent company or "AI" only if a quick check shows the bare name is noisy. For Korean and Japanese companies, pair these with the local-language name per the edition rule above.</p>
+<p>AI Agent:</p>
+<ul>
+<li>OpenClaw: "OpenClaw AI agent", "Moltbot", "Clawdbot"
+</li>
+<li>Paperclip: "Paperclip AI agent"
+</li>
+<li>A.(에이닷): "에이닷", "SKT 에이닷", "A. SKT AI agent"
+</li>
+<li>KIRA: "KIRA Krafton", "KIRA AI agent"
+</li>
+<li>Wrtn Crack: "뤼튼 크랙", "Wrtn Crack"
+</li>
+<li>Rinna: "rinna AI", "rinna 株式会社"
+</li>
+<li>Cotomo: "Cotomo AI", "Cotomo アプリ"
+</li>
+<li>Chai: "Chai AI app", "Chai Research AI"
+</li>
+<li>Nomi: "Nomi AI companion"
+</li>
+<li>Paradot: "Paradot AI"
+</li>
+<li>Poketomo: "Poketomo AI"
+</li>
+<li>Bot Madang: "봇마당", "Bot Madang"
+</li>
+<li>NVIDIA: "NVIDIA AI agent" (this category only; the company itself is broad)
+</li></ul>
+<p>AI/GPT:</p>
+<ul>
+<li>Lovable: "Lovable AI", "Lovable vibe coding"
+</li>
+<li>Codex: "OpenAI Codex"
+</li>
+<li>Sora: "OpenAI Sora", "Sora AI video"
+</li>
+<li>Gemini: "Google Gemini"
+</li>
+<li>Veo: "Google Veo", "Veo AI video"
+</li>
+<li>Nova AI: "Amazon Nova AI"
+</li>
+<li>Claude: "Claude AI", "Anthropic Claude"
+</li>
+<li>Copilot: "Microsoft Copilot"
+</li>
+<li>Safari: "Apple Safari browser"
+</li>
+<li>Comet: "Perplexity Comet browser"
+</li>
+<li>Anysphere (Cursor): "Cursor AI code editor", "Anysphere Cursor"
+</li>
+<li>Le Chat: "Mistral Le Chat"
+</li>
+<li>Seedance: "ByteDance Seedance"
+</li>
+<li>Moonshot AI: "Moonshot AI Kimi"
+</li>
+<li>Physical Intelligence: "Physical Intelligence robotics", "Physical Intelligence robot company"
+</li>
+<li>Writer AI: "Writer.com AI", "Writer AI enterprise"
+</li>
+<li>Inflection AI (Pi): "Inflection Pi AI", "Pi AI assistant"
+</li>
+<li>Arc Browser: "Arc browser Browser Company"
+</li>
+<li>Dia Browser: "Dia browser"
+</li>
+<li>Zen Browser: "Zen browser"
+</li>
+<li>Sidekick Browser: "Sidekick browser"
+</li>
+<li>Shift Browser: "Shift browser app"
+</li>
+<li>Orion Browser: "Orion browser Kagi"
+</li>
+<li>yandex: "Yandex AI"
+</li>
+<li>Kakao Brain: "카카오브레인", "Kakao Brain"
+</li>
+<li>Kakao AI: "카카오 AI", "Kakao Kanana", "카카오 카나나"
+</li>
+<li>Zeta: "제타 AI character", "Zeta Scatter Lab" (Korean character-chat app, not the fintech Zeta)
+</li>
+<li>Speak AI: "Speak AI tutor", "Speak language app" (speak.com, not speakai.co)
+</li>
+<li>Stable Diffusion: "Stable Diffusion Stability AI"
+</li>
+<li>Kling AI: "Kling AI Kuaishou video"
+</li></ul>
+<p>Asia Big Tech:</p>
+<ul>
+<li>note（ノート): "note 株式会社", "note.com Japan" (not the generic word "note")
+</li>
+<li>DeNA: "DeNA ディー・エヌ・エー"
+</li>
+<li>Gree (グリー): "GREE グリー"
+</li>
+<li>Gunosy (グノシー): "Gunosy グノシー"
+</li>
+<li>Time Tree (タイムツリ): "TimeTree タイムツリー"
+</li>
+<li>Mercari (メルカリ): "Mercari メルカリ"
+</li>
+<li>Kakao / 카카오: "Kakao 카카오"
+</li>
+<li>Coupang / 쿠팡: "Coupang 쿠팡"
+</li>
+<li>Toss / 토스: "Toss 토스 핀테크", "Viva Republica Toss"
+</li>
+<li>WeChat (微信): "WeChat 微信"
+</li></ul>
+<p>Social:</p>
+<ul>
+<li>X: "X Twitter", "X app Musk"
+</li>
+<li>XChat: "X Chat messaging app"
+</li>
+<li>Douyin: "Douyin 抖音"
+</li>
+<li>Snapchat / Snap: "Snapchat Snap"
+</li>
+<li>BlueSky: "Bluesky social app"
+</li></ul>
+<p>Theme:</p>
+<ul>
+<li>locket: "Locket Widget app" (not jewelry)
+</li>
+<li>The keyword rows (Other Super Apps, MZ Gen, Gen Z, 1020 trend, Social app) follow their Phase 1 feed handling, not a single bare search.
+</li></ul>
+<hr>
+<h2 id="5-what-changed-in-this-merge">5. What changed in this merge</h2>
+<ul>
+<li>One Query List, one HTML report, one JSON data file. Weekly and Global are not split (carried from both specs).
+</li>
+<li>Master query list and the per-category source maps come from the canonical runbook; the procedure has since been rearranged (see the architecture bullets below).
+</li>
+<li>Section 4 source maps are now the <strong>union of both specs' links</strong>, deduped. Several queries that were "unresolved/verify/homepage-only" now have concrete official channels (for example Speak AI, Stability AI, KIRA, LangGraph, Pi), and many queries gained official docs / changelogs / release-notes and a shared common-feed block.
+</li>
+<li>Added the Naver / LINE / LY Corporation single-company drop (now Tier 4 #8, Section 3d.4), with a <code>[Market]</code>-only exception.
+</li>
+<li>The report row carries five fields: Category, Master Query, Headline, a clickable selection checkbox, and up to three source links (Section 1a). The checkbox is a real <code>&lt;input&gt;</code> the desk ticks; the agent never pre-ticks it. Source links render as clickable anchors, primary then secondary then Google News.
+</li>
+<li>Source taxonomy simplified to two defined types: Primary source (the query's official channel) and Secondary source (a defined news outlet or catch-all or keyword feed). Links found via Google search at run time are the third, undefined type. This replaces the earlier Group 1 / Group 2 / Group 3 split.
+</li>
+<li>Agent-efficiency notes: resolve Google News redirects only for kept links; add the US-edition pass for an Asian query only when the local-edition pass is thin; cap each cluster at 3 sources so collection stops early; all phases run inline, no spawned sub-agents.
+</li>
+<li>Procedure rearranged into Phases 0 to 6: Phase 0 setup; Phase 1 primary sources, one headline per link; Phase 2 secondary sources, clustered into Phase 1 with a 3-source cap; Phase 3 Google News across US, KR, and JP with the trigger cluster size rule; Phase 4 tier arrangement; Phase 5 n/a establishment; Phase 6 repetition check (across-week and within-week). Headlines are now written during collection, not in a separate pass.
+</li>
+<li>Replaced the hard/soft exclusion split and the old selection tiers with a single four-tier system (Section 3d): Tier 4 drops; Tiers 1 to 3 are kept and ranked. Geography is no longer a hard drop (out-of-market stories are Tier 2 unless they signal a cross-market trend); transportation is a Tier 4 drop (Tier 3 under AI or Global Big Tech queries); security incidents are Tier 3.
+</li>
+<li>Defined three named operating rules (Section 3f): the headline rule, the cluster rule (up to 3 sources, primary then secondary then Google News), and the trigger cluster size rule (Phase 3 boolean-negate when over 50% of Google hits repeat Phases 1 to 2).
+</li>
+<li>Output migrated from an Excel workbook to a self-contained HTML report (Section 1a) rendered from a JSON data file (Section 1b). No openpyxl, no .xlsx. The data file is also the Phase 6 dedup memory, replacing the archived Working sheet.
+</li>
+<li>The selection checkbox is now a real clickable <code>&lt;input type="checkbox"&gt;</code>: ticks autosave in the browser and export to <code>selections_{since}_{until}.json</code> for a later agent step (no fixed schema yet). Phase 0 renamed to Setup; the column-letter and tab-name conventions are dropped.
+</li></ul>
+<hr>
+<h2 id="6-report-template-fill-this-and-save-as-report-html">6. Report template (fill this and save as report.html)</h2>
+<p>This is the deliverable's exact HTML. It is self-contained (inline CSS and JS, no external requests, <code>&lt;meta charset="utf-8"&gt;</code>, a CJK font stack) and already implements Section 1a: rows grouped by category then master query with Tier 1 first, a tier badge, up to three clickable source links, real clickable checkboxes that autosave in the browser, and an Export button that downloads <code>selections_{since}_{until}.json</code>. Every value is inserted with <code>textContent</code>/<code>href</code>, so it is HTML-escaped automatically.</p>
+<p>To produce a week's report, copy the file below verbatim and replace only the JSON inside the <code>&lt;script type="application/json" id="report-data"&gt;</code> block, then save it as <code>report_{since}_{until}.html</code>. Change nothing outside that JSON. Because the data is JSON, all quotes and ampersands are handled for you; just keep the JSON valid. (If any value could literally contain the text <code>&lt;/script&gt;</code>, escape the <code>&lt;</code> as <code>\u003c</code>.) The JSON shape:</p>
+<pre><code class="language-json">{
+  &quot;run&quot;: { &quot;since&quot;: &quot;2026-06-17&quot;, &quot;until&quot;: &quot;2026-06-23&quot; },
+  &quot;data&quot;: [
+    { &quot;cluster_id&quot;: &quot;c001&quot;, &quot;category&quot;: &quot;AI/GPT&quot;, &quot;master_query&quot;: &quot;ChatGPT&quot;, &quot;company&quot;: &quot;OpenAI&quot;,
+      &quot;tier&quot;: 1, &quot;date&quot;: &quot;2026-06-17&quot;,
+      &quot;headline&quot;: &quot;[OpenAI] ChatGPT Projects 공유 기능 \&quot;GA\&quot; 공개 (2026.6.17)&quot;,
+      &quot;sources&quot;: [&quot;https://openai.com/index/projects&quot;, &quot;https://techcrunch.com/2026/06/17/openai&quot;] },
+    { &quot;cluster_id&quot;: &quot;c099&quot;, &quot;category&quot;: &quot;AI/GPT&quot;, &quot;master_query&quot;: &quot;Codex&quot;, &quot;is_na&quot;: true, &quot;headline&quot;: &quot;n/a&quot;, &quot;sources&quot;: [] }
+  ]
+}</code></pre>
+<p><code>data</code> is the display subset of the records you wrote to <code>data.json</code>: one object per kept cluster (order does not matter; the page groups and sorts). Use <code>"is_na": true</code> for a master query with no story this week (it renders with no checkbox). The embedded HTML:</p>
+<pre><code class="language-html">&lt;!doctype html&gt;
+&lt;html lang=&quot;ko&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;title&gt;Weekly Tech Research · 2026.6.17–2026.6.23&lt;/title&gt;
+&lt;style&gt;
+  :root{
+    --ink:#15171c; --paper:#ffffff; --soft:#f5f6f8; --line:#e6e8ec; --muted:#6a7280;
+    --accent:#2f4cdd; --accent-soft:#eef1fe;
+    --t1:#3b3f8f; --t1-bg:#ecedfb; --t2:#9a5b00; --t2-bg:#fdf3e3; --t3:#566174; --t3-bg:#eef1f4;
+    --sel:#f0fff7; --sel-line:#9fe3c2;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--soft); color:var(--ink);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,&quot;Noto Sans KR&quot;,&quot;Apple SD Gothic Neo&quot;,&quot;Noto Sans JP&quot;,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px 96px}
+
+  /* sticky toolbar */
+  .bar{
+    position:sticky; top:0; z-index:20; background:rgba(255,255,255,.9); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line); margin:0 -20px 0; padding:14px 20px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  .bar .lead{display:flex;flex-direction:column;line-height:1.2;margin-right:auto}
+  .bar .lead b{font-size:15px;letter-spacing:-.01em}
+  .bar .lead span{font-size:12.5px;color:var(--muted)}
+  .count{font-variant-numeric:tabular-nums;font-weight:700;color:var(--accent)}
+  .btn{
+    appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);
+    font:600 14px/1 inherit;padding:10px 14px;border-radius:9px;cursor:pointer;white-space:nowrap;
+  }
+  .btn:hover{border-color:#c9cdd4}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{background:#2740c4}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  header.page{padding:40px 0 8px}
+  .eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  h1{margin:.25em 0 .15em;font-size:clamp(1.7rem,3.4vw,2.4rem);letter-spacing:-.02em}
+  .sub{margin:.2em 0 0;color:var(--muted);font-size:14.5px}
+  .sample{display:inline-block;margin-top:10px;font-size:12px;color:#9a5b00;background:var(--t2-bg);border:1px solid #f0dcb6;border-radius:999px;padding:3px 10px}
+
+  .cat{margin-top:40px}
+  .cat &gt; h2{
+    display:flex;align-items:baseline;gap:10px;margin:0 0 4px;font-size:1.15rem;letter-spacing:-.01em;
+    padding-bottom:8px;border-bottom:2px solid var(--ink);
+  }
+  .cat &gt; h2 .n{font-size:.8rem;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+  .mq{margin:18px 0 0}
+  .mq &gt; h3{margin:0 0 2px;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+  .row{
+    display:grid;grid-template-columns:26px 1fr;gap:14px;align-items:start;
+    padding:14px 12px;border:1px solid var(--line);border-radius:11px;background:var(--paper);margin-top:8px;
+  }
+  .row.sel{background:var(--sel);border-color:var(--sel-line)}
+  .row.na{background:var(--soft);border-style:dashed}
+  .cbx{margin-top:3px}
+  .cbx input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+  .head{font-size:15.5px;line-height:1.5;letter-spacing:-.005em}
+  .row.na .head{color:var(--muted);font-style:italic}
+  .meta{margin-top:7px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+  .tier{font-weight:700;font-size:11.5px;letter-spacing:.02em;padding:2px 8px;border-radius:999px;border:1px solid transparent}
+  .t1{color:var(--t1);background:var(--t1-bg);border-color:#d6d8f4}
+  .t2{color:var(--t2);background:var(--t2-bg);border-color:#f0dcb6}
+  .t3{color:var(--t3);background:var(--t3-bg);border-color:#dde2e8}
+  .date{font-variant-numeric:tabular-nums}
+  .srcs{display:flex;gap:8px;flex-wrap:wrap}
+  .srcs a{
+    color:var(--accent);text-decoration:none;font-size:12.5px;border:1px solid var(--accent-soft);
+    background:var(--accent-soft);padding:2px 8px;border-radius:7px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .srcs a:hover{text-decoration:underline}
+  .dot{color:#cdd2da}
+
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:40;max-width:90vw;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media (max-width:560px){ .row{grid-template-columns:24px 1fr} .bar .lead{margin-right:0;width:100%} }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important;scroll-behavior:auto} }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class=&quot;wrap&quot;&gt;
+
+  &lt;div class=&quot;bar&quot;&gt;
+    &lt;div class=&quot;lead&quot;&gt;
+      &lt;b&gt;주간 리서치 · 최종 선별&lt;/b&gt;
+      &lt;span id=&quot;range&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div&gt;&lt;span class=&quot;count&quot; id=&quot;count&quot;&gt;0&lt;/span&gt; selected&lt;/div&gt;
+    &lt;button class=&quot;btn&quot; id=&quot;clear&quot; type=&quot;button&quot;&gt;Clear all&lt;/button&gt;
+    &lt;button class=&quot;btn primary&quot; id=&quot;export&quot; type=&quot;button&quot;&gt;Export selections&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;header class=&quot;page&quot;&gt;
+    &lt;p class=&quot;eyebrow&quot;&gt;Weekly Tech News Research&lt;/p&gt;
+    &lt;h1&gt;Global IT · AI 주간 리서치&lt;/h1&gt;
+    &lt;p class=&quot;sub&quot; id=&quot;subline&quot;&gt;&lt;/p&gt;
+  &lt;/header&gt;
+
+  &lt;main id=&quot;report&quot; aria-live=&quot;polite&quot;&gt;&lt;/main&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;toast&quot; id=&quot;toast&quot;&gt;&lt;/div&gt;
+
+&lt;!-- ====== AGENT-INJECTED DATA: replace the JSON below on every run ====== --&gt;
+&lt;script type=&quot;application/json&quot; id=&quot;report-data&quot;&gt;
+{ &quot;run&quot;: { &quot;since&quot;: &quot;YYYY-MM-DD&quot;, &quot;until&quot;: &quot;YYYY-MM-DD&quot; }, &quot;data&quot;: [] }
+&lt;/script&gt;
+
+&lt;script&gt;
+/* CATEGORY_ORDER is fixed. RUN and DATA are read from the JSON in the
+   #report-data block below, which is the ONLY thing the agent replaces. */
+const CATEGORY_ORDER = [&quot;AI Agent&quot;,&quot;AI/GPT&quot;,&quot;Global Big Tech&quot;,&quot;Asia Big Tech&quot;,&quot;Social&quot;,&quot;Theme&quot;];
+let RUN = { since:&quot;&quot;, until:&quot;&quot; }, DATA = [];
+try {
+  const _p = JSON.parse(document.getElementById(&quot;report-data&quot;).textContent);
+  RUN = _p.run || RUN;
+  DATA = Array.isArray(_p.data) ? _p.data : [];
+} catch (e) { console.error(&quot;report-data JSON failed to parse:&quot;, e); }
+
+/* ----- helpers ----- */
+const $ = (s,r=document)=&gt;r.querySelector(s);
+const fmtDot = d =&gt; d.replaceAll(&quot;-&quot;,&quot;.&quot;).replace(/\.0?(\d)/g,(m,x,o)=&gt; o===4? &quot;.&quot;+x : m); // 2026-06-17 -&gt; 2026.6.17
+function pretty(d){ const [y,m,da]=d.split(&quot;-&quot;); return `${y}.${+m}.${+da}`; }
+const STORE_KEY = `selections:${RUN.since}_${RUN.until}`;
+
+function loadChecked(){
+  try { return new Set(JSON.parse(localStorage.getItem(STORE_KEY) || &quot;[]&quot;)); }
+  catch { return new Set(); }
+}
+function saveChecked(){
+  const ids = [...document.querySelectorAll(&#x27;input[data-cluster-id]:checked&#x27;)].map(i=&gt;i.dataset.clusterId);
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(ids)); } catch {}
+  $(&quot;#count&quot;).textContent = ids.length;
+}
+
+/* ----- render (textContent + href =&gt; auto-escaped) ----- */
+function render(){
+  const root = $(&quot;#report&quot;);
+  root.textContent = &quot;&quot;;
+  const checked = loadChecked();
+  const byCat = {};
+  for(const r of DATA){ (byCat[r.category] ||= []).push(r); }
+
+  for(const cat of CATEGORY_ORDER){
+    const rows = byCat[cat]; if(!rows) continue;
+    const realCount = rows.filter(r=&gt;!r.is_na).length;
+    const sec = document.createElement(&quot;section&quot;); sec.className=&quot;cat&quot;;
+    const h2 = document.createElement(&quot;h2&quot;);
+    h2.append(cat);
+    const n = document.createElement(&quot;span&quot;); n.className=&quot;n&quot;; n.textContent = `${realCount} stor${realCount===1?&quot;y&quot;:&quot;ies&quot;}`;
+    h2.append(n); sec.append(h2);
+
+    // group by master query, preserve first-seen order
+    const mqOrder = [...new Set(rows.map(r=&gt;r.master_query))];
+    for(const mq of mqOrder){
+      const grp = document.createElement(&quot;div&quot;); grp.className=&quot;mq&quot;;
+      const h3 = document.createElement(&quot;h3&quot;); h3.textContent = mq; grp.append(h3);
+
+      rows.filter(r=&gt;r.master_query===mq)
+          .sort((a,b)=&gt;(a.tier??99)-(b.tier??99))
+          .forEach(r=&gt;{
+        const row = document.createElement(&quot;div&quot;);
+        row.className = &quot;row&quot; + (r.is_na?&quot; na&quot;:&quot;&quot;);
+        // checkbox cell
+        const cbWrap = document.createElement(&quot;div&quot;); cbWrap.className=&quot;cbx&quot;;
+        if(!r.is_na){
+          const cb = document.createElement(&quot;input&quot;);
+          cb.type=&quot;checkbox&quot;; cb.dataset.clusterId=r.cluster_id;
+          cb.setAttribute(&quot;aria-label&quot;,&quot;select: &quot;+r.headline);
+          cb.checked = checked.has(r.cluster_id);
+          cb.addEventListener(&quot;change&quot;,()=&gt;{ row.classList.toggle(&quot;sel&quot;,cb.checked); saveChecked(); });
+          if(cb.checked) row.classList.add(&quot;sel&quot;);
+          cbWrap.append(cb);
+        }
+        row.append(cbWrap);
+        // content cell
+        const body = document.createElement(&quot;div&quot;);
+        const head = document.createElement(&quot;div&quot;); head.className=&quot;head&quot;; head.textContent=r.headline;
+        body.append(head);
+        if(!r.is_na){
+          const meta = document.createElement(&quot;div&quot;); meta.className=&quot;meta&quot;;
+          const tier = document.createElement(&quot;span&quot;); tier.className=&quot;tier t&quot;+r.tier; tier.textContent=&quot;Tier &quot;+r.tier;
+          const date = document.createElement(&quot;span&quot;); date.className=&quot;date&quot;; date.textContent=pretty(r.date);
+          meta.append(tier, date);
+          if(r.sources?.length){
+            const dot=document.createElement(&quot;span&quot;); dot.className=&quot;dot&quot;; dot.textContent=&quot;·&quot;; meta.append(dot);
+            const srcs=document.createElement(&quot;span&quot;); srcs.className=&quot;srcs&quot;;
+            r.sources.slice(0,3).forEach(u=&gt;{
+              const a=document.createElement(&quot;a&quot;); a.href=u; a.target=&quot;_blank&quot;; a.rel=&quot;noopener noreferrer&quot;;
+              try{ a.textContent=new URL(u).hostname.replace(/^www\./,&quot;&quot;); }catch{ a.textContent=u; }
+              srcs.append(a);
+            });
+            meta.append(srcs);
+          }
+          body.append(meta);
+        }
+        row.append(body);
+        grp.append(row);
+      });
+      sec.append(grp);
+    }
+    root.append(sec);
+  }
+  saveChecked(); // sync count
+}
+
+/* ----- export ----- */
+function buildSelectionsJSON(){
+  const ids = [...document.querySelectorAll(&#x27;input[data-cluster-id]:checked&#x27;)].map(i=&gt;i.dataset.clusterId);
+  const set = new Set(ids);
+  const selected = DATA.filter(r=&gt;set.has(r.cluster_id)).map(r=&gt;({
+    cluster_id:r.cluster_id, category:r.category, master_query:r.master_query,
+    company:r.company, headline:r.headline, tier:r.tier, sources:r.sources, date:r.date
+  }));
+  return JSON.stringify({ since:RUN.since, until:RUN.until, generated:new Date().toISOString(),
+                          count:selected.length, selections:selected }, null, 2);
+}
+function download(json){
+  const blob = new Blob([json], {type:&quot;application/json&quot;});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement(&quot;a&quot;);
+  a.href=url; a.download=`selections_${RUN.since}_${RUN.until}.json`;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(()=&gt;URL.revokeObjectURL(url), 1000);
+}
+function toast(msg){ const t=$(&quot;#toast&quot;); t.textContent=msg; t.classList.add(&quot;show&quot;); setTimeout(()=&gt;t.classList.remove(&quot;show&quot;),2200); }
+
+/* ----- wire up ----- */
+function init(){
+  $(&quot;#range&quot;).textContent = `${pretty(RUN.since)} – ${pretty(RUN.until)}`;
+  $(&quot;#subline&quot;).textContent = `${pretty(RUN.since)} – ${pretty(RUN.until)} · 6개 카테고리 · Tier 1 우선 정렬`;
+  render();
+  $(&quot;#export&quot;).addEventListener(&quot;click&quot;,()=&gt;{
+    const json = buildSelectionsJSON();
+    const n = JSON.parse(json).count;
+    if(n===0){ toast(&quot;No rows selected yet. Tick the stories to keep, then export.&quot;); return; }
+    download(json); toast(`Exported ${n} selected row${n===1?&quot;&quot;:&quot;s&quot;} to selections_${RUN.since}_${RUN.until}.json`);
+  });
+  $(&quot;#clear&quot;).addEventListener(&quot;click&quot;,()=&gt;{
+    document.querySelectorAll(&#x27;input[data-cluster-id]:checked&#x27;).forEach(cb=&gt;{ cb.checked=false; cb.closest(&quot;.row&quot;).classList.remove(&quot;sel&quot;); });
+    saveChecked(); toast(&quot;Cleared all selections.&quot;);
+  });
+}
+if(typeof document!==&quot;undefined&quot; &amp;&amp; document.readyState!==&quot;loading&quot;) init();
+else if(typeof document!==&quot;undefined&quot;) document.addEventListener(&quot;DOMContentLoaded&quot;, init);
+
+/* test hook (no effect in browser) */
+if(typeof window!==&quot;undefined&quot;){ window.__test = { buildSelectionsJSON, saveChecked, STORE_KEY, DATA, RUN }; }
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre></article></main></body></html>
