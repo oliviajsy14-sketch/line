@@ -1,0 +1,17 @@
+{
+  "loaded_source_count": 257,
+  "google_news_query_count": 800,
+  "raw_collected_count": 0,
+  "after_date_filter_count": 0,
+  "after_ai_filter_count": 0,
+  "after_dedupe_count": 0,
+  "final_visible_row_count": 0,
+  "routes_attempted": [
+    "google_news_us_kr_jp_global",
+    "additional_source_rss_discovery",
+    "sitemap_discovery",
+    "direct_pages",
+    "site_query_fallback"
+  ],
+  "incomplete": true
+}
