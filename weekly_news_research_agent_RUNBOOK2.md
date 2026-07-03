@@ -10,6 +10,57 @@ The pipeline runs in seven phases (0 to 6): set up the run, collect and headline
 
 ---
 
+## ONE-SHOT EXECUTION INSTRUCTION
+
+When this runbook is executed by Codex, Claude Code, or any coding agent, do not only summarize this document.
+
+You must perform the full execution workflow:
+
+1. Check whether crawler.py exists.
+2. If crawler.py does not exist, create it from this runbook.
+3. If crawler.py exists, inspect and update it so it fully follows this runbook.
+4. Ensure the crawler can:
+   - load all additional_source_url_pool entries
+   - run Google News RSS queries for US/KR/JP/Global
+   - discover RSS/feed endpoints
+   - discover sitemap/news sitemap URLs
+   - crawl direct newsroom/blog pages
+   - use site: search fallback
+   - use Playwright for JS-heavy sources when available
+   - generate final HTML and JSON outputs
+
+5. Do not sample additional_source_url_pool.
+6. Iterate through every source URL.
+7. Add diagnostic counters:
+   - loaded source count
+   - Google News query count
+   - raw collected count
+   - after date filter count
+   - after AI filter count
+   - after dedupe count
+   - final visible row count
+
+8. If the final visible row count is below 200, do not stop immediately.
+   First expand:
+   - Google News query variants
+   - source-specific RSS discovery
+   - sitemap discovery
+   - site: query fallback
+   - Playwright rendering for JS-heavy sources
+
+9. Only mark the run incomplete after all collection routes have been attempted.
+
+10. After updating or creating crawler.py, run:
+
+python3 crawler.py --since {START_DATE} --until {END_DATE}
+
+11. Generate:
+   - report_{START_DATE}_{END_DATE}.html
+   - data_{START_DATE}_{END_DATE}.json
+   - diagnostics_{START_DATE}_{END_DATE}.json
+
+12. Final output must include the HTML report path and diagnostics summary.
+
 ## 0. How to run on Claude Code
 
 ### What a run produces (read this first)
