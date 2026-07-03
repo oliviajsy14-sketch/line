@@ -77,9 +77,62 @@ If required capability is missing:
 - Do not silently proceed as a normal complete run. First record the missing capability in embedded audit metadata.
 - If web collection is entirely impossible, do not fabricate articles or URLs. Generate a `cannot execute collection` HTML report explaining the missing capability in the collapsed audit metadata.
 - If the agent cannot perform high-volume Google News RSS fetches, direct RSS/page fetches, or browser rendering for JS-heavy pages, it must not present the output as a complete weekly run. It must either stop and report missing capabilities, or generate an incomplete report with `shortage_reason`, `failed_sources`, and `missing_capabilities` clearly embedded and visible in the header.
-- If only some sources are inaccessible, collect all reachable articles but record each unreachable source in `source_manifest` and explain the coverage gap in `shortage_reason`.
+- If only some sources are inaccessible, collect allㅌ reachable articles but record each unreachable source in `source_manifest` and explain the coverage gap in `shortage_reason`.
 
 ---
+## HARD EXECUTION REQUIREMENT: Do not generate the report unless the crawler actually runs
+
+This runbook must not be executed as a manual web-search summary. It must be executed with a real local or agent-side runtime that can run scripts, fetch RSS/HTML, resolve redirects, and optionally render JS-heavy pages.
+
+Before collecting news, the executing agent must create and run a real crawler script, preferably `crawler.py`. The script must perform the collection work programmatically. Manual browsing, sampled web search, or best-effort targeted search is not a valid run.
+
+The run is valid only if all of the following are true:
+
+1. A script was created and executed locally.
+2. Google News RSS was fetched programmatically for every master query.
+3. For every master query, the following query variants were attempted:
+
+   * `{master query}`
+   * `{master query} AI`
+   * `{master query} update`
+   * `{master query} launch`
+   * `{master query} partnership`
+   * `{master query} funding`
+   * `{master query} regulation`
+4. Google News RSS was attempted across US/en, KR/ko, and JP/ja editions where applicable.
+5. Google News redirect URLs were resolved or replaced with the actual publisher URLs for all kept rows.
+6. Every root URL in `additional_source_url_pool` was processed by code, not manually sampled.
+7. For every root URL, the crawler tried applicable routes such as `/feed`, `/rss`, `/news`, `/blog`, `/press`, `/latest`, `/archive`, `/category`, `/tag`, sitemap routes, and Google `site:` fallback queries.
+8. JS-heavy pages were handled through RSS/feed fallback, Google site search, Google News RSS, and browser rendering through Playwright or an equivalent browser tool when available.
+9. A `source_manifest` entry exists for every mandatory source root URL.
+10. The final HTML was generated from the crawler's final records, not from manually summarized search results.
+
+If the executing environment cannot run a script, cannot perform high-volume Google News RSS fetches, cannot fetch RSS/page HTML, cannot resolve Google News redirects, or cannot use browser rendering for JS-heavy pages, the agent must stop before report generation and output only a setup failure message with missing capabilities and installation steps.
+
+Do not create an `INCOMPLETE RUN` HTML just because the agent lacks the required tools. An incomplete HTML is allowed only after the full crawler has actually run and the logs prove that all required RSS routes, source routes, site searches, and fallback paths were attempted.
+
+Forbidden shortcuts:
+
+* Do not use only ChatGPT/web-search results.
+* Do not sample only major sources.
+* Do not skip `additional_source_url_pool`.
+* Do not mark a source checked after opening only the homepage.
+* Do not assign n/a before Google News RSS, official source checks, secondary source sweeps, and local-language searches are completed.
+* Do not generate the final HTML if fewer than 200 rows remain and the crawler logs do not prove that all expansion routes were attempted.
+
+Required local setup for a complete run:
+
+```bash
+pip install requests feedparser beautifulsoup4 lxml python-dateutil pandas
+pip install playwright
+python -m playwright install chromium
+```
+
+If using Claude Code, also enable browser rendering:
+
+```bash
+claude mcp add playwright npx @playwright/mcp@latest
+```
 
 ## 1. Output
 
