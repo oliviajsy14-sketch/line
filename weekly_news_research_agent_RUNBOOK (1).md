@@ -4,65 +4,79 @@ You are the executing agent. When you are asked to run the weekly pipeline for a
 
 **Purpose.** In one run, for a fixed list of master queries grouped into six categories over a given week, collect news article links from primary sources, Google News, and secondary sources (trusted news sites); group links covering the same event into clusters; render each cluster as one row (Select, Headline, Tier, Sources, Date) in a static `Weekly Tech News Article List` HTML report, with n/a evidence preserved in embedded validation metadata after full search completion; and remove any story already covered last week.
 
-The pipeline runs in seven phases (0 to 6): set up the run, collect and headline from primary sources, then secondary sources, then Google News, arrange each master query's stories by tier, mark empty queries n/a, and drop repeats. Headlines are written during collection, one per cluster. Collection uses the `web_search` and `web_fetch` tools. The deliverable is one self-contained `report_{since}_{until}.html`; full records, validation, source manifest, crawl log, n/a audit, and shortage reasons are embedded inside the HTML as hidden metadata or a collapsed audit section. See Section 0 for how to run it on Claude Code.
+The pipeline runs in seven phases (0 to 6): set up the run, collect and headline from primary sources, then secondary sources, then Google News, arrange each master query's stories by tier, mark empty queries n/a, and drop repeats. Headlines are written during collection, one per cluster. Collection uses whatever web search, fetch, browser, request, and scripting capabilities are available in the executing agent environment. The deliverable is one self-contained `report_{since}_{until}.html`; full records, validation, source manifest, crawl log, n/a audit, and shortage reasons are embedded inside the HTML as hidden metadata or a collapsed audit section. See Section 0 for agent-agnostic execution requirements.
 
 > This runbook merges two prior specs into one. The master query list comes from the canonical runbook; the per-query source maps in Section 4 are the union of both specs' links (deduped). The procedure has since been rearranged into the seven-phase flow in Section 4, and Section 3d defines the four-tier classification. There is one Query List and one HTML report with embedded metadata. Weekly and Global are **not** split.
 
 ---
 
-## 0. How to run on Claude Code
+## 0. How to run in any agent environment
 
 ### What a run produces (read this first)
-Running this runbook is an action, not a document conversion. When you are asked to run it for a date range, you collect that week's real news with `web_search` and `web_fetch`, follow Phases 0 to 6, and write one file:
-- `./output/report_{since}_{until}.html`: the deliverable the desk reads. You build it by filling the ready-made template in Section 6 with this week's stories and embedded hidden/collapsible metadata.
+Running this runbook is an action, not a document conversion. When you are asked to run it for a date range, collect that week's real news using the available search/fetch/browser/request capabilities, follow Phases 0 to 6, and write one file:
+- `./output/report_{since}_{until}.html`: the deliverable the desk reads. Build it from collected news by filling the Section 6 template with this week's stories and embedded hidden/collapsible metadata.
 
 Do not convert this runbook itself into HTML. This file is the instructions; the report is generated from collected news. If you find yourself turning these section titles (`0. How to run`, `1. Output`, `2. Headline format`, and so on) into a web page, stop, that is the wrong output.
 
 ### Invocation
-1. Put this file and its helper folders in one project directory, then start Claude Code in that directory.
-2. Run it one of two ways:
-   - Slash command: `/weekly-news <since> <until>` (for example `/weekly-news 2026-06-17 2026-06-23`). The command file is at `.claude/commands/weekly-news.md`.
-   - Or just tell Claude Code: "Execute this runbook for <since> to <until>."
-3. If you pass no dates, use the `time_period` in Section 3a. Dates are inclusive.
+1. Put this runbook in the working project directory.
+2. Provide a date range as `<since> <until>` in ISO `YYYY-MM-DD`, inclusive of both ends.
+3. If no date is provided, use `time_period` in Section 3a.
 4. Date input: ISO `YYYY-MM-DD` is canonical. A human may also type the range as `yyyy.m.d~yyyy.m.d` (no zero-padding, no slashes, for example `2026.6.17~2026.6.23`); normalize it to ISO before use. Inclusive both ends; do not extend past the end date.
-5. Optional: rename this file to `CLAUDE.md` so Claude Code auto-loads it as context every session.
+5. The executing agent must run the collection pipeline, not convert this MD into HTML.
+6. The final deliverable must be `./output/report_{since}_{until}.html`.
 
-### Weekly run command
-For a one-line weekly run, create `.claude/commands/weekly-news.md` with the text below, then each week run `/weekly-news 2026-06-17 2026-06-23` with your dates.
+For a one-line weekly run in any agent environment, use an instruction equivalent to:
 
 ```text
-Execute the runbook in this project (the Weekly Tech News Research Agent) for the dates: $ARGUMENTS.
-Treat $ARGUMENTS as "<since> <until>" in ISO YYYY-MM-DD, inclusive of both ends.
+Execute this runbook for the dates: <since> <until>.
+Treat the arguments as ISO YYYY-MM-DD dates, inclusive of both ends.
 Collect that week's news, follow Phases 0 to 6, and write only ./output/report_<since>_<until>.html.
 Do NOT convert this runbook to HTML. Generate the report from collected news by filling the Section 6 template.
 ```
 
-### Tools you use
-- **Collection (no live browser).** Use `web_search` and `web_fetch`. You cannot drive Google News in a real browser, so map the browser steps to:
-  - Google News RSS per edition (date-filterable, returns clean article lists). Fetch each with `web_fetch`:
-    - US / en: `https://news.google.com/rss/search?q={QUERY}+after:{since}+before:{until_plus_1}&hl=en-US&gl=US&ceid=US:en`
-    - KR / ko: same URL with `hl=ko&gl=KR&ceid=KR:ko`
-    - JP / ja: same URL with `hl=ja&gl=JP&ceid=JP:ja`
-    - `before:` is exclusive, so pass `until + 1 day`. URL-encode the query (Korean and Japanese names included).
-    - RSS items are Google redirect links. **Efficiency: do not resolve every redirect.** Cluster and dedup on the RSS titles/snippets first, then resolve to the real publisher URL only for the links you actually keep; never put Google redirect URLs into final HTML source cells.
-  - `web_fetch` on the Phase 1 source pages (newsrooms, blogs, GitHub releases, changelogs) listed in Section 4.
-  - `web_search` as the fallback, and for the Phase 2 secondary sites, using `site:` filters plus the date window in the query.
-  - This is best-effort. Note what each query actually returned.
-- **Report and data I/O.** Write a Python script (run with bash) that builds the single output file in Section 1 from the final records: the clean user-facing `report_{since}_{until}.html` with embedded machine-readable metadata. No Excel, no `openpyxl`. The HTML is one file with inline CSS and JS, declares `<meta charset="utf-8">`, uses a CJK-capable font stack so Korean and Japanese render, contains static pre-rendered article rows in the DOM at build time, and includes working checkbox controls. Validation data belongs in hidden HTML metadata or the collapsed audit section unless explicitly requested in the default visible report.
-- **Filesystem.** Keep all working state in the project directory.
+### Required capabilities and tool adapters
 
-### Files and I/O contract
-- Deliverable: `./output/report_{since}_{until}.html`, one self-contained HTML file (Section 1a): a clean article-selection list with expanded article coverage, no verbose validation/audit tables by default, static pre-rendered article HTML rows, working checkbox controls, and embedded hidden/collapsible metadata.
-- Do **not** write a separate `data_{since}_{until}.json` file for this run. Embed the machine-readable `records`, `validation`, `source_manifest`, `crawl_log`, `google_search_log`, `na_audit`, `dedup_log`, and `shortage_reason` inside the HTML.
-- Previous week: Phase 6 reads `previous_week.data_path` (Section 3a) only if it exists from an earlier run; otherwise skip the repetition drop and note it in embedded audit metadata.
-- Selections: the desk ticks rows in the report; ticks autosave in the browser, and an "Export selections" button downloads `selections_{since}_{until}.json` for a later step. No fixed schema yet (Section 1a).
-- Create `./output/` if missing.
+Required capabilities:
+- **Web search capability:** search public web results by query, site filter, and date window where possible.
+- **Web fetch capability:** open article pages, RSS feeds, changelogs, blogs, newsroom pages, GitHub releases, and official docs.
+- **File write capability:** create `./output/` and write a self-contained HTML file.
+- **Optional browser rendering capability:** use only when raw fetch/RSS/site search fails for JS-heavy sources.
+- **Optional scripting capability:** use Python, Node, or other local scripting to deduplicate, cluster, validate, and render HTML.
 
-### Execution loop
-- Process one category at a time, fully through Phases 0 to 6, before the next. Order: AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme.
-- After each category, append its cluster records to an in-memory or working-state record store, so a crash is recoverable. Render the HTML report once at the end with embedded metadata; do not write a separate final JSON data file.
-- Do not fabricate URLs, dates, or headlines. A paywalled article is a lead only; prefer an accessible source for the same event.
-- Apply the house-style rules in Section 2 to every headline.
+Tool adapter rule:
+- If the agent has a web-search tool, use it for search.
+- If the agent has a page-fetch, HTTP request, RSS, or document-fetch tool, use it for page/RSS fetching.
+- If the agent has browser tools such as Playwright, Browser MCP, Selenium, or browser navigation, use them only for JS-heavy pages after RSS/feed/site-search fallback.
+- If the agent has shell, Python, Node, or equivalent local execution, use it to build the final HTML.
+- If tool names differ, map the agent's equivalent tools to these capabilities.
+- Do not reference one vendor-specific tool name as mandatory.
+
+Collection adapters:
+- Do not depend on an interactive Google News browser session. Prefer Google News RSS because it is date-filterable and reproducible. If the agent has browser rendering, use it only as fallback.
+- Google News RSS per edition (date-filterable, returns clean article lists). Fetch each RSS URL using the agent's available fetch/browser/request capability:
+  - US / en: `https://news.google.com/rss/search?q={QUERY}+after:{since}+before:{until_plus_1}&hl=en-US&gl=US&ceid=US:en`
+  - KR / ko: same URL with `hl=ko&gl=KR&ceid=KR:ko`
+  - JP / ja: same URL with `hl=ja&gl=JP&ceid=JP:ja`
+  - `before:` is exclusive, so pass `until + 1 day`. URL-encode the query (Korean and Japanese names included).
+  - RSS items are Google redirect links. **Efficiency: do not resolve every redirect.** Cluster and dedup on the RSS titles/snippets first, then resolve to the real publisher URL only for the links you actually keep; never put Google redirect URLs into final HTML source cells.
+- Fetch or render the Phase 1 source pages (newsrooms, blogs, GitHub releases, changelogs) listed in Section 4.
+- Use search as the fallback, and for the Phase 2 secondary sites, using `site:` filters plus the date window in the query.
+
+### Agent capability check
+
+Before starting collection, the executing agent must check:
+- Can perform web search?
+- Can fetch RSS/page HTML?
+- Can resolve or replace Google News redirect URLs with actual publisher URLs for kept articles?
+- Can write local files?
+- Can run a script or otherwise render static HTML?
+- Can handle JS-heavy pages, or at least mark them as blocked?
+
+If required capability is missing:
+- Do not silently proceed as a normal complete run. First record the missing capability in embedded audit metadata.
+- If web collection is entirely impossible, do not fabricate articles or URLs. Generate a `cannot execute collection` HTML report explaining the missing capability in the collapsed audit metadata.
+- If only some sources are inaccessible, collect all reachable articles but record each unreachable source in `source_manifest` and explain the coverage gap in `shortage_reason`.
 
 ---
 
@@ -669,14 +683,14 @@ Required source-specific coverage:
 - Social Media Today: sweep Meta, Instagram, Facebook, WhatsApp, Threads, TikTok, YouTube, LinkedIn, Snapchat, social ads, creator monetization, and social commerce updates, and route them across Social, Global Big Tech, AI/GPT, and Theme as appropriate.
 - Asia/regional: sweep ITmedia, ASCII STARTUP, Impress Watch, CNET Japan, The Bridge, Nikkei Asia, Tech in Asia, KrASIA, Rest of World, SCMP, TechNode, 36Kr, ZDNet Korea, ETNews, Bloter, Platum, The Bell, Korea Herald, Korea JoongAng Daily, and Yonhap English where relevant.
 - Mandatory source URL pool: every URL in `additional_source_url_pool` is a mandatory crawl target. Do not stop at root-page fetches; infer article list routes (`/news`, `/newsroom`, `/press`, `/press-release`, `/blog`, `/index`, `/posts`, `/updates`, `/research`, `/engineering`, `/docs/changelog`, `/release-notes`, `/tag`, `/category`, `/guides`, `/archive`, `/latest`), RSS/feed endpoints, site search, Google `site:` query, or Google News RSS as appropriate.
-- JS-heavy fallback: if raw fetch returns empty or unusable content, try RSS/feed, Google `site:` query, and Google News RSS before failing. If still blocked, mark `js_render_required` or `failed_with_reason` in `source_manifest` rather than treating the source as checked cleanly.
+- JS-heavy fallback: if raw fetch returns empty or unusable content, try RSS/feed, Google `site:` query, and Google News RSS before failing. If the agent has browser rendering capability (for example Playwright, Selenium, Browser MCP, or equivalent), render the page and inspect the DOM after those lighter fallbacks. If browser rendering is unavailable or still fails, mark `js_render_required` or `failed_with_reason` in `source_manifest`; never treat that source as checked with no articles.
 
 Weight the secondary outlets by category: Global English outlets (techcrunch.com through 9to5google.com, plus the-decoder.com, marktechpost.com, siliconangle.com) are the main surface for AI Agent, AI/GPT, Global Big Tech, and Social; Asia-focused English (restofworld.org, techinasia.com, kr-asia.com, scmp.com) for Asia Big Tech, super apps, and Theme; Korean (zdnet.co.kr, etnews.com, bloter.net, platum.kr, thebell.co.kr) for the Korean Asia Big Tech queries and Korea AI; Japanese (itmedia.co.jp, watch.impress.co.jp, ascii.jp, japan.cnet.com, asia.nikkei.com) for the Japanese queries; Chinese (technode.com, 36kr.com, caixinglobal.com) for the Chinese queries. Several of these paywall (bloomberg.com, reuters.com, theinformation.com, asia.nikkei.com, caixinglobal.com, scmp.com); treat a paywalled article as a lead and prefer an accessible source for the same event.
 
 ### Phase 3: Google News
-For each master query, search Google News across three editions: Google US (`US / en`), Google KR (`KR / ko`), and Google JP (`JP / ja`). On Claude Code you have no live browser, so use the Google News RSS endpoints and the `web_search` fallback from Section 0; apply the date window with `after:` / `before:` (`before:` is exclusive, pass `until + 1 day`), and do the date filtering and cross-edition dedup in code. For an Asian company, search both its English name in Google US and its local-language name in the local edition (for example Toss in Google US and `토스` in Google KR; Rakuten in Google US and `楽天` in Google JP). Pool the editions into one set and dedup the same event across them. Use the Phase 3 search-term overrides below for any query whose bare name is noisy.
+For each master query, search Google News across three editions: Google US (`US / en`), Google KR (`KR / ko`), and Google JP (`JP / ja`). Prefer the Google News RSS endpoints and use the agent's available search capability as fallback; apply the date window with `after:` / `before:` (`before:` is exclusive, pass `until + 1 day`), and do the date filtering and cross-edition dedup in code. Do not depend on an interactive Google News browser session; use browser rendering only as fallback when RSS/search/fetch routes fail. For an Asian company, search both its English name in Google US and its local-language name in the local edition (for example Toss in Google US and `토스` in Google KR; Rakuten in Google US and `楽天` in Google JP). Pool the editions into one set and dedup the same event across them. Use the Phase 3 search-term overrides below for any query whose bare name is noisy.
 
-Google US / English search is mandatory for every master query before n/a is assigned. Do not limit Google Query to major queries. For every master query, run the base query and these variants with `after:{since}` and `before:{until_plus_1}`: `{master query}`, `{master query} AI`, `{master query} update`, `{master query} launch`, `{master query} partnership`, `{master query} funding`, and `{master query} regulation`. Check at least the top 50 results and up to 100 where possible, using both Google News RSS and `web_search` fallback when available.
+Google US / English search is mandatory for every master query before n/a is assigned. Do not limit Google Query to major queries. For every master query, run the base query and these variants with `after:{since}` and `before:{until_plus_1}`: `{master query}`, `{master query} AI`, `{master query} update`, `{master query} launch`, `{master query} partnership`, `{master query} funding`, and `{master query} regulation`. Check at least the top 50 results and up to 100 where possible, using both Google News RSS and the agent's available search fallback when available.
 
 For Asia Big Tech, Google US search is mandatory; Google KR search is mandatory for Korean companies and Korean-language aliases; Google JP search is mandatory for Japanese companies and Japanese-language aliases; use local-language query variants listed in the search-term overrides; and do not mark any Asia Big Tech query as n/a unless local-language Google evidence exists. Examples: `Rakuten after:2026-06-17 before:2026-06-24`, `楽天 after:2026-06-17 before:2026-06-24`, `카카오 after:2026-06-17 before:2026-06-24`, and `토스 after:2026-06-17 before:2026-06-24`. If a Google result matches an event already found in Phase 1 or 2, add it as Source 2 or Source 3 only when it adds useful context; do not create a duplicate row.
 
@@ -1040,8 +1054,13 @@ Before finalizing, validate internally:
 - Every mandatory source URL has a `source_manifest` entry with these fields/status flags: `checked`, `added_articles`, `no_in_range_articles`, `duplicate_only`, `skipped_by_tier4`, `blocked_or_paywalled`, `js_render_required`, and `failed_with_reason`.
 - If final visible article rows are fewer than 200, do not mark the run complete; write `shortage_reason` explaining which source approaches failed and why the run did not reach 200 visible rows.
 - The phrase `best-effort targeted crawl` does not appear in the final HTML.
+- The runbook execution path is agent-agnostic and does not require any single vendor-specific tool name.
+- Date input handling is clear and preserves the warning not to convert this MD itself into HTML.
+- Google News RSS, official source checks, secondary source sweeps, source-first sweep rules, and final-only n/a handling remain intact.
+- JS-heavy fallback includes RSS/feed, site search, Google News RSS, optional browser rendering, and source-manifest failure recording.
+- Environment-specific execution phrases have been removed, except where product names such as Anthropic's Claude or Claude Code appear as master queries/news subjects.
 
-Do not finalize the report if any of these checks fail; rerun the missing collection step instead. Do not show the full quality gate table in the default HTML. Save gate results to validation JSON/metadata.
+Do not finalize the report if any of these checks fail; rerun the missing collection step instead. Do not show the full quality gate table in the default HTML. Save gate results to embedded validation metadata.
 
 ## 6. Report template (fill this and save as report.html)
 
