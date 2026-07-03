@@ -1,0 +1,10 @@
+{
+  "records": [],
+  "created_from_incomplete_run": true,
+  "run": {
+    "since": "2026-06-17",
+    "until": "2026-06-23",
+    "until_plus_1": "2026-06-24",
+    "generated_at": "2026-07-03T02:11:47.346554+00:00"
+  }
+}
