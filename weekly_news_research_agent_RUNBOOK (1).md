@@ -76,6 +76,7 @@ Before starting collection, the executing agent must check:
 If required capability is missing:
 - Do not silently proceed as a normal complete run. First record the missing capability in embedded audit metadata.
 - If web collection is entirely impossible, do not fabricate articles or URLs. Generate a `cannot execute collection` HTML report explaining the missing capability in the collapsed audit metadata.
+- If the agent cannot perform high-volume Google News RSS fetches, direct RSS/page fetches, or browser rendering for JS-heavy pages, it must not present the output as a complete weekly run. It must either stop and report missing capabilities, or generate an incomplete report with `shortage_reason`, `failed_sources`, and `missing_capabilities` clearly embedded and visible in the header.
 - If only some sources are inaccessible, collect all reachable articles but record each unreachable source in `source_manifest` and explain the coverage gap in `shortage_reason`.
 
 ---
@@ -87,6 +88,8 @@ One file: the HTML report, with the user-facing article list plus hidden/collaps
 ### 1a. HTML report (the deliverable)
 
 One self-contained static HTML file, `./output/report_{since}_{until}.html`: inline CSS and JS, `<meta charset="utf-8">`, a CJK-capable font stack (for example `system-ui, "Apple SD Gothic Neo", "Noto Sans KR", "Noto Sans JP", sans-serif`), and no external requests. The final HTML must be readable when opened locally as a `file://` file. Keep the HTML title as `Weekly Tech News Article List` and keep the run date range from the source file/run arguments.
+
+If the run is incomplete because fewer than 200 visible article rows remain after deduplication and hard date filtering, the HTML title and header must clearly say `INCOMPLETE RUN - UNDER 200 ARTICLES`. The header must visibly include `shortage_reason`, `failed_sources`, and `missing_capabilities` summaries; the full details remain embedded in audit metadata/collapsible audit.
 
 The HTML report is a high-coverage **article list/checklist**, not a validation dashboard. It must be regenerated from strengthened collection and validation logic, not just restyled from an earlier sparse HTML. Default visible content should be:
 - Header with date range, generated date, and metadata pills for Range, Articles, AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme, and Selected count.
@@ -229,7 +232,7 @@ trusted_news_sites:
 
 # Mandatory source URL pool supplied for broad coverage expansion.
 # Duplicates already present elsewhere in this runbook were omitted by canonical host.
-# These are mandatory crawl targets, not passive reference links. For each root URL, infer article-list routes such as /news, /newsroom, /press, /press-release, /blog, /index, /posts, /updates, /research, /engineering, /docs/changelog, /release-notes, /tag, /category, /guides, /archive, /latest, RSS/feed, site search, Google site: query, or Google News RSS.
+# These are mandatory crawl targets, not passive reference links. For each root URL, infer article-list routes such as /feed, /rss, /news, /newsroom, /press, /press-release, /blog, /index, /posts, /updates, /research, /engineering, /docs/changelog, /release-notes, /tag, /category, /guides, /archive, /latest, sitemap routes, RSS/feed, site search, Google site: query, or Google News RSS.
 additional_source_url_pool:
   - https://247wallst.com/
   - https://abhs.in/
@@ -682,7 +685,7 @@ Required source-specific coverage:
 - 9to5Mac: sweep Apple, iOS, App Store, Apple Intelligence, Siri, Vision Pro, Mac, iPad, privacy, and developer policy surfaces. Pair Apple official sources as Source 1 with 9to5Mac as interpretive Source 2 when applicable.
 - Social Media Today: sweep Meta, Instagram, Facebook, WhatsApp, Threads, TikTok, YouTube, LinkedIn, Snapchat, social ads, creator monetization, and social commerce updates, and route them across Social, Global Big Tech, AI/GPT, and Theme as appropriate.
 - Asia/regional: sweep ITmedia, ASCII STARTUP, Impress Watch, CNET Japan, The Bridge, Nikkei Asia, Tech in Asia, KrASIA, Rest of World, SCMP, TechNode, 36Kr, ZDNet Korea, ETNews, Bloter, Platum, The Bell, Korea Herald, Korea JoongAng Daily, and Yonhap English where relevant.
-- Mandatory source URL pool: every URL in `additional_source_url_pool` is a mandatory crawl target. Do not stop at root-page fetches; infer article list routes (`/news`, `/newsroom`, `/press`, `/press-release`, `/blog`, `/index`, `/posts`, `/updates`, `/research`, `/engineering`, `/docs/changelog`, `/release-notes`, `/tag`, `/category`, `/guides`, `/archive`, `/latest`), RSS/feed endpoints, site search, Google `site:` query, or Google News RSS as appropriate.
+- Mandatory source URL pool: every URL in `additional_source_url_pool` is a mandatory crawl target. Do not mark a domain checked after only opening the homepage. For every root URL, try applicable article-list routes: `/feed`, `/rss`, `/news`, `/blog`, `/press`, `/latest`, `/archive`, `/category`, `/tag`, and sitemap routes. If no usable article list is found, run Google `site:` queries with the date window: `site:{domain} after:{since} before:{until_plus_1}`, `site:{domain} AI after:{since} before:{until_plus_1}`, `site:{domain} launch after:{since} before:{until_plus_1}`, and `site:{domain} update after:{since} before:{until_plus_1}`. Record checked route, article count, blocked status, and failure reason in `source_manifest`.
 - JS-heavy fallback: if raw fetch returns empty or unusable content, try RSS/feed, Google `site:` query, and Google News RSS before failing. If the agent has browser rendering capability (for example Playwright, Selenium, Browser MCP, or equivalent), render the page and inspect the DOM after those lighter fallbacks. If browser rendering is unavailable or still fails, mark `js_render_required` or `failed_with_reason` in `source_manifest`; never treat that source as checked with no articles.
 
 Weight the secondary outlets by category: Global English outlets (techcrunch.com through 9to5google.com, plus the-decoder.com, marktechpost.com, siliconangle.com) are the main surface for AI Agent, AI/GPT, Global Big Tech, and Social; Asia-focused English (restofworld.org, techinasia.com, kr-asia.com, scmp.com) for Asia Big Tech, super apps, and Theme; Korean (zdnet.co.kr, etnews.com, bloter.net, platum.kr, thebell.co.kr) for the Korean Asia Big Tech queries and Korea AI; Japanese (itmedia.co.jp, watch.impress.co.jp, ascii.jp, japan.cnet.com, asia.nikkei.com) for the Japanese queries; Chinese (technode.com, 36kr.com, caixinglobal.com) for the Chinese queries. Several of these paywall (bloomberg.com, reuters.com, theinformation.com, asia.nikkei.com, caixinglobal.com, scmp.com); treat a paywalled article as a lead and prefer an accessible source for the same event.
@@ -690,7 +693,7 @@ Weight the secondary outlets by category: Global English outlets (techcrunch.com
 ### Phase 3: Google News
 For each master query, search Google News across three editions: Google US (`US / en`), Google KR (`KR / ko`), and Google JP (`JP / ja`). Prefer the Google News RSS endpoints and use the agent's available search capability as fallback; apply the date window with `after:` / `before:` (`before:` is exclusive, pass `until + 1 day`), and do the date filtering and cross-edition dedup in code. Do not depend on an interactive Google News browser session; use browser rendering only as fallback when RSS/search/fetch routes fail. For an Asian company, search both its English name in Google US and its local-language name in the local edition (for example Toss in Google US and `토스` in Google KR; Rakuten in Google US and `楽天` in Google JP). Pool the editions into one set and dedup the same event across them. Use the Phase 3 search-term overrides below for any query whose bare name is noisy.
 
-Google US / English search is mandatory for every master query before n/a is assigned. Do not limit Google Query to major queries. For every master query, run the base query and these variants with `after:{since}` and `before:{until_plus_1}`: `{master query}`, `{master query} AI`, `{master query} update`, `{master query} launch`, `{master query} partnership`, `{master query} funding`, and `{master query} regulation`. Check at least the top 50 results and up to 100 where possible, using both Google News RSS and the agent's available search fallback when available.
+Google News collection is mandatory for every master query before n/a is assigned. Do not limit Google Query to major queries. For every master query, run these 7 searches with `after:{since}` and `before:{until_plus_1}`: `{master query}`, `{master query} AI`, `{master query} update`, `{master query} launch`, `{master query} partnership`, `{master query} funding`, and `{master query} regulation`. For each search, fetch Google News RSS for US/en, fetch KR/ko and JP/ja where relevant, parse all returned RSS items, keep only items within the exact run date range, and deduplicate by event after date filtering. If RSS fetch fails, run web-search fallback using the same query. A query is not considered checked unless at least one RSS route or one web-search fallback completed. Check at least the top 50 results and up to 100 where possible.
 
 For Asia Big Tech, Google US search is mandatory; Google KR search is mandatory for Korean companies and Korean-language aliases; Google JP search is mandatory for Japanese companies and Japanese-language aliases; use local-language query variants listed in the search-term overrides; and do not mark any Asia Big Tech query as n/a unless local-language Google evidence exists. Examples: `Rakuten after:2026-06-17 before:2026-06-24`, `楽天 after:2026-06-17 before:2026-06-24`, `카카오 after:2026-06-17 before:2026-06-24`, and `토스 after:2026-06-17 before:2026-06-24`. If a Google result matches an event already found in Phase 1 or 2, add it as Source 2 or Source 3 only when it adds useful context; do not create a duplicate row.
 
@@ -704,6 +707,19 @@ Required local query examples include: Kakao / 카카오, KakaoTalk / 카카오�
 
 ### Phase 4: Tier arrangement
 With the headlines and clusters from Phases 1 to 3 in hand, go through every master query in the category and assign each cluster a tier using Section 3d. First apply the content exclusion rules (Tier 4, Section 3d.4) and drop those clusters outright. Then classify each surviving cluster as Tier 1, 2, or 3 by the Section 3d order, reading the cluster's opened source where the headline alone is not enough to judge. Arrange each master query's clusters by tier, Tier 1 first, then Tier 2, then Tier 3, and store the tier on each cluster record in the data file. Nothing else is cut: every cluster that is not Tier 4 and not a last-week repeat is written.
+
+### Phase 4a: Hard date validation before rendering
+
+Before rendering final HTML, run a hard date validation pass over every candidate article and cluster:
+- Keep only articles whose verified publisher publish date satisfies `since <= date <= until`.
+- If a source date is outside the range, drop that source from the cluster.
+- If all sources in a cluster are outside the range, drop the entire cluster.
+- Do not use event date, crawl date, modified date, generated date, or search-result discovered date as the article date.
+- The visible Date column must always use the verified publisher publish date.
+- If the publisher date cannot be verified, exclude the article from visible rows and record it in audit metadata.
+- Never render an article row with a date outside the run range.
+
+After deduplication and date filtering, the run is not complete unless the final visible article row count is at least 200. If fewer than 200 visible rows remain, continue collection by expanding Google News RSS, source-first sweeps, site searches, RSS/feed checks, and local-language searches. Only when all required expansion routes fail may the agent generate an incomplete report; in that case, the HTML title and header must say `INCOMPLETE RUN - UNDER 200 ARTICLES`, and the audit must list exactly which required sources, RSS routes, Google News editions, and site searches failed.
 
 ### Phase 5: N/a establishment
 
@@ -723,7 +739,7 @@ A master query gets n/a only when all applicable sources and Google Query varian
 For Asia Big Tech, n/a is forbidden unless official newsroom/source page, Google US, applicable Google KR/JP, local-language aliases, and regional specialist media were all checked.
 
 ### Phase 6: Repetition check
-Two passes. First, the across-week check: load last week's data file from `previous_week.data_path` and, for each cluster this week, decide whether it covers the **same news event** as any last-week cluster (compare on `article_texts`), even if the specific articles differ; set `dedup_status = drop` for genuine repeats (Tier 4 #6) and `keep` for real follow-on developments with new facts or escalation. Second, the within-week check: compare this week's clusters against each other and drop any duplicate, so the same event is not rendered twice across master queries. Do not write a separate final data JSON file. Then build the deliverable: write only `report_{since}_{until}.html` from the final records. Embed full records, validation logs, `source_manifest`, `crawl_log`, `google_search_log`, `na_audit`, `dedup_log`, and `shortage_reason` in hidden metadata or a collapsed audit section. The default HTML contains the clean user-facing article checklist with static pre-rendered rows, working checkboxes, and no verbose validation/audit tables by default.
+Two passes. First, the across-week check: load last week's data file from `previous_week.data_path` and, for each cluster this week, decide whether it covers the **same news event** as any last-week cluster (compare on `article_texts`), even if the specific articles differ; set `dedup_status = drop` for genuine repeats (Tier 4 #6) and `keep` for real follow-on developments with new facts or escalation. Second, the within-week check: compare this week's clusters against each other and drop any duplicate, so the same event is not rendered twice across master queries. Do not write a separate final data JSON file. Then build the deliverable: write only `report_{since}_{until}.html` from the final records. Embed full records, validation logs, `source_manifest`, `crawl_log`, `google_search_log`, `na_audit`, `dedup_log`, `shortage_reason`, `failed_sources`, and `missing_capabilities` in hidden metadata or a collapsed audit section. The default HTML contains the clean user-facing article checklist with static pre-rendered rows, working checkboxes, and no verbose validation/audit tables by default.
 
 ### Per-category source maps (Phases 1 and 2)
 Each query lists its source URLs and, in parentheses, the handling rule. (`GH` = read GitHub releases; `changelog` / `release notes` = treat a notable release as the event.) Primary sources are read in Phase 1; Secondary sources in Phase 2.
@@ -1052,7 +1068,10 @@ Before finalizing, validate internally:
 - `Export selections`, `Clear checks`, and checkbox `localStorage` autosave work.
 - `records`, `validation`, `source_manifest`, `google_search_log`, `crawl_log`, `na_audit`, `dedup_log`, and `shortage_reason` are saved in hidden HTML metadata or the collapsed audit section.
 - Every mandatory source URL has a `source_manifest` entry with these fields/status flags: `checked`, `added_articles`, `no_in_range_articles`, `duplicate_only`, `skipped_by_tier4`, `blocked_or_paywalled`, `js_render_required`, and `failed_with_reason`.
-- If final visible article rows are fewer than 200, do not mark the run complete; write `shortage_reason` explaining which source approaches failed and why the run did not reach 200 visible rows.
+- Every visible row date is the verified publisher publish date and satisfies `since <= date <= until`; no event/crawl/modified/generated/discovered date is used as a substitute.
+- Sources outside the date range were removed from clusters, clusters with no in-range sources were dropped, and unverifiable publisher dates were excluded from visible rows and recorded in audit metadata.
+- If final visible article rows are fewer than 200, do not mark the run complete; continue collection through required expansion routes. Only after all expansion routes fail may an incomplete report be generated with `INCOMPLETE RUN - UNDER 200 ARTICLES` in the title/header plus visible `shortage_reason`, `failed_sources`, and `missing_capabilities`.
+- For every root URL in `additional_source_url_pool`, `/feed`, `/rss`, `/news`, `/blog`, `/press`, `/latest`, `/archive`, `/category`, `/tag`, and sitemap routes were tried where applicable; if no article list was found, required Google `site:` queries were attempted and logged.
 - The phrase `best-effort targeted crawl` does not appear in the final HTML.
 - The runbook execution path is agent-agnostic and does not require any single vendor-specific tool name.
 - Date input handling is clear and preserves the warning not to convert this MD itself into HTML.
@@ -1064,9 +1083,9 @@ Do not finalize the report if any of these checks fail; rerun the missing collec
 
 ## 6. Report template (fill this and save as report.html)
 
-The weekly report must be generated as static HTML with pre-rendered article rows. Machine-readable metadata must be embedded for checkbox export and validation, but the visible article list must not depend on runtime JSON parsing. Article rows must already exist in the DOM at build time so the report is readable with JavaScript disabled. Keep the document title and visible heading as `Weekly Tech News Article List`.
+The weekly report must be generated as static HTML with pre-rendered article rows. Machine-readable metadata must be embedded for checkbox export and validation, but the visible article list must not depend on runtime JSON parsing. Article rows must already exist in the DOM at build time so the report is readable with JavaScript disabled. Keep the document title and visible heading as `Weekly Tech News Article List` for complete runs; for incomplete under-200-row runs, set both to `INCOMPLETE RUN - UNDER 200 ARTICLES`.
 
-Generate the HTML from the same final records used for embedded validation metadata. Do not write a separate data JSON file. Save verbose validation, source manifests, Google query logs, crawl logs, n/a audit evidence, dedup logs, and any under-200-row shortage reason under `records`, `validation`, `source_manifest`, `google_search_log`, `crawl_log`, `na_audit`, `dedup_log`, and `shortage_reason` inside hidden `<script type="application/json">` blocks or a collapsed audit section; do not show those tables in the default HTML unless explicitly requested.
+Generate the HTML from the same final records used for embedded validation metadata. Do not write a separate data JSON file. Save verbose validation, source manifests, Google query logs, crawl logs, n/a audit evidence, dedup logs, and any under-200-row shortage reason under `records`, `validation`, `source_manifest`, `google_search_log`, `crawl_log`, `na_audit`, `dedup_log`, `shortage_reason`, `failed_sources`, and `missing_capabilities` inside hidden `<script type="application/json">` blocks or a collapsed audit section; do not show those tables in the default HTML unless explicitly requested.
 
 The visible HTML article table uses this column order only: Select, Headline, Tier, Sources, Date. Do not add Category, Master Query, or Original Title as table columns; show category and master query as section/group headings.
 
@@ -1155,7 +1174,7 @@ The HTML report is for human article selection. Keep it minimal. Allowed in defa
   </details>
 </div>
 <script type="application/json" id="report-data">{ "run": {"since":"{since}", "until":"{until}"}, "data": [] }</script>
-<script type="application/json" id="report-metadata">{ "records": [], "validation": {}, "source_manifest": {}, "google_search_log": [], "crawl_log": [], "na_audit": [], "dedup_log": [], "shortage_reason": null }</script>
+<script type="application/json" id="report-metadata">{ "records": [], "validation": {}, "source_manifest": {}, "google_search_log": [], "crawl_log": [], "na_audit": [], "dedup_log": [], "shortage_reason": null, "failed_sources": [], "missing_capabilities": [] }</script>
 <script>
 const RUN={since:"{since}",until:"{until}"};
 const STORE_KEY=`selections:${RUN.since}_${RUN.until}`;
