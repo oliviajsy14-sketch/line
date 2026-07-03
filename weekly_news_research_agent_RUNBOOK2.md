@@ -2,9 +2,9 @@
 
 You are the executing agent. When you are asked to run the weekly pipeline for a date range, follow this runbook end to end: collect that week's real news and write the two output files in Section 1 (the HTML report and the JSON data file). This file is your instructions, not the report itself. Section 0 says exactly what a run does.
 
-**Purpose.** In one run, for a fixed list of master queries grouped into six categories over a given week, collect news article links from primary sources, Google News, and secondary sources (trusted news sites); group links covering the same event into clusters; render each cluster as one row (Select, Headline, Tier, Sources, Date) in a static `Weekly Tech News Article List` HTML report, with n/a evidence preserved in validation/JSON after full search completion; and remove any story already covered last week.
+**Purpose.** In one run, for a fixed list of master queries grouped into six categories over a given week, collect news article links from primary sources, Google News, and secondary sources (trusted news sites); group links covering the same event into clusters while preserving article-level records; render visible article rows (Select, Headline, Tier, Sources, Date) in a static `Weekly Tech News Article List` HTML report, with n/a evidence preserved in validation/JSON after full search completion; and remove any story already covered last week.
 
-The pipeline runs in seven phases (0 to 6): set up the run, collect and headline from primary sources, then secondary sources, then Google News, arrange each master query's stories by tier, mark empty queries n/a, and drop repeats. Headlines are written during collection, one per cluster. Collection uses the `web_search` and `web_fetch` tools. The deliverable is one self-contained `report_{since}_{until}.html`, rendered from a machine-readable `data_{since}_{until}.json` that also serves as next week's dedup memory; both are written by Python. See Section 0 for how to run it on Claude Code.
+The pipeline runs in seven phases (0 to 6): set up the run, collect and headline from primary sources, then secondary sources, then Google News, arrange each master query's stories by tier, mark empty queries n/a, and drop repeats. Headlines are written during collection, one per cluster, while each retained article remains linked to its `cluster_id`. Collection uses the `web_search` and `web_fetch` tools. The deliverable is one self-contained `report_{since}_{until}.html`, rendered from a machine-readable `data_{since}_{until}.json` that also serves as next week's dedup memory; both are written by Python. See Section 0 for how to run it on Claude Code.
 
 > This runbook merges two prior specs into one. The master query list comes from the canonical runbook; the per-query source maps in Section 4 are the union of both specs' links (deduped). The procedure has since been rearranged into the seven-phase flow in Section 4, and Section 3d defines the four-tier classification. There is one Query List, one HTML report, and one JSON data file. Weekly and Global are **not** split.
 
@@ -155,7 +155,7 @@ Selection checkboxes:
 - `Export selections` downloads selected full records as JSON, including run dates and full selected records.
 
 Rendering rules:
-- One cluster = one row = one Korean headline = up to three source links.
+- One article row = one source URL linked to a `cluster_id`; multiple article rows may share the same Korean cluster headline when their source angles differ. Do not collapse cluster siblings into one visible row unless they are exact duplicate rewrites or low-value syndicated copies.
 - HTML-escape every dynamic value before injecting it: headlines contain `"` and `[ ]`, and source URLs contain `&`.
 - Rows are grouped by category and master query using the strict display order in Section 3b-1.
 - The `[Company]` tag in the headline is the owning company and may differ from the master query. Sub-brands roll up to their parent in the headline: `[Meta] Instagram`, `[Meta] WhatsApp`, `[Meta] Facebook`; `[Google] YouTube`, `[Google] Android`, `[Google] Gemini`; `[Kakao] Bank`, `[Kakao] Pay`, `[Kakao] Mobility`. Whole-market and multi-company stories carry `[Market]`.
@@ -164,7 +164,7 @@ Rendering rules:
 
 `./output/data_{since}_{until}.json`: the full record the report is rendered from, and the file next week's repetition check (Phase 6) reads. Not shown to readers. Saved every week to the archive path.
 
-One record per cluster, with at least these fields:
+The JSON must keep both event-level `clusters` and article-level `articles`. Each article links back to a `cluster_id`; the HTML renders article-level records by default. Each cluster record has at least these fields:
 - `cluster_id`: stable unique id for the cluster.
 - `category`: one of the six categories.
 - `master_query`: the owning master query.
@@ -176,6 +176,18 @@ One record per cluster, with at least these fields:
 - `source_headlines`, `source_dates`: per-source titles and publish dates.
 - `article_texts`: the opened article text, used only for the Phase 6 same-event comparison.
 - `dedup_status`: `keep` or `drop` (set in Phase 6).
+
+Each article record has at least these fields:
+- `article_id`: stable unique id for this source article.
+- `cluster_id`: the event cluster this article belongs to.
+- `category`: one of the six categories.
+- `master_query`: the owning master query.
+- `headline`: the Section 2 Korean cluster headline shown in HTML.
+- `tier`: 1, 2, or 3, inherited from the cluster unless a stricter article-specific judgment is needed.
+- `source_url`: the real, reachable source URL.
+- `source_label`: publisher/source label.
+- `source_headline`: original source headline.
+- `date`: article publish date, `YYYY-MM-DD`.
 
 ---
 
@@ -686,14 +698,65 @@ Write headlines during collection, one source at a time as you review it, not in
 - Write the headline itself in the format and house style of Section 2.
 
 #### Cluster rule
-- A cluster holds up to 3 sources, no more.
+- A cluster may retain more than 3 article records in JSON for article-row coverage. For compact cluster summaries, keep `sources` ordered with the three strongest representative URLs, but do not discard additional valuable article records that should render as separate visible rows.
 - The first source is the basis for the headline and is normally a primary source. If the cluster has no primary source, base it on a secondary source; if it has neither, base it on a Google News source.
-- Order a cluster's sources by source quality: official source first; closest original specialist outlet second; trusted outlets such as TechCrunch, 9to5Google, 9to5Mac, or Social Media Today; local specialist media; then general business or mainstream outlets. Once a cluster holds 3 sources, drop any further source unless it is an official source replacing a weaker Source 1.
+- Order a cluster's sources by source quality: official source first; closest original specialist outlet second; trusted outlets such as TechCrunch, 9to5Google, 9to5Mac, or Social Media Today; local specialist media; then general business or mainstream outlets. Once the representative `sources` list holds 3 URLs, keep further valuable sources as article records when they have a materially different angle; drop only exact duplicate rewrites, low-value syndicated copies, or redundant rewrites with no new angle.
 - The cluster's date is the publish date of its primary source if it has one, otherwise the earliest publish date among its sources.
 - Umbrella vs detail: a broad announcement and the deeper sub-stories under it are separate events, so cluster them separately (a model-suite launch is one cluster; each individually detailed model in the suite is its own cluster).
 
 #### Trigger cluster size rule
 This runs in Phase 3 (Google News), per master query. If more than 50% of a query's Google results only repeat coverage already captured in Phases 1 and 2 (for example a week where searching `Claude` returns almost only Fable-launch stories already sourced), run a boolean negated search to surface fresh results, for example `Claude -Fable`, and read up to 100 results from that negated search. Use the most frequent repeated term as the one to negate.
+
+### 3g. Coverage target and backfill rules
+
+This run must produce a high-coverage article checklist, not only a compact event-cluster summary.
+
+Coverage targets:
+- Minimum visible article rows: 200.
+- Target visible article rows: 250.
+- Maximum visible article rows: 300 unless the date range is unusually active.
+- Raw candidate target before final filtering: 800 to 1,000 URLs.
+
+If the final visible HTML contains fewer than 200 article rows, the run is incomplete unless the Backfill Pass in Phase 4a has been completed and a clear shortage reason has been written in `validation.shortage_reason`.
+
+Per-category minimum article-row targets before final rendering:
+- AI Agent: 30 to 40 rows.
+- AI/GPT: 80 to 100 rows.
+- Global Big Tech: 35 to 45 rows.
+- Asia Big Tech: 40 to 55 rows.
+- Social: 25 to 35 rows.
+- Theme: 20 to 30 rows.
+
+Definitions:
+- `cluster`: one news event or announcement.
+- `article`: one source URL covering that event.
+- `visible_article_row`: one row shown in the HTML checklist.
+
+Keep clustering in JSON, but do not let clustering suppress article visibility too aggressively. The JSON must keep both `clusters` (event-level deduped records) and `articles` (article-level records linked by `cluster_id`). The HTML report renders article-level rows by default while still showing the cluster headline. If multiple sources cover the same event, each source may appear as a separate visible row when it provides original reporting, local-market context, analysis, executive comments, regulatory angle, product details, funding details, user metrics, or a materially different framing.
+
+Conservative dedup rule: only merge two items into one visible row when all of the following are true:
+1. Same primary actor.
+2. Same product or feature.
+3. Same announcement/event.
+4. Same core fact pattern.
+5. No materially different local, strategic, regulatory, financial, user-metric, or product-detail angle.
+
+Do not merge official announcements with secondary analysis; global coverage with Korea/Japan/China local coverage; launch articles with later rollout/user reaction articles; funding announcements with separate investor/market analysis; product announcements with regulatory responses; same-company stories about different product surfaces; same-parent stories with different app-level impact such as Instagram vs WhatsApp vs Facebook; or the same AI model family when product integrations, benchmarks, or release-note details differ. When unsure, keep separate article rows and connect them with the same `cluster_id`.
+
+Source-first sweep raw candidate quotas for each weekly run:
+- TechCrunch: at least 80 in-window candidates across AI, startups, apps, social/platform, Apple, Google, Meta, Microsoft, Amazon, OpenAI, Anthropic, and NVIDIA.
+- 9to5Google: at least 60 in-window candidates across Gemini, Google AI, Search, Android, Chrome, YouTube, Workspace, and Google app.
+- 9to5Mac: at least 40 in-window candidates across Apple Intelligence, iOS, App Store, Siri, privacy, and developer policy.
+- Social Media Today: at least 40 in-window candidates across Meta, Instagram, Facebook, WhatsApp, Threads, TikTok, YouTube, LinkedIn, Snapchat, social ads, and creator monetization.
+- The Verge: at least 50 in-window candidates across AI, big tech, social, apps, and platforms.
+- VentureBeat, SiliconANGLE, The Decoder, MarkTechPost, AI Business: at least 80 combined AI/enterprise/agent candidates.
+- Asia/regional sources: at least 100 combined candidates across ZDNET Korea, ETNews, Bloter, Platum, The Bell, ITmedia, Impress Watch, ASCII, CNET Japan, Nikkei Asia, TechNode, 36Kr, SCMP, Tech in Asia, KrASIA, and Rest of World.
+
+Paginate archive/latest/category pages until either articles before the start date appear, the source quota is satisfied, or the page clearly has no date-window content. Do not stop after finding only the first few relevant articles.
+
+For every master Google News query, run the existing base variants plus: `{master query} announces`, `rolls out`, `launches`, `tests`, `beta`, `preview`, `changelog`, `release notes`, `developer`, `API`, `ads`, `commerce`, `creator`, `subscription`, `regulation`, `antitrust`, `privacy`, `safety`, `enterprise`, `agent`, and `agentic AI`. For Asia Big Tech, also run local-language variants for product and company names. Do not mark n/a until English, Korean/Japanese/local-language, and regional-source sweeps are complete.
+
+If final count remains below 200 after two Backfill Passes, write `validation.shortage_reason` with: `raw_candidates_checked`, `sources_checked`, `google_queries_checked`, `tier4_drops`, `duplicates_dropped`, `final_visible_rows`, and `why_200_not_reached`. Do not silently deliver a sparse report.
 
 ---
 
@@ -701,7 +764,7 @@ This runs in Phase 3 (Google News), per master query. If more than 50% of a quer
 
 The run is organized into the six categories from Section 3b. Process one category completely, through Phases 0 to 6, before starting the next, so each delivered block is internally consistent. Category order: AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme.
 
-All six categories use the same method and produce one combined deliverable: one HTML report, one headline format (Section 2), and one JSON data file that next week's repetition check compares against. There is no separate AI report and no second headline format. Headlines are written during collection (Phases 1 to 3) under the headline rule (Section 3f), one per cluster.
+All six categories use the same method and produce one combined deliverable: one HTML report, one headline format (Section 2), and one JSON data file that next week's repetition check compares against. There is no separate AI report and no second headline format. Headlines are written during collection (Phases 1 to 3) under the headline rule (Section 3f), one per cluster, with visible article rows linked to those clusters.
 
 **Routing (one destination per cluster).** As you collect, assign each cluster to exactly one owning master query using the multi-company routing rule in Section 3e: the primary actor's query, `[Market]` for market-level stories, sub-brands filed under their own query but tagged to the parent, and the AI-angle tie-break for AI-versus-product stories. This is also the cross-query dedup step: when the same event is caught under more than one master query, merge it into one cluster filed once.
 
@@ -709,10 +772,10 @@ All six categories use the same method and produce one combined deliverable: one
 Create `./output/` and `./archive/` if missing. Set `time_period` from the run dates, inclusive of both ends, normalizing any `yyyy.m.d~yyyy.m.d` input to ISO first (Section 0). Initialize an empty `data_{since}_{until}.json` (the per-cluster record store from Section 1b); the HTML report is rendered from it at the end of the run. Take the report and data paths from the `output` block in Section 3a. The report itself is produced at the end of the run by filling the Section 6 template (see Phase 6).
 
 ### Phase 1: Primary sources
-For each master query in the current category, open its **Primary sources** from the source maps below and collect every article published inside `time_period`. Write a headline for every primary-source link under the headline rule (Section 3f). When two primary-source links cover the same event, cluster them into one row and write a single headline (cluster rule, Section 3f). Apply each query's handling note from the source map (filter a broad newsroom for the product, treat a notable GitHub or changelog release as the event, check more than one official page, treat in-app or Discord posts as the update channel, or verify the URL or path first). Primary sources set the cluster's date.
+For each master query in the current category, open its **Primary sources** from the source maps below and collect every article published inside `time_period`. Write a headline for every primary-source link under the headline rule (Section 3f). When two primary-source links cover the same event, connect them to the same `cluster_id` and single Korean headline, but keep separate article records when their angles differ (cluster rule, Section 3f). Apply each query's handling note from the source map (filter a broad newsroom for the product, treat a notable GitHub or changelog release as the event, check more than one official page, treat in-app or Discord posts as the update channel, or verify the URL or path first). Primary sources set the cluster's date.
 
 ### Phase 2: Secondary sources
-For each master query, scan its **Secondary sources** from the source maps below, plus the `trusted_news_sites` (Section 3a) weighted by the current category, for in-window articles relevant to the query. Drop anything that is Tier 4 (Section 3d.4) as you go. For every remaining secondary article, apply the cluster rule (Section 3f): if it covers an event already clustered in Phase 1, add it to that cluster as an extra source up to the 3-source cap, and once a cluster holds 3 sources discard any further secondary source for it; if it covers a new event not seen in Phase 1, start a new cluster and write its headline under the headline rule. Run the `All Other ... News` and `Other Super Apps` catch-alls last, and route keyword or theme feeds to the owning master query when one exists.
+For each master query, scan its **Secondary sources** from the source maps below, plus the `trusted_news_sites` (Section 3a) weighted by the current category, for in-window articles relevant to the query. Drop anything that is Tier 4 (Section 3d.4) as you go. For every remaining secondary article, apply the cluster rule (Section 3f): if it covers an event already clustered in Phase 1, add it to that cluster and create a separate article record when it provides a materially different angle; keep only the three strongest URLs in the cluster `sources` summary but do not discard valuable article-level rows. If it covers a new event not seen in Phase 1, start a new cluster and write its headline under the headline rule. Run the `All Other ... News` and `Other Super Apps` catch-alls last, and route keyword or theme feeds to the owning master query when one exists.
 
 Secondary source sweep must be source-first before query routing. Do not run only a few query-specific `site:` searches. First sweep each major source's latest/archive/category/guide/topic pages for the target week, paginate until articles before the start date appear, then route each relevant article to the correct master query. Mandatory source-first sweeps include TechCrunch, 9to5Google, 9to5Mac, Social Media Today, The Verge, VentureBeat, SiliconANGLE, ZDNET, CNBC, The Decoder, MarkTechPost, and accessible alternatives for Reuters/Bloomberg/NYTimes/The Information leads.
 
@@ -728,11 +791,11 @@ Weight the secondary outlets by category: Global English outlets (techcrunch.com
 ### Phase 3: Google News
 For each master query, search Google News across three editions: Google US (`US / en`), Google KR (`KR / ko`), and Google JP (`JP / ja`). On Claude Code you have no live browser, so use the Google News RSS endpoints and the `web_search` fallback from Section 0; apply the date window with `after:` / `before:` (`before:` is exclusive, pass `until + 1 day`), and do the date filtering and cross-edition dedup in code. For an Asian company, search both its English name in Google US and its local-language name in the local edition (for example Toss in Google US and `토스` in Google KR; Rakuten in Google US and `楽天` in Google JP). Pool the editions into one set and dedup the same event across them. Use the Phase 3 search-term overrides below for any query whose bare name is noisy.
 
-Google US / English search is mandatory for every master query before n/a is assigned. Do not limit Google Query to major queries. For every master query, run the base query and these variants with `after:{since}` and `before:{until_plus_1}`: `{master query}`, `{master query} AI`, `{master query} update`, `{master query} launch`, `{master query} partnership`, `{master query} funding`, and `{master query} regulation`. Check at least the top 50 results and up to 100 where possible, using both Google News RSS and `web_search` fallback when available.
+Google US / English search is mandatory for every master query before n/a is assigned. Do not limit Google Query to major queries. For every master query, run the base query and these variants with `after:{since}` and `before:{until_plus_1}`: `{master query}`, `{master query} AI`, `{master query} update`, `{master query} launch`, `{master query} partnership`, `{master query} funding`, `{master query} regulation`, plus every expanded variant listed in Section 3g (`announces`, `rolls out`, `launches`, `tests`, `beta`, `preview`, `changelog`, `release notes`, `developer`, `API`, `ads`, `commerce`, `creator`, `subscription`, `antitrust`, `privacy`, `safety`, `enterprise`, `agent`, and `agentic AI`). Check at least the top 50 results and up to 100 where possible, using both Google News RSS and `web_search` fallback when available.
 
-For Asia Big Tech, Google US search is mandatory; Google KR search is mandatory for Korean companies and Korean-language aliases; Google JP search is mandatory for Japanese companies and Japanese-language aliases; use local-language query variants listed in the search-term overrides; and do not mark any Asia Big Tech query as n/a unless local-language Google evidence exists. Examples: `Rakuten after:2026-06-17 before:2026-06-24`, `楽天 after:2026-06-17 before:2026-06-24`, `카카오 after:2026-06-17 before:2026-06-24`, and `토스 after:2026-06-17 before:2026-06-24`. If a Google result matches an event already found in Phase 1 or 2, add it as Source 2 or Source 3 only when it adds useful context; do not create a duplicate row.
+For Asia Big Tech, Google US search is mandatory; Google KR search is mandatory for Korean companies and Korean-language aliases; Google JP search is mandatory for Japanese companies and Japanese-language aliases; use local-language query variants listed in the search-term overrides; and do not mark any Asia Big Tech query as n/a unless local-language Google evidence exists. Examples: `Rakuten after:2026-06-17 before:2026-06-24`, `楽天 after:2026-06-17 before:2026-06-24`, `카카오 after:2026-06-17 before:2026-06-24`, and `토스 after:2026-06-17 before:2026-06-24`. If a Google result matches an event already found in Phase 1 or 2, add it as a linked article row when it adds useful context or a different angle; update the cluster representative `sources` only if it belongs in the top three. Do not create duplicate rows for exact rewrites.
 
-Apply the **trigger cluster size rule** (Section 3f): if more than 50% of a query's Google results only repeat coverage already captured in Phases 1 and 2, re-run the search with the dominant repeated term negated (for example `Claude -Fable`) and read up to 100 results from that negated search. Apply the **cluster rule** the same way as Phase 2: add a Google source to an existing cluster up to the 3-source cap, or start a new cluster if the event is new, then write its headline under the headline rule. A Google News link is the basis for a cluster's headline only when the cluster has no primary or secondary source.
+Apply the **trigger cluster size rule** (Section 3f): if more than 50% of a query's Google results only repeat coverage already captured in Phases 1 and 2, re-run the search with the dominant repeated term negated (for example `Claude -Fable`) and read up to 100 results from that negated search. Apply the **cluster rule** the same way as Phase 2: add a Google source to an existing cluster as a visible article row when it has a different angle, update the representative top-three `sources` when warranted, or start a new cluster if the event is new, then write its headline under the headline rule. A Google News link is the basis for a cluster's headline only when the cluster has no primary or secondary source.
 
 ### Phase 3a: Asia Big Tech reinforcement
 
@@ -741,7 +804,20 @@ Before tiering or n/a assignment, separately reinforce Asia Big Tech. For each A
 Required local query examples include: Kakao / 카카오, KakaoTalk / 카카오톡, Kakao Pay / 카카오페이, Kakao Bank / 카카오뱅크, Kakao Mobility / 카카오모빌리티, Toss / 토스, Coupang / 쿠팡, Woowa Brothers / 배달의민족, 당근 / Karrot, Rakuten / 楽天, Mercari / メルカリ, DeNA / ディー・エヌ・エー, Note / note, LINE Yahoo / LINEヤフー, PayPay, Tencent / 腾讯, WeChat / 微信, Alibaba / 阿里巴巴, Taobao / 淘宝, ByteDance / 字节跳动, Doubao / 豆包, TikTok, Grab, Shopee, and Gojek.
 
 ### Phase 4: Tier arrangement
-With the headlines and clusters from Phases 1 to 3 in hand, go through every master query in the category and assign each cluster a tier using Section 3d. First apply the content exclusion rules (Tier 4, Section 3d.4) and drop those clusters outright. Then classify each surviving cluster as Tier 1, 2, or 3 by the Section 3d order, reading the cluster's opened source where the headline alone is not enough to judge. Arrange each master query's clusters by tier, Tier 1 first, then Tier 2, then Tier 3, and store the tier on each cluster record in the data file. Nothing else is cut: every cluster that is not Tier 4 and not a last-week repeat is written.
+With the headlines and clusters from Phases 1 to 3 in hand, go through every master query in the category and assign each cluster a tier using Section 3d. First apply the content exclusion rules (Tier 4, Section 3d.4) and drop those clusters outright. Then classify each surviving cluster as Tier 1, 2, or 3 by the Section 3d order, reading the cluster's opened source where the headline alone is not enough to judge. Arrange each master query's clusters by tier, Tier 1 first, then Tier 2, then Tier 3, and store the tier on each cluster record in the data file. Nothing else is cut: every article in a cluster that is not Tier 4 and not a last-week repeat is eligible for rendering unless it fails the conservative dedup rule.
+
+### Phase 4a: Coverage count and Backfill Pass
+
+After Phase 4 tiering and before Phase 5 n/a establishment, count `visible_article_rows` overall and by category. If any category is below its Section 3g minimum, run category-specific backfill before final HTML rendering. If the total visible article rows are below 200, run a Backfill Pass:
+
+1. Re-sweep mandatory source-first outlets by date range.
+2. Run Google News RSS queries for high-yield generic terms: `AI agent`, `agentic AI`, `OpenAI`, `Anthropic`, `Gemini`, `Claude`, `ChatGPT`, `AI startup funding`, `social media update`, `Instagram update`, `WhatsApp update`, `TikTok update`, `YouTube update`, `Kakao AI`, `카카오 AI`, `Toss`, `토스`, `Rakuten AI`, `楽天 AI`, `Tencent AI`, `WeChat AI`, `ByteDance AI`, and `Alibaba AI`.
+3. Add articles that pass Tier 1 to Tier 3.
+4. Keep separate article rows when the angle differs, even if they share a cluster.
+5. Recalculate category counts.
+6. Repeat once more if visible article rows are still below 200.
+
+If the final count remains below 200 after two Backfill Passes, populate `validation.shortage_reason` with the fields required in Section 3g.
 
 ### Phase 5: N/a establishment
 
@@ -1061,7 +1137,7 @@ Theme:
 - Agent-efficiency notes: resolve Google News redirects only for kept links; add the US-edition pass for an Asian query only when the local-edition pass is thin; cap each cluster at 3 sources so collection stops early; all phases run inline, no spawned sub-agents.
 - Procedure rearranged into Phases 0 to 6: Phase 0 setup; Phase 1 primary sources, one headline per link; Phase 2 secondary sources, clustered into Phase 1 with a 3-source cap; Phase 3 Google News across US, KR, and JP with the trigger cluster size rule; Phase 4 tier arrangement; Phase 5 n/a establishment; Phase 6 repetition check (across-week and within-week). Headlines are now written during collection, not in a separate pass.
 - Replaced the hard/soft exclusion split and the old selection tiers with a single four-tier system (Section 3d): Tier 4 drops; Tiers 1 to 3 are kept and ranked. Geography is no longer a hard drop (out-of-market stories are Tier 2 unless they signal a cross-market trend); transportation is a Tier 4 drop (Tier 3 under AI or Global Big Tech queries); security incidents are Tier 3.
-- Defined three named operating rules (Section 3f): the headline rule, the cluster rule (up to 3 sources, primary then secondary then Google News), and the trigger cluster size rule (Phase 3 boolean-negate when over 50% of Google hits repeat Phases 1 to 2).
+- Defined three named operating rules (Section 3f): the headline rule, the cluster rule (top-three representative cluster sources plus article-level rows for materially different sources), and the trigger cluster size rule (Phase 3 boolean-negate when over 50% of Google hits repeat Phases 1 to 2).
 - Output migrated from an Excel workbook to a self-contained HTML report (Section 1a) rendered from a JSON data file (Section 1b). No openpyxl, no .xlsx. The data file is also the Phase 6 dedup memory, replacing the archived Working sheet.
 - The selection checkbox is now a real clickable `<input type="checkbox">`: ticks autosave in the browser and export to `selections_{since}_{until}.json` for a later agent step (no fixed schema yet). Phase 0 renamed to Setup; the column-letter and tab-name conventions are dropped.
 
@@ -1070,7 +1146,7 @@ Theme:
 ### Final quality gate before writing files
 
 Before finalizing, validate internally:
-- Visible article count increased meaningfully versus the sparse seed/first HTML and approaches the reference/second HTML coverage level.
+- Visible article count meets the Section 3g target: at least 200 visible article rows, target 250, maximum 300 unless unusually active; if below 200, `validation.shortage_reason` is populated after two Backfill Passes.
 - Header pills show Range, Articles, AI Agent, AI/GPT, Global Big Tech, Asia Big Tech, Social, Theme, and Selected count.
 - Asia Big Tech is not left at only a token article count; if it remains very low, rerun official, regional, Google US, KR/JP, and local-language searches.
 - Social is not left at only a token article count; if it remains very low, rerun Social Media Today and social platform source sweeps.
@@ -1081,7 +1157,7 @@ Before finalizing, validate internally:
 - Asia Big Tech official newsroom/source pages were checked before n/a.
 - Every visible article row has a real checkbox and at least one real source URL.
 - No visible article row has a broken or missing source link.
-- No event is duplicated across multiple rows or master queries.
+- No exact duplicate rewrite is duplicated across multiple rows or master queries; materially different article angles may share one `cluster_id` and cluster headline.
 - Category order exactly matches Section 3b.
 - Master query order exactly matches Section 3b or the seed HTML/runbook order.
 - Headline format is `[Company] ... (YYYY.M.D)` with no zero padding in the suffix date.
@@ -1101,11 +1177,11 @@ Generate the HTML from the same final records used for validation metadata. Save
 
 The visible HTML article table uses this column order only: Select, Headline, Tier, Sources, Date. Do not add Category, Master Query, or Original Title as table columns; show category and master query as section/group headings.
 
-The generated HTML must include this row structure for each visible article cluster:
+The generated HTML must include this row structure for each visible article row. Each row includes `article_id`, `cluster_id`, `category`, `master_query`, `headline`, `tier`, `source_url`, `source_label`, `source_headline`, and `date`; multiple rows may share the same `cluster_id` and Korean headline while showing different source URLs:
 
 ```html
-<tr class="article-row" data-cluster-id="..." data-category="AI/GPT" data-master-query="Gemini">
-  <td class="select-cell"><input type="checkbox" class="row-check" data-cluster-id="..." aria-label="Select article"></td>
+<tr class="article-row" data-article-id="..." data-cluster-id="..." data-category="AI/GPT" data-master-query="Gemini">
+  <td class="select-cell"><input type="checkbox" class="row-check" data-article-id="..." data-cluster-id="..." aria-label="Select article"></td>
   <td class="headline-cell"><div class="headline-text">[Google] Gemini in Sheets language support 확대, spreadsheet 생성·편집 AI workflow의 다국어 접근성 강화 (2026.6.18)</div></td>
   <td class="tier-cell"><span class="tier-badge tier-1">Tier 1</span></td>
   <td class="source-cell"><a class="source-link" href="..." target="_blank" rel="noopener noreferrer">Source 1</a></td>
@@ -1117,7 +1193,7 @@ Checkbox requirements:
 - Checkbox must be a real `<input type="checkbox">`.
 - Do not wrap it in a fake button, custom div, or non-clickable element.
 - Do not pre-check any row.
-- Autosave selected cluster IDs in `localStorage`.
+- Autosave selected article IDs in `localStorage` (include `cluster_id` in exported records).
 - `Clear checks` clears all selected rows.
 - `Export selections` must download selected full records as JSON.
 
@@ -1185,11 +1261,11 @@ The HTML report is for human article selection. Keep it minimal. Allowed in defa
 <script>
 const RUN={since:"{since}",until:"{until}"};
 const STORE_KEY=`selections:${RUN.since}_${RUN.until}`;
-function selectedIds(){return [...document.querySelectorAll('.row-check:checked')].map(cb=>cb.dataset.clusterId)}
+function selectedIds(){return [...document.querySelectorAll('.row-check:checked')].map(cb=>cb.dataset.articleId)}
 function save(){const ids=selectedIds();localStorage.setItem(STORE_KEY,JSON.stringify(ids));document.getElementById('selected-count').textContent=`${ids.length} selected`; const pill=document.getElementById('selected-pill'); if(pill) pill.textContent=`Selected ${ids.length}`;}
-function restore(){let ids=[];try{ids=JSON.parse(localStorage.getItem(STORE_KEY)||'[]')}catch{};const set=new Set(ids);document.querySelectorAll('.row-check').forEach(cb=>{cb.checked=set.has(cb.dataset.clusterId);cb.closest('tr').classList.toggle('selected',cb.checked);cb.addEventListener('change',()=>{cb.closest('tr').classList.toggle('selected',cb.checked);save();});});save();}
+function restore(){let ids=[];try{ids=JSON.parse(localStorage.getItem(STORE_KEY)||'[]')}catch{};const set=new Set(ids);document.querySelectorAll('.row-check').forEach(cb=>{cb.checked=set.has(cb.dataset.articleId);cb.closest('tr').classList.toggle('selected',cb.checked);cb.addEventListener('change',()=>{cb.closest('tr').classList.toggle('selected',cb.checked);save();});});save();}
 function fullRecords(){try{return JSON.parse(document.getElementById('report-data').textContent).data||[]}catch{return []}}
-document.getElementById('export').addEventListener('click',()=>{const ids=new Set(selectedIds());const selected=fullRecords().filter(r=>ids.has(r.cluster_id));const blob=new Blob([JSON.stringify({since:RUN.since,until:RUN.until,count:selected.length,selections:selected},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`selections_${RUN.since}_${RUN.until}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);});
+document.getElementById('export').addEventListener('click',()=>{const ids=new Set(selectedIds());const selected=fullRecords().filter(r=>ids.has(r.article_id));const blob=new Blob([JSON.stringify({since:RUN.since,until:RUN.until,count:selected.length,selections:selected},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`selections_${RUN.since}_${RUN.until}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);});
 document.getElementById('clear').addEventListener('click',()=>{document.querySelectorAll('.row-check').forEach(cb=>{cb.checked=false;cb.closest('tr').classList.remove('selected')});save();});
 restore();
 </script>
